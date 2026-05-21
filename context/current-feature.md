@@ -15,3 +15,5 @@
 
 ## History
 <!-- Detail history here. Keep updated. Earliest to latest. -->
+
+- **2026-05-21** — Initial Next.js and Tailwind CSS setup.
