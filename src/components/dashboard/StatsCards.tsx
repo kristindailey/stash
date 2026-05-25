@@ -4,36 +4,29 @@ import {
 	Star,
 	type LucideIcon,
 } from "lucide-react";
-import {
-	mockCollections,
-	mockItemTypeCounts,
-	mockItems,
-} from "@/lib/mock-data";
+import { getDashboardStats } from "@/lib/db/items";
 
-export function StatsCards() {
-	const totalItems = mockItemTypeCounts.all;
-	const totalCollections = mockCollections.length;
-	const favoriteItems = mockItems.filter((i) => i.isFavorite).length;
-	const favoriteCollections = mockCollections.filter((c) => c.isFavorite).length;
+export async function StatsCards() {
+	const stats = await getDashboardStats();
 
 	return (
 		<div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-			<StatCard label="Total Items" value={totalItems} icon={Layers} />
+			<StatCard label="Total Items" value={stats.totalItems} icon={Layers} />
 			<StatCard
 				label="Collections"
-				value={totalCollections}
+				value={stats.totalCollections}
 				icon={FolderOpen}
 			/>
 			<StatCard
 				label="Favorite Items"
-				value={favoriteItems}
+				value={stats.favoriteItems}
 				icon={Star}
 				iconColor="#f59e0b"
 				iconFill
 			/>
 			<StatCard
 				label="Favorite Collections"
-				value={favoriteCollections}
+				value={stats.favoriteCollections}
 				icon={Star}
 				iconColor="#f59e0b"
 				iconFill

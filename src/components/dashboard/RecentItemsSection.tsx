@@ -1,36 +1,35 @@
 import Link from "next/link";
 import { FolderOpen } from "lucide-react";
-import { mockItems } from "@/lib/mock-data";
 import {
 	ITEM_TYPE_COLORS,
 	ITEM_TYPE_ICONS,
 	ITEM_TYPE_LABELS,
 } from "@/lib/constants/item-types";
+import { getRecentItems, type DashboardItem } from "@/lib/db/items";
 import { formatRelativeTime } from "@/lib/format-time";
 
-export function RecentItemsSection() {
-	const recent = [...mockItems]
-		.sort(
-			(a, b) =>
-				new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-		)
-		.slice(0, 10);
+export async function RecentItemsSection() {
+	const recent = await getRecentItems(10);
 
 	return (
 		<section>
 			<h2 className="mb-4 text-lg font-semibold">Recent Items</h2>
-			<div className="overflow-hidden rounded-lg border bg-card">
-				<ul className="divide-y">
-					{recent.map((item) => (
-						<RecentItemRow key={item.id} item={item} />
-					))}
-				</ul>
-			</div>
+			{recent.length === 0 ? (
+				<p className="text-sm text-muted-foreground">No items yet.</p>
+			) : (
+				<div className="overflow-hidden rounded-lg border bg-card">
+					<ul className="divide-y">
+						{recent.map((item) => (
+							<RecentItemRow key={item.id} item={item} />
+						))}
+					</ul>
+				</div>
+			)}
 		</section>
 	);
 }
 
-function RecentItemRow({ item }: { item: (typeof mockItems)[number] }) {
+function RecentItemRow({ item }: { item: DashboardItem }) {
 	const Icon = ITEM_TYPE_ICONS[item.type] ?? FolderOpen;
 	const color = ITEM_TYPE_COLORS[item.type] ?? "#6b7280";
 	const typeLabel = ITEM_TYPE_LABELS[item.type] ?? item.type;

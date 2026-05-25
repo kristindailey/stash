@@ -1,13 +1,13 @@
 import { FolderOpen, Pin, Star } from "lucide-react";
-import { mockItems } from "@/lib/mock-data";
 import {
 	ITEM_TYPE_COLORS,
 	ITEM_TYPE_ICONS,
 } from "@/lib/constants/item-types";
+import { getPinnedItems, type DashboardItem } from "@/lib/db/items";
 import { formatRelativeTime } from "@/lib/format-time";
 
-export function PinnedSection() {
-	const pinned = mockItems.filter((i) => i.isPinned);
+export async function PinnedSection() {
+	const pinned = await getPinnedItems();
 
 	if (pinned.length === 0) return null;
 
@@ -23,7 +23,7 @@ export function PinnedSection() {
 	);
 }
 
-function PinnedItemCard({ item }: { item: (typeof mockItems)[number] }) {
+function PinnedItemCard({ item }: { item: DashboardItem }) {
 	const Icon = ITEM_TYPE_ICONS[item.type] ?? FolderOpen;
 	const color = ITEM_TYPE_COLORS[item.type] ?? "#6b7280";
 
@@ -34,10 +34,7 @@ function PinnedItemCard({ item }: { item: (typeof mockItems)[number] }) {
 		>
 			<div className="flex items-start justify-between gap-2">
 				<div className="flex min-w-0 items-center gap-2">
-					<Icon
-						className="size-4 shrink-0"
-						style={{ color }}
-					/>
+					<Icon className="size-4 shrink-0" style={{ color }} />
 					<h3 className="truncate font-semibold" style={{ color }}>
 						{item.title}
 					</h3>
@@ -58,12 +55,6 @@ function PinnedItemCard({ item }: { item: (typeof mockItems)[number] }) {
 				<p className="line-clamp-2 text-sm text-muted-foreground">
 					{item.description}
 				</p>
-			)}
-
-			{item.content && (
-				<pre className="overflow-hidden rounded-md bg-muted px-3 py-2 font-mono text-xs">
-					<code className="line-clamp-2 block">{item.content}</code>
-				</pre>
 			)}
 
 			{item.tags.length > 0 && (
