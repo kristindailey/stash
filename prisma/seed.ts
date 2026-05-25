@@ -78,12 +78,15 @@ type SeedItem = {
 	description?: string;
 	language?: string;
 	itemType: string;
+	isPinned?: boolean;
+	isFavorite?: boolean;
 };
 
 type SeedCollection = {
 	name: string;
 	description: string;
 	defaultType?: string;
+	isFavorite?: boolean;
 	items: SeedItem[];
 };
 
@@ -92,6 +95,7 @@ const collections: SeedCollection[] = [
 		name: "React Patterns",
 		description: "Reusable React patterns and hooks",
 		defaultType: "snippet",
+		isFavorite: true,
 		items: [
 			{
 				title: "useDebounce hook",
@@ -99,6 +103,8 @@ const collections: SeedCollection[] = [
 				language: "typescript",
 				itemType: "snippet",
 				description: "Debounces a rapidly changing value.",
+				isPinned: true,
+				isFavorite: true,
 				content: `import { useEffect, useState } from "react";
 
 export function useDebounce<T>(value: T, delay = 300): T {
@@ -163,12 +169,15 @@ export function useTheme() {
 		name: "AI Workflows",
 		description: "AI prompts and workflow automations",
 		defaultType: "prompt",
+		isFavorite: true,
 		items: [
 			{
 				title: "Code review prompt",
 				contentType: "TEXT",
 				itemType: "prompt",
 				description: "Structured review covering bugs, style, and security.",
+				isPinned: true,
+				isFavorite: true,
 				content: `You are a senior engineer reviewing a pull request.
 
 Review the diff below and respond with:
@@ -284,6 +293,7 @@ CMD ["node", "dist/index.js"]`,
 				itemType: "command",
 				description: "Soft reset that preserves the working tree.",
 				content: "git reset --soft HEAD~1",
+				isFavorite: true,
 			},
 			{
 				title: "Remove all stopped containers",
@@ -319,6 +329,7 @@ CMD ["node", "dist/index.js"]`,
 				itemType: "link",
 				url: "https://tailwindcss.com/docs",
 				description: "Utility-first CSS framework reference.",
+				isFavorite: true,
 			},
 			{
 				title: "shadcn/ui",
@@ -354,6 +365,7 @@ async function seedCollectionsAndItems(
 			data: {
 				name: col.name,
 				description: col.description,
+				isFavorite: col.isFavorite ?? false,
 				userId,
 				defaultTypeId: col.defaultType ? itemTypeIds[col.defaultType] : null,
 			},
@@ -368,6 +380,8 @@ async function seedCollectionsAndItems(
 					url: item.url,
 					description: item.description,
 					language: item.language,
+					isPinned: item.isPinned ?? false,
+					isFavorite: item.isFavorite ?? false,
 					userId,
 					itemTypeId: itemTypeIds[item.itemType],
 				},
