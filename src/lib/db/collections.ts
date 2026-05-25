@@ -18,6 +18,43 @@ export type DashboardCollection = {
 	updatedAt: Date;
 };
 
+export type SidebarCollection = {
+	id: string;
+	name: string;
+	isFavorite: boolean;
+	itemCount: number;
+	updatedAt: Date;
+};
+
+export async function getSidebarCollections(): Promise<SidebarCollection[]> {
+	const user = await prisma.user.findUnique({
+		where: { email: DEMO_USER_EMAIL },
+		select: { id: true },
+	});
+
+	if (!user) return [];
+
+	const collections = await prisma.collection.findMany({
+		where: { userId: user.id },
+		orderBy: { updatedAt: "desc" },
+		select: {
+			id: true,
+			name: true,
+			isFavorite: true,
+			updatedAt: true,
+			_count: { select: { items: true } },
+		},
+	});
+
+	return collections.map((c) => ({
+		id: c.id,
+		name: c.name,
+		isFavorite: c.isFavorite,
+		itemCount: c._count.items,
+		updatedAt: c.updatedAt,
+	}));
+}
+
 export async function getRecentCollections(
 	limit = 6,
 ): Promise<DashboardCollection[]> {
