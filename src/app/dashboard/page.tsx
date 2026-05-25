@@ -3,6 +3,8 @@ import { PinnedSection } from "@/components/dashboard/PinnedSection";
 import { RecentItemsSection } from "@/components/dashboard/RecentItemsSection";
 import { StatsCards } from "@/components/dashboard/StatsCards";
 
+export const dynamic = "force-dynamic";
+
 export default function DashboardPage() {
 	return (
 		<div className="flex flex-col gap-8">
