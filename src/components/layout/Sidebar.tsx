@@ -17,12 +17,9 @@ import {
 	type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import {
-	mockCollections,
-	mockItemTypeCounts,
-	mockItemTypes,
-	mockUser,
-} from "@/lib/mock-data";
+import { mockUser } from "@/lib/mock-data";
+import type { SidebarCollection } from "@/lib/db/collections";
+import type { SidebarItemType } from "@/lib/db/items";
 import { useSidebar } from "./sidebar-context";
 
 const TYPE_ICONS: Record<string, LucideIcon> = {
@@ -35,18 +32,23 @@ const TYPE_ICONS: Record<string, LucideIcon> = {
 	Link: LinkIcon,
 };
 
-export function Sidebar() {
+type SidebarProps = {
+	itemTypes: SidebarItemType[];
+	totalItemCount: number;
+	collections: SidebarCollection[];
+};
+
+export function Sidebar({
+	itemTypes,
+	totalItemCount,
+	collections,
+}: SidebarProps) {
 	const { open, setOpen } = useSidebar();
 	const [favoritesOpen, setFavoritesOpen] = React.useState(true);
 	const [collectionsOpen, setCollectionsOpen] = React.useState(true);
 
-	const favoriteCollections = mockCollections.filter((c) => c.isFavorite);
-	const recentCollections = [...mockCollections]
-		.filter((c) => !c.isFavorite)
-		.sort(
-			(a, b) =>
-				new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-		);
+	const favoriteCollections = collections.filter((c) => c.isFavorite);
+	const otherCollections = collections.filter((c) => !c.isFavorite);
 
 	return (
 		<>
@@ -74,15 +76,11 @@ export function Sidebar() {
 							href="/items"
 							icon={FolderOpen}
 							label="All Items"
-							count={mockItemTypeCounts.all}
+							count={totalItemCount}
 							active
 						/>
-						{mockItemTypes.map((type) => {
+						{itemTypes.map((type) => {
 							const Icon = TYPE_ICONS[type.icon] ?? FolderOpen;
-							const count =
-								mockItemTypeCounts[
-									type.name as keyof typeof mockItemTypeCounts
-								] ?? 0;
 							return (
 								<SidebarLink
 									key={type.id}
@@ -90,7 +88,7 @@ export function Sidebar() {
 									icon={Icon}
 									iconColor={type.color}
 									label={type.label}
-									count={count}
+									count={type.count}
 								/>
 							);
 						})}
@@ -130,16 +128,25 @@ export function Sidebar() {
 							/>
 						}
 					>
-						{collectionsOpen &&
-							recentCollections.map((collection) => (
-								<SidebarLink
-									key={collection.id}
-									href={`/collections/${collection.id}`}
-									icon={FolderOpen}
-									label={collection.name}
-									count={collection.itemCount}
-								/>
-							))}
+						{collectionsOpen && (
+							<>
+								{otherCollections.map((collection) => (
+									<SidebarLink
+										key={collection.id}
+										href={`/collections/${collection.id}`}
+										icon={FolderOpen}
+										label={collection.name}
+										count={collection.itemCount}
+									/>
+								))}
+								<Link
+									href="/collections"
+									className="flex h-8 items-center gap-2.5 rounded-md px-2 text-sm text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+								>
+									<span className="flex-1 truncate">View all collections</span>
+								</Link>
+							</>
+						)}
 					</Section>
 				</div>
 
