@@ -1,15 +1,27 @@
-import { Code, FolderPlus, Plus, Search } from "lucide-react";
+"use client";
+
+import { Code, FolderPlus, PanelLeft, Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useSidebar } from "./sidebar-context";
 
 export function TopBar() {
+	const { toggle } = useSidebar();
 	return (
 		<header className="flex h-16 shrink-0 items-center border-b">
-			<div className="flex h-full w-64 shrink-0 items-center gap-2.5 border-r px-5">
+			<div className="flex h-full shrink-0 items-center gap-2.5 border-r px-5 md:w-64">
 				<div className="flex size-8 items-center justify-center rounded-lg bg-foreground text-background">
 					<Code className="size-4" />
 				</div>
 				<span className="text-lg font-semibold tracking-tight">DevStash</span>
+				<button
+					type="button"
+					onClick={toggle}
+					aria-label="Toggle sidebar"
+					className="ml-auto flex h-7 w-5 items-center justify-end rounded-md text-muted-foreground hover:text-foreground"
+				>
+					<PanelLeft className="size-4" />
+				</button>
 			</div>
 
 			<div className="flex flex-1 justify-center px-6">
