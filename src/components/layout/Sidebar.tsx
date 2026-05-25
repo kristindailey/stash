@@ -18,9 +18,12 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { mockUser } from "@/lib/mock-data";
+import { Badge } from "@/components/ui/badge";
 import type { SidebarCollection } from "@/lib/db/collections";
 import type { SidebarItemType } from "@/lib/db/items";
 import { useSidebar } from "./sidebar-context";
+
+const PRO_TYPE_NAMES = new Set(["file", "image"]);
 
 const TYPE_ICONS: Record<string, LucideIcon> = {
 	Code,
@@ -89,6 +92,7 @@ export function Sidebar({
 									iconColor={type.color}
 									label={type.label}
 									count={type.count}
+									pro={PRO_TYPE_NAMES.has(type.name)}
 								/>
 							);
 						})}
@@ -229,6 +233,7 @@ function SidebarLink({
 	label,
 	count,
 	active,
+	pro,
 }: {
 	href: string;
 	icon: LucideIcon;
@@ -237,6 +242,7 @@ function SidebarLink({
 	label: string;
 	count?: number;
 	active?: boolean;
+	pro?: boolean;
 }) {
 	return (
 		<Link
@@ -254,6 +260,14 @@ function SidebarLink({
 				fill={iconFill ? "currentColor" : "none"}
 			/>
 			<span className="flex-1 truncate">{label}</span>
+			{pro && (
+				<Badge
+					variant="secondary"
+					className="h-4 px-1.5 text-[10px] font-semibold tracking-wide text-sidebar-foreground/70"
+				>
+					PRO
+				</Badge>
+			)}
 			{typeof count === "number" && (
 				<span className="w-5 text-right text-xs text-sidebar-foreground/50">
 					{count}
