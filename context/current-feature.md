@@ -1,38 +1,15 @@
-# Current Feature: Auth Setup - NextAuth + GitHub Provider
+# Current Feature
+<!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
+
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
+
 ## Goals
-- Install NextAuth v5 (`next-auth@beta`) and `@auth/prisma-adapter`
-- Set up split auth config pattern for edge compatibility
-- Add GitHub OAuth provider
-- Protect `/dashboard/*` routes using Next.js 16 proxy
-- Redirect unauthenticated users to sign-in
+<!-- Bullet points of what success looks like -->
+
 ## Notes
-Files to create:
-- `src/auth.config.ts` - Edge-compatible config (providers only, no adapter)
-- `src/auth.ts` - Full config with Prisma adapter and JWT strategy
-- `src/app/api/auth/[...nextauth]/route.ts` - Export handlers from auth.ts
-- `src/proxy.ts` - Route protection with redirect logic
-- `src/types/next-auth.d.ts` - Extend Session type with user.id
+<!-- Additional context, constraints, or details from spec -->
 
-Key gotchas:
-- Use `next-auth@beta` (not `@latest` which installs v4)
-- Proxy file must be at `src/proxy.ts` (same level as `app/`)
-- Use named export: `export const proxy = auth(...)` not default export
-- Use `session: { strategy: 'jwt' }` with split config pattern
-- Don't set custom `pages.signIn` - use NextAuth's default page
-- Use Context7 to verify the newest config and conventions
-
-Env vars: `AUTH_SECRET`, `AUTH_GITHUB_ID`, `AUTH_GITHUB_SECRET`
-
-Testing:
-1. Go to `/dashboard` - should redirect to sign-in
-2. Click "Sign in with GitHub"
-3. Verify redirect back to `/dashboard` after auth
-
-References:
-- Edge compatibility: https://authjs.dev/getting-started/installation#edge-compatibility
-- Prisma adapter: https://authjs.dev/getting-started/adapters/prisma
 ## History
 - **2026-05-21** — Initial Next.js and Tailwind CSS setup.
 - **2026-05-21** — Dashboard UI Phase 1: ShadCN setup, `/dashboard` route, shell layout, dark mode, display-only top bar.
@@ -45,3 +22,4 @@ References:
 - **2026-05-25** — Sidebar on real data: `getSidebarItemTypes` + `getSidebarCollections` fetchers, dashboard layout passes data to Sidebar, item-type links go to `/items/{name}s`, added "View all collections" link.
 - **2026-05-25** — Sidebar PRO badge: installed ShadCN Badge, subtle "PRO" tag on Files and Images item types.
 - **2026-05-25** — Audit quick wins: cached shared `getDemoUserId` (React.cache), N+1 fix in `getRecentCollections` (Prisma `select` + narrow `itemCollection.findMany`), tightened `ITEM_TYPE_*` constants to `Partial<Record>`, removed duplicate `TYPE_ICONS` from Sidebar, batched seed item inserts via nested create.
+- **2026-05-26** — Auth Phase 1: NextAuth v5 (beta) + `@auth/prisma-adapter`, split config (`auth.config.ts` edge-safe + `auth.ts` with PrismaAdapter & JWT strategy), `/api/auth/[...nextauth]` route, `src/proxy.ts` protecting `/dashboard/*` with redirect to NextAuth default sign-in, Session/JWT type augmentation exposing `user.id`.
