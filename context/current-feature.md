@@ -1,25 +1,15 @@
-# Current Feature: Email Verification on Sign Up
+# Current Feature
+<!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
+<!-- Brief description of the feature to implement -->
 
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- New users receive a verification email after registering
-- Email contains a unique, time-limited verification link
-- Clicking the link marks the user's email as verified (`User.emailVerified`)
-- Unverified users are blocked from signing in (or shown a clear "verify your email" state)
-- Resend-powered email delivery using `RESEND_API_KEY` from `.env`
-- Ability to resend the verification email if the link expires or is lost
+<!-- Bullet points of what success looks like -->
 
 ## Notes
-- Using Resend for transactional email delivery; API key already present in `.env` as `RESEND_API_KEY`
-- Credentials flow only — GitHub OAuth users are already verified by the provider
-- Reuse NextAuth's `VerificationToken` model in the Prisma schema for token storage
-- Token should be a secure random string with a reasonable expiry (e.g., 24h)
-- Registration flow (`POST /api/auth/register`) currently creates the user and returns success — needs to also generate a token and send the email
-- Need a new route (e.g., `GET /api/auth/verify-email?token=...`) that validates the token, sets `emailVerified`, and redirects to `/login?verified=1`
-- Credentials `authorize` in `auth.ts` should reject login when `emailVerified` is null
-- Consider a "Resend verification" action on the login page when a user tries to sign in with an unverified account
+<!-- Additional context, constraints, or details from spec -->
 
 ## History
 - **2026-05-21** — Initial Next.js and Tailwind CSS setup.
@@ -36,3 +26,4 @@ In Progress
 - **2026-05-26** — Auth Phase 1: NextAuth v5 (beta) + `@auth/prisma-adapter`, split config (`auth.config.ts` edge-safe + `auth.ts` with PrismaAdapter & JWT strategy), `/api/auth/[...nextauth]` route, `src/proxy.ts` protecting `/dashboard/*` with redirect to NextAuth default sign-in, Session/JWT type augmentation exposing `user.id`.
 - **2026-05-26** — Auth Phase 2: Credentials provider in split config (placeholder in `auth.config.ts`, bcrypt-backed `authorize` in `auth.ts`), `POST /api/auth/register` route with field validation, duplicate-email check, and bcryptjs hashing.
 - **2026-05-26** — Auth Phase 3: custom `/login` + `/register` pages (Credentials + GitHub, validation, error display), `pages.signIn` override + proxy redirect updated, reusable `UserAvatar` (image or initials), inline `GithubIcon` (lucide 1.x dropped brands), sidebar footer driven by `auth()` session with avatar dropup → Sign out and gear icon → `/profile`, sonner toaster mounted with post-register success toast on `/login?registered=1`.
+- **2026-05-26** — Email Verification: Resend SDK + `src/lib/email.ts` (`sendVerificationEmail`), `src/lib/verification-token.ts` (32-byte hex, 24h TTL) reusing NextAuth `VerificationToken` model; register route generates token + sends email; `GET /api/auth/verify-email` consumes token and sets `User.emailVerified`; `POST /api/auth/resend-verification` (no-enumeration); Credentials `authorize` throws `EmailNotVerifiedError` for unverified users; dedicated `/verify-email` (check-inbox + resend + error states) and `/verify-email/verified` (success) pages; login form shows "Resend verification email" link on failed sign-in. Added `scripts/delete-non-demo-users.ts` for dev cleanup.
