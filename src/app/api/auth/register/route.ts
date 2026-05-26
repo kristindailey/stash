@@ -47,7 +47,7 @@ export async function POST(request: Request) {
 	const verificationEnabled = isEmailVerificationEnabled();
 	const baseUrl = getBaseUrl(request);
 
-	const hashed = await bcrypt.hash(password, 10);
+	const hashed = await bcrypt.hash(password, 12);
 
 	const existing = await prisma.user.findUnique({
 		where: { email: normalizedEmail },

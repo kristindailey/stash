@@ -35,7 +35,7 @@ export async function POST(request: Request) {
 		return NextResponse.json({ error, reason: result.reason }, { status: 400 });
 	}
 
-	const hashed = await bcrypt.hash(password, 10);
+	const hashed = await bcrypt.hash(password, 12);
 	try {
 		await prisma.user.update({
 			where: { email: result.email },

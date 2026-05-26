@@ -48,7 +48,7 @@ export async function changePassword(input: {
 		return { success: false, error: "Current password is incorrect" };
 	}
 
-	const hashed = await bcrypt.hash(newPassword, 10);
+	const hashed = await bcrypt.hash(newPassword, 12);
 	await prisma.user.update({
 		where: { id: session.user.id },
 		data: { password: hashed },
