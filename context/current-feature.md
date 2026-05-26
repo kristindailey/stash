@@ -1,25 +1,15 @@
-# Current Feature: Auth UI - Sign In, Register & Sign Out
+# Current Feature
 <!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
 <!-- Brief description of the feature to implement -->
 
-Replace NextAuth default pages with custom UI for sign-in and register, and update the sidebar footer with avatar, name, and sign-out dropdown.
-
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- Custom `/login` page with email/password fields, "Sign in with GitHub" button, and link to register
-- Custom `/register` page with name, email, password, confirm password fields posting to `/api/auth/register`, then redirecting to sign-in
-- Form validation and error display on both pages (passwords match, email format)
-- Reusable avatar component: GitHub `image` when present, otherwise initials from name (e.g., "Brad Traversy" → "BT")
-- Sidebar footer shows user avatar + name; clicking avatar navigates to `/profile`
-- Dropdown on avatar exposes a "Sign out" action
+<!-- Bullet points of what success looks like -->
 
 ## Notes
-- Override NextAuth default sign-in route by configuring custom `pages` in auth config
-- Avatar logic centralized in a reusable component used by sidebar footer (and any future placements)
-- Sidebar footer currently shows static demo data — replace with the authenticated session user
-- "Sign out" should use NextAuth's `signOut` and redirect to `/login`
+<!-- Additional context, constraints, or details from spec -->
 
 ## History
 - **2026-05-21** — Initial Next.js and Tailwind CSS setup.
@@ -35,3 +25,4 @@ In Progress
 - **2026-05-25** — Audit quick wins: cached shared `getDemoUserId` (React.cache), N+1 fix in `getRecentCollections` (Prisma `select` + narrow `itemCollection.findMany`), tightened `ITEM_TYPE_*` constants to `Partial<Record>`, removed duplicate `TYPE_ICONS` from Sidebar, batched seed item inserts via nested create.
 - **2026-05-26** — Auth Phase 1: NextAuth v5 (beta) + `@auth/prisma-adapter`, split config (`auth.config.ts` edge-safe + `auth.ts` with PrismaAdapter & JWT strategy), `/api/auth/[...nextauth]` route, `src/proxy.ts` protecting `/dashboard/*` with redirect to NextAuth default sign-in, Session/JWT type augmentation exposing `user.id`.
 - **2026-05-26** — Auth Phase 2: Credentials provider in split config (placeholder in `auth.config.ts`, bcrypt-backed `authorize` in `auth.ts`), `POST /api/auth/register` route with field validation, duplicate-email check, and bcryptjs hashing.
+- **2026-05-26** — Auth Phase 3: custom `/login` + `/register` pages (Credentials + GitHub, validation, error display), `pages.signIn` override + proxy redirect updated, reusable `UserAvatar` (image or initials), inline `GithubIcon` (lucide 1.x dropped brands), sidebar footer driven by `auth()` session with avatar dropup → Sign out and gear icon → `/profile`, sonner toaster mounted with post-register success toast on `/login?registered=1`.
