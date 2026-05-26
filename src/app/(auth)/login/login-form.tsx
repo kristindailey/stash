@@ -1,9 +1,9 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { GithubIcon } from "@/components/shared/GithubIcon";
@@ -19,14 +19,9 @@ const ERROR_MESSAGES: Record<string, string> = {
 type LoginFormProps = {
 	callbackUrl?: string;
 	initialError?: string;
-	justRegistered?: boolean;
 };
 
-export function LoginForm({
-	callbackUrl,
-	initialError,
-	justRegistered,
-}: LoginFormProps) {
+export function LoginForm({ callbackUrl, initialError }: LoginFormProps) {
 	const router = useRouter();
 	const [email, setEmail] = React.useState("");
 	const [password, setPassword] = React.useState("");
@@ -34,16 +29,7 @@ export function LoginForm({
 		initialError ? ERROR_MESSAGES[initialError] ?? "Sign in failed" : null
 	);
 	const [pending, setPending] = React.useState(false);
-
-	const toastFiredRef = React.useRef(false);
-	React.useEffect(() => {
-		if (justRegistered && !toastFiredRef.current) {
-			toastFiredRef.current = true;
-			toast.success("Account created. You can now log in.", {
-				id: "registered-success",
-			});
-		}
-	}, [justRegistered]);
+	const [showResend, setShowResend] = React.useState(false);
 
 	async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
@@ -72,6 +58,7 @@ export function LoginForm({
 					? ERROR_MESSAGES[result.error] ?? "Invalid email or password"
 					: "Sign in failed"
 			);
+			setShowResend(true);
 			return;
 		}
 
@@ -148,6 +135,18 @@ export function LoginForm({
 				<Button type="submit" size="lg" className="w-full" disabled={pending}>
 					{pending ? "Signing in…" : "Sign in"}
 				</Button>
+
+				{showResend && (
+					<p className="text-center text-xs text-muted-foreground">
+						Haven&apos;t verified your email?{" "}
+						<Link
+							href={`/verify-email${email ? `?email=${encodeURIComponent(email)}` : ""}`}
+							className="font-medium text-foreground underline-offset-4 hover:underline"
+						>
+							Resend verification email
+						</Link>
+					</p>
+				)}
 			</form>
 		</div>
 	);

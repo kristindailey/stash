@@ -54,7 +54,7 @@ export function RegisterForm() {
 				return;
 			}
 
-			router.push("/login?registered=1");
+			router.push(`/verify-email?email=${encodeURIComponent(email.trim().toLowerCase())}`);
 		} catch {
 			setError("Network error. Please try again.");
 			setPending(false);
