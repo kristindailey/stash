@@ -6,11 +6,12 @@ type LoginPageProps = {
 	searchParams: Promise<{
 		callbackUrl?: string;
 		error?: string;
+		reset?: string;
 	}>;
 };
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
-	const { callbackUrl, error } = await searchParams;
+	const { callbackUrl, error, reset } = await searchParams;
 	return (
 		<div className="flex min-h-screen items-center justify-center bg-background px-4 py-12">
 			<div className="w-full max-w-sm space-y-6">
@@ -20,6 +21,11 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 						Sign in to your DevStash account
 					</p>
 				</div>
+				{reset === "1" && (
+					<p className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-center text-sm text-emerald-500">
+						Your password has been reset. Sign in with your new password.
+					</p>
+				)}
 				<LoginForm
 					callbackUrl={callbackUrl}
 					initialError={error}

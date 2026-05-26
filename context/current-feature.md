@@ -1,15 +1,26 @@
-# Current Feature
+# Current Feature: Forgot Password
 <!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
-<!-- Brief description of the feature to implement -->
+Add a forgot password flow that lets users reset their password via a token-based email link, reusing the existing `VerificationToken` model.
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- Bullet points of what success looks like -->
+- "Forgot password?" link on the `/login` page
+- `/forgot-password` page with email form that triggers the reset email (no enumeration in response)
+- `POST /api/auth/forgot-password` route generates a reset token (reusing `VerificationToken` model, distinct identifier prefix) and sends a reset email via Resend
+- `/reset-password?token=...` page with new password form (validation + confirmation)
+- `POST /api/auth/reset-password` consumes the token, updates `User.password` (bcryptjs), and invalidates the token
+- Tokens expire (1h TTL) and are single-use
+- Sensible error states: invalid/expired token, weak password, etc.
+- Password reset email always sends via Resend (independent of `EMAIL_VERIFICATION_ENABLED`)
 
 ## Notes
-<!-- Additional context, constraints, or details from spec -->
+- Reuse `src/lib/email.ts` (Resend) and add `sendPasswordResetEmail`
+- Reuse `src/lib/verification-token.ts` patterns (32-byte hex, store in `VerificationToken`); use a namespaced identifier like `password-reset:<email>` to avoid colliding with email-verification tokens
+- Use bcryptjs for hashing the new password to match existing auth code
+- Keep responses no-enumeration on `/api/auth/forgot-password` (always 200 ok)
+- Follow existing page/component patterns from `/verify-email` and `/login` for styling/UX consistency
 
 ## History
 - **2026-05-21** — Initial Next.js and Tailwind CSS setup.
