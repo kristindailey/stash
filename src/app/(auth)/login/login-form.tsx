@@ -19,9 +19,10 @@ const ERROR_MESSAGES: Record<string, string> = {
 type LoginFormProps = {
 	callbackUrl?: string;
 	initialError?: string;
+	verificationEnabled?: boolean;
 };
 
-export function LoginForm({ callbackUrl, initialError }: LoginFormProps) {
+export function LoginForm({ callbackUrl, initialError, verificationEnabled = false }: LoginFormProps) {
 	const router = useRouter();
 	const [email, setEmail] = React.useState("");
 	const [password, setPassword] = React.useState("");
@@ -136,7 +137,7 @@ export function LoginForm({ callbackUrl, initialError }: LoginFormProps) {
 					{pending ? "Signing in…" : "Sign in"}
 				</Button>
 
-				{showResend && (
+				{showResend && verificationEnabled && (
 					<p className="text-center text-xs text-muted-foreground">
 						Haven&apos;t verified your email?{" "}
 						<Link

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { isEmailVerificationEnabled } from "@/lib/email";
 import { LoginForm } from "./login-form";
 
 type LoginPageProps = {
@@ -19,7 +20,11 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 						Sign in to your DevStash account
 					</p>
 				</div>
-				<LoginForm callbackUrl={callbackUrl} initialError={error} />
+				<LoginForm
+					callbackUrl={callbackUrl}
+					initialError={error}
+					verificationEnabled={isEmailVerificationEnabled()}
+				/>
 				<p className="text-center text-sm text-muted-foreground">
 					Don&apos;t have an account?{" "}
 					<Link
