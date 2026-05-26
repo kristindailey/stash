@@ -1,15 +1,22 @@
-# Current Feature
+# Current Feature: Email Verification Toggle
 <!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
 <!-- Brief description of the feature to implement -->
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- Bullet points of what success looks like -->
+- Add a flag to easily enable/disable the email verification system
+- When disabled: registration succeeds without sending a verification email; users can log in immediately (no `EmailNotVerifiedError`)
+- When enabled: current behavior is preserved (send verification email, block unverified login, resend flow, etc.)
+- Default to disabled so registration works without a Resend-verified domain
 
 ## Notes
-<!-- Additional context, constraints, or details from spec -->
+- Currently Resend has no verified domain, so only the account owner's Resend email can receive verification mail — blocking real registrations
+- Prefer an env variable (e.g. `EMAIL_VERIFICATION_ENABLED`) read through a single helper so call sites stay clean
+- Touch points: `POST /api/auth/register` (skip token generation + send), Credentials `authorize` in `auth.ts` (skip `EmailNotVerifiedError`), `/login` "Resend verification email" link, `/verify-email` pages, `POST /api/auth/resend-verification` route
+- When disabled, registration response should redirect users straight to `/login` (or auto-flag as verified) rather than `/verify-email`
+- Document the flag in `.env.example` if present
 
 ## History
 - **2026-05-21** — Initial Next.js and Tailwind CSS setup.

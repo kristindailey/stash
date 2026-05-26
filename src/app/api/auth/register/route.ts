@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-import { sendVerificationEmail } from "@/lib/email";
+import { isEmailVerificationEnabled, sendVerificationEmail } from "@/lib/email";
 import { buildVerifyUrl, createVerificationToken } from "@/lib/verification-token";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -46,10 +46,23 @@ export async function POST(request: Request) {
 	}
 
 	const hashed = await bcrypt.hash(password, 10);
+	const verificationEnabled = isEmailVerificationEnabled();
 	const user = await prisma.user.create({
-		data: { name: name.trim(), email: normalizedEmail, password: hashed },
+		data: {
+			name: name.trim(),
+			email: normalizedEmail,
+			password: hashed,
+			emailVerified: verificationEnabled ? null : new Date(),
+		},
 		select: { id: true, email: true, name: true },
 	});
+
+	if (!verificationEnabled) {
+		return NextResponse.json(
+			{ success: true, user, verificationRequired: false },
+			{ status: 201 }
+		);
+	}
 
 	try {
 		const token = await createVerificationToken(user.email);
@@ -58,10 +71,13 @@ export async function POST(request: Request) {
 	} catch (err) {
 		console.error("[register] failed to send verification email", err);
 		return NextResponse.json(
-			{ success: true, user, emailSent: false, error: "Account created, but we couldn't send the verification email. Please request a new one." },
+			{ success: true, user, verificationRequired: true, emailSent: false, error: "Account created, but we couldn't send the verification email. Please request a new one." },
 			{ status: 201 }
 		);
 	}
 
-	return NextResponse.json({ success: true, user, emailSent: true }, { status: 201 });
+	return NextResponse.json(
+		{ success: true, user, verificationRequired: true, emailSent: true },
+		{ status: 201 }
+	);
 }

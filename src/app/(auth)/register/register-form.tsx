@@ -45,12 +45,17 @@ export function RegisterForm() {
 				body: JSON.stringify({ name, email, password, confirmPassword }),
 			});
 			const data = (await res.json().catch(() => null)) as
-				| { error?: string }
+				| { error?: string; verificationRequired?: boolean }
 				| null;
 
 			if (!res.ok) {
 				setError(data?.error ?? "Failed to create account");
 				setPending(false);
+				return;
+			}
+
+			if (data?.verificationRequired === false) {
+				router.push("/login?registered=1");
 				return;
 			}
 

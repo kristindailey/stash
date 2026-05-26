@@ -4,6 +4,10 @@ const resendClient = new Resend(process.env.RESEND_API_KEY);
 
 const EMAIL_FROM = process.env.EMAIL_FROM ?? "DevStash <onboarding@resend.dev>";
 
+export function isEmailVerificationEnabled() {
+	return process.env.EMAIL_VERIFICATION_ENABLED === "true";
+}
+
 export async function sendVerificationEmail(params: {
 	to: string;
 	name: string | null;

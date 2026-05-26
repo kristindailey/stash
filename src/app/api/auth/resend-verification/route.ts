@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { sendVerificationEmail } from "@/lib/email";
+import { isEmailVerificationEnabled, sendVerificationEmail } from "@/lib/email";
 import { buildVerifyUrl, createVerificationToken } from "@/lib/verification-token";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -12,6 +12,10 @@ function getBaseUrl(request: Request) {
 }
 
 export async function POST(request: Request) {
+	if (!isEmailVerificationEnabled()) {
+		return NextResponse.json({ ok: true });
+	}
+
 	let body: unknown;
 	try {
 		body = await request.json();
