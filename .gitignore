@@ -46,3 +46,6 @@ next-env.d.ts
 # mcp
 .mcp.json
 .playwright-mcp
+
+# docs
+/docs/audit-results/
