@@ -16,6 +16,12 @@ const ERROR_MESSAGES: Record<string, string> = {
 		"This email is already linked to another sign-in method.",
 };
 
+function safeCallbackUrl(url: string | undefined): string {
+	if (!url) return "/dashboard";
+	if (!url.startsWith("/") || url.startsWith("//")) return "/dashboard";
+	return url;
+}
+
 type LoginFormProps = {
 	callbackUrl?: string;
 	initialError?: string;
@@ -24,6 +30,7 @@ type LoginFormProps = {
 
 export function LoginForm({ callbackUrl, initialError, verificationEnabled = false }: LoginFormProps) {
 	const router = useRouter();
+	const safeUrl = safeCallbackUrl(callbackUrl);
 	const [email, setEmail] = React.useState("");
 	const [password, setPassword] = React.useState("");
 	const [error, setError] = React.useState<string | null>(
@@ -63,7 +70,7 @@ export function LoginForm({ callbackUrl, initialError, verificationEnabled = fal
 			return;
 		}
 
-		router.push(callbackUrl ?? "/dashboard");
+		router.push(safeUrl);
 		router.refresh();
 	}
 
@@ -75,9 +82,7 @@ export function LoginForm({ callbackUrl, initialError, verificationEnabled = fal
 				size="lg"
 				className="w-full"
 				disabled={pending}
-				onClick={() =>
-					signIn("github", { callbackUrl: callbackUrl ?? "/dashboard" })
-				}
+				onClick={() => signIn("github", { callbackUrl: safeUrl })}
 			>
 				<GithubIcon />
 				Sign in with GitHub
