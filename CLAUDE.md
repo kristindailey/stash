@@ -27,3 +27,17 @@ npm run lint     # ESLint
 ```
 
 There is no test framework configured in this repo.
+
+## Neon MCP
+
+When using the Neon MCP in this project, **always** use:
+
+- **Project:** `devstash` (id: `icy-queen-08131444`)
+- **Branch:** `development` (id: `br-lively-dust-akj9eq2s`)
+
+Rules:
+- Never run queries against the `production` branch (`br-damp-thunder-akgjg9i7`) unless I explicitly say "production" in the request.
+- Always pass `projectId: "icy-queen-08131444"` and `branchId: "br-lively-dust-akj9eq2s"` to Neon MCP tool calls (e.g. `run_sql`, `describe_branch`, `get_database_tables`).
+- Skip the `list_projects` / `describe_project` discovery calls — the IDs above are authoritative.
+- If a request is ambiguous about which branch to use, default to `development` and mention it in your response.
+- Never run destructive SQL (DROP, DELETE, TRUNCATE, UPDATE/INSERT without explicit instruction) on any branch without asking first.
