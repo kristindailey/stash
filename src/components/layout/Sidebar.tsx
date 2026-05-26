@@ -5,16 +5,15 @@ import Link from "next/link";
 import {
 	ChevronDown,
 	FolderOpen,
-	Settings,
 	Star,
 	type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { mockUser } from "@/lib/mock-data";
 import { Badge } from "@/components/ui/badge";
 import { ITEM_TYPE_ICONS } from "@/lib/constants/item-types";
 import type { SidebarCollection } from "@/lib/db/collections";
 import type { SidebarItemType } from "@/lib/db/items";
+import { SidebarUser } from "./SidebarUser";
 import { useSidebar } from "./sidebar-context";
 
 const PRO_TYPE_NAMES = new Set(["file", "image"]);
@@ -23,12 +22,18 @@ type SidebarProps = {
 	itemTypes: SidebarItemType[];
 	totalItemCount: number;
 	collections: SidebarCollection[];
+	user: {
+		name: string | null;
+		email: string | null;
+		image: string | null;
+	} | null;
 };
 
 export function Sidebar({
 	itemTypes,
 	totalItemCount,
 	collections,
+	user,
 }: SidebarProps) {
 	const { open, setOpen } = useSidebar();
 	const [favoritesOpen, setFavoritesOpen] = React.useState(true);
@@ -139,22 +144,7 @@ export function Sidebar({
 				</div>
 
 				<div className="border-t p-3">
-					<div className="flex items-center gap-3 rounded-md px-2 py-1.5">
-						<UserAvatar name={mockUser.name} />
-						<div className="min-w-0 flex-1">
-							<p className="truncate text-sm font-medium">{mockUser.name}</p>
-							<p className="truncate text-xs text-sidebar-foreground/60">
-								{mockUser.plan}
-							</p>
-						</div>
-						<button
-							type="button"
-							aria-label="Settings"
-							className="rounded p-1 text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground"
-						>
-							<Settings className="size-4" />
-						</button>
-					</div>
+					<SidebarUser user={user} />
 				</div>
 			</aside>
 		</>
@@ -261,11 +251,3 @@ function SidebarLink({
 	);
 }
 
-function UserAvatar({ name }: { name: string }) {
-	const initial = name.charAt(0).toUpperCase();
-	return (
-		<div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#8b5cf6] text-sm font-medium text-white">
-			{initial}
-		</div>
-	);
-}
