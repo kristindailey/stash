@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { SidebarProvider } from "@/components/layout/sidebar-context";
 import { TopBar } from "@/components/layout/TopBar";
@@ -11,10 +12,19 @@ export default async function DashboardLayout({
 }: {
 	children: React.ReactNode;
 }) {
-	const [itemTypes, collections] = await Promise.all([
+	const [session, itemTypes, collections] = await Promise.all([
+		auth(),
 		getSidebarItemTypes(),
 		getSidebarCollections(),
 	]);
+
+	const sessionUser = session?.user
+		? {
+				name: session.user.name ?? null,
+				email: session.user.email ?? null,
+				image: session.user.image ?? null,
+		  }
+		: null;
 
 	return (
 		<SidebarProvider>
@@ -25,6 +35,7 @@ export default async function DashboardLayout({
 						itemTypes={itemTypes.types}
 						totalItemCount={itemTypes.totalCount}
 						collections={collections}
+						user={sessionUser}
 					/>
 					<main className="flex-1 overflow-y-auto p-6">{children}</main>
 				</div>
