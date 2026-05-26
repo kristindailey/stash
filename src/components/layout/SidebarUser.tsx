@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { signOut } from "next-auth/react";
-import { LogOut, Settings } from "lucide-react";
+import { LogOut, Settings, User } from "lucide-react";
 import { DropdownMenu } from "radix-ui";
 import { UserAvatar } from "@/components/shared/UserAvatar";
 
@@ -51,6 +51,15 @@ export function SidebarUser({ user }: { user: SidebarUser | null }) {
 								<DropdownMenu.Separator className="my-1 h-px bg-border" />
 							</>
 						)}
+						<DropdownMenu.Item asChild>
+							<Link
+								href="/profile"
+								className="flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground"
+							>
+								<User className="size-4" />
+								Profile
+							</Link>
+						</DropdownMenu.Item>
 						<DropdownMenu.Item asChild>
 							<button
 								type="button"
