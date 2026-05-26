@@ -41,6 +41,39 @@ export async function sendVerificationEmail(params: {
 	}
 }
 
+export async function sendAccountExistsEmail(params: {
+	to: string;
+	name: string | null;
+	loginUrl: string;
+	forgotUrl: string;
+}) {
+	const { to, name, loginUrl, forgotUrl } = params;
+	const greeting = name ? `Hi ${name},` : "Hi,";
+	const html = `
+		<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px; color: #111;">
+			<h1 style="font-size: 20px; margin: 0 0 16px;">Someone tried to sign up with your email</h1>
+			<p style="margin: 0 0 12px;">${greeting}</p>
+			<p style="margin: 0 0 16px;">A DevStash account already exists for this email address. If this was you, sign in instead:</p>
+			<p style="margin: 0 0 16px;">
+				<a href="${loginUrl}" style="display: inline-block; background: #111; color: #fff; padding: 10px 16px; border-radius: 6px; text-decoration: none; font-weight: 500;">Sign in</a>
+			</p>
+			<p style="margin: 0 0 16px; font-size: 13px; color: #555;">Forgot your password? <a href="${forgotUrl}" style="color: #111;">Reset it here</a>.</p>
+			<p style="margin: 24px 0 0; font-size: 12px; color: #888;">If this wasn't you, you can safely ignore this email — no changes have been made to your account.</p>
+		</div>
+	`;
+	const text = `${greeting}\n\nA DevStash account already exists for this email. If this was you, sign in: ${loginUrl}\n\nForgot your password? Reset it: ${forgotUrl}\n\nIf this wasn't you, ignore this email — your account is unchanged.`;
+	const { error } = await resendClient.emails.send({
+		from: EMAIL_FROM,
+		to,
+		subject: "Someone tried to sign up with your DevStash email",
+		html,
+		text,
+	});
+	if (error) {
+		throw new Error(`Failed to send account-exists email: ${error.message}`);
+	}
+}
+
 export async function sendPasswordResetEmail(params: {
 	to: string;
 	name: string | null;
