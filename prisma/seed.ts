@@ -371,26 +371,27 @@ async function seedCollectionsAndItems(
 			},
 		});
 
-		for (const item of col.items) {
-			const created = await prisma.item.create({
-				data: {
-					title: item.title,
-					contentType: item.contentType,
-					content: item.content,
-					url: item.url,
-					description: item.description,
-					language: item.language,
-					isPinned: item.isPinned ?? false,
-					isFavorite: item.isFavorite ?? false,
-					userId,
-					itemTypeId: itemTypeIds[item.itemType],
-				},
-			});
-
-			await prisma.itemCollection.create({
-				data: { itemId: created.id, collectionId: collection.id },
-			});
-		}
+		await Promise.all(
+			col.items.map((item) =>
+				prisma.item.create({
+					data: {
+						title: item.title,
+						contentType: item.contentType,
+						content: item.content,
+						url: item.url,
+						description: item.description,
+						language: item.language,
+						isPinned: item.isPinned ?? false,
+						isFavorite: item.isFavorite ?? false,
+						userId,
+						itemTypeId: itemTypeIds[item.itemType],
+						collections: {
+							create: [{ collectionId: collection.id }],
+						},
+					},
+				}),
+			),
+		);
 	}
 }
 

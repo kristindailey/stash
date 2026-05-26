@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/prisma";
-
-const DEMO_USER_EMAIL = "demo@devstash.io";
+import { getDemoUserId } from "@/lib/db/get-user-id";
 
 export type CollectionTypeCount = {
 	name: string;
@@ -27,15 +26,11 @@ export type SidebarCollection = {
 };
 
 export async function getSidebarCollections(): Promise<SidebarCollection[]> {
-	const user = await prisma.user.findUnique({
-		where: { email: DEMO_USER_EMAIL },
-		select: { id: true },
-	});
-
-	if (!user) return [];
+	const userId = await getDemoUserId();
+	if (!userId) return [];
 
 	const collections = await prisma.collection.findMany({
-		where: { userId: user.id },
+		where: { userId },
 		orderBy: { updatedAt: "desc" },
 		select: {
 			id: true,
@@ -58,39 +53,49 @@ export async function getSidebarCollections(): Promise<SidebarCollection[]> {
 export async function getRecentCollections(
 	limit = 6,
 ): Promise<DashboardCollection[]> {
-	const user = await prisma.user.findUnique({
-		where: { email: DEMO_USER_EMAIL },
-		select: { id: true },
-	});
-
-	if (!user) return [];
+	const userId = await getDemoUserId();
+	if (!userId) return [];
 
 	const collections = await prisma.collection.findMany({
-		where: { userId: user.id },
+		where: { userId },
 		orderBy: { updatedAt: "desc" },
 		take: limit,
-		include: {
-			items: {
-				include: {
-					item: {
-						select: {
-							itemType: { select: { name: true } },
-						},
-					},
-				},
-			},
+		select: {
+			id: true,
+			name: true,
+			description: true,
+			isFavorite: true,
+			updatedAt: true,
+			_count: { select: { items: true } },
 		},
 	});
 
-	return collections.map((collection) => {
-		const counts = new Map<string, number>();
-		for (const link of collection.items) {
-			const name = link.item.itemType.name;
-			counts.set(name, (counts.get(name) ?? 0) + 1);
-		}
+	if (collections.length === 0) return [];
 
+	const collectionIds = collections.map((c) => c.id);
+	const links = await prisma.itemCollection.findMany({
+		where: { collectionId: { in: collectionIds } },
+		select: {
+			collectionId: true,
+			item: { select: { itemType: { select: { name: true } } } },
+		},
+	});
+
+	const countsByCollection = new Map<string, Map<string, number>>();
+	for (const link of links) {
+		const typeName = link.item.itemType.name;
+		let typeMap = countsByCollection.get(link.collectionId);
+		if (!typeMap) {
+			typeMap = new Map();
+			countsByCollection.set(link.collectionId, typeMap);
+		}
+		typeMap.set(typeName, (typeMap.get(typeName) ?? 0) + 1);
+	}
+
+	return collections.map((collection) => {
+		const counts = countsByCollection.get(collection.id) ?? new Map();
 		const typeCounts: CollectionTypeCount[] = [...counts.entries()]
-			.map(([name, count]) => ({ name, count }))
+			.map(([name, count]) => ({ name, count: count as number }))
 			.sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
 
 		return {
@@ -98,7 +103,7 @@ export async function getRecentCollections(
 			name: collection.name,
 			description: collection.description,
 			isFavorite: collection.isFavorite,
-			itemCount: collection.items.length,
+			itemCount: collection._count.items,
 			typeCounts,
 			dominantType: typeCounts[0]?.name ?? null,
 			updatedAt: collection.updatedAt,

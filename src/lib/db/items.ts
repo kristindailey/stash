@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/prisma";
-
-const DEMO_USER_EMAIL = "demo@devstash.io";
+import { getDemoUserId } from "@/lib/db/get-user-id";
 
 export type DashboardItem = {
 	id: string;
@@ -50,14 +49,6 @@ const SYSTEM_TYPE_ORDER = [
 	"image",
 	"link",
 ];
-
-async function getDemoUserId(): Promise<string | null> {
-	const user = await prisma.user.findUnique({
-		where: { email: DEMO_USER_EMAIL },
-		select: { id: true },
-	});
-	return user?.id ?? null;
-}
 
 const itemInclude = {
 	itemType: { select: { name: true } },

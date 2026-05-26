@@ -9,7 +9,7 @@ import {
 	type LucideIcon,
 } from "lucide-react";
 
-export const ITEM_TYPE_ICONS: Record<string, LucideIcon> = {
+export const ITEM_TYPE_ICONS: Partial<Record<string, LucideIcon>> = {
 	snippet: Code,
 	prompt: Sparkles,
 	command: Terminal,
@@ -19,7 +19,7 @@ export const ITEM_TYPE_ICONS: Record<string, LucideIcon> = {
 	link: LinkIcon,
 };
 
-export const ITEM_TYPE_COLORS: Record<string, string> = {
+export const ITEM_TYPE_COLORS: Partial<Record<string, string>> = {
 	snippet: "#3b82f6",
 	prompt: "#8b5cf6",
 	command: "#f97316",
@@ -29,7 +29,7 @@ export const ITEM_TYPE_COLORS: Record<string, string> = {
 	link: "#10b981",
 };
 
-export const ITEM_TYPE_LABELS: Record<string, string> = {
+export const ITEM_TYPE_LABELS: Partial<Record<string, string>> = {
 	snippet: "Snippet",
 	prompt: "Prompt",
 	command: "Command",

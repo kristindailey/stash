@@ -66,15 +66,16 @@ function CollectionCard({ collection }: { collection: DashboardCollection }) {
 				<div className="flex items-center gap-1.5">
 					{collection.typeCounts.map(({ name, count }) => {
 						const TypeIcon = ITEM_TYPE_ICONS[name];
-						if (!TypeIcon) return null;
+						const color = ITEM_TYPE_COLORS[name];
+						if (!TypeIcon || !color) return null;
 						return (
 							<span
 								key={name}
 								title={`${count} ${ITEM_TYPE_LABELS[name] ?? name}${count === 1 ? "" : "s"}`}
 								className="inline-flex size-5 items-center justify-center rounded-sm"
 								style={{
-									color: ITEM_TYPE_COLORS[name],
-									backgroundColor: `${ITEM_TYPE_COLORS[name]}1f`,
+									color,
+									backgroundColor: `${color}1f`,
 								}}
 							>
 								<TypeIcon className="size-3" />
