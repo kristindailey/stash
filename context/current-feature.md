@@ -1,22 +1,15 @@
-# Current Feature: Auth Phase 2 - Credentials Provider
+# Current Feature
+<!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
+<!-- Brief description of the feature to implement -->
 
 ## Status
-Complete
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- Add Credentials (email/password) provider to NextAuth v5
-- Use bcryptjs to hash and verify passwords
-- Ensure `password` field exists on User model (add via migration if missing)
-- Wire Credentials provider in split config: placeholder in `auth.config.ts`, real `authorize` in `auth.ts`
-- Create `POST /api/auth/register` route (name, email, password, confirmPassword) with validation, duplicate check, hashing, and user creation
-- Email/password sign-in works via `/api/auth/signin` and redirects to `/dashboard`
-- GitHub OAuth continues to work alongside Credentials
+<!-- Bullet points of what success looks like -->
 
 ## Notes
-- bcryptjs already installed
-- Split pattern: `auth.config.ts` is edge-safe — keep `authorize: () => null` placeholder there; override with real bcrypt logic in `auth.ts`
-- Return shape from registration route should be a clear success/error JSON response
-- Reference: https://authjs.dev/getting-started/authentication/credentials
+<!-- Additional context, constraints, or details from spec -->
 
 ## History
 - **2026-05-21** — Initial Next.js and Tailwind CSS setup.
@@ -31,3 +24,4 @@ Complete
 - **2026-05-25** — Sidebar PRO badge: installed ShadCN Badge, subtle "PRO" tag on Files and Images item types.
 - **2026-05-25** — Audit quick wins: cached shared `getDemoUserId` (React.cache), N+1 fix in `getRecentCollections` (Prisma `select` + narrow `itemCollection.findMany`), tightened `ITEM_TYPE_*` constants to `Partial<Record>`, removed duplicate `TYPE_ICONS` from Sidebar, batched seed item inserts via nested create.
 - **2026-05-26** — Auth Phase 1: NextAuth v5 (beta) + `@auth/prisma-adapter`, split config (`auth.config.ts` edge-safe + `auth.ts` with PrismaAdapter & JWT strategy), `/api/auth/[...nextauth]` route, `src/proxy.ts` protecting `/dashboard/*` with redirect to NextAuth default sign-in, Session/JWT type augmentation exposing `user.id`.
+- **2026-05-26** — Auth Phase 2: Credentials provider in split config (placeholder in `auth.config.ts`, bcrypt-backed `authorize` in `auth.ts`), `POST /api/auth/register` route with field validation, duplicate-email check, and bcryptjs hashing.
