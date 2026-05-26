@@ -1,18 +1,39 @@
-# Current Feature
-<!-- Name and one-line summary of the feature. -->
-
+# Current Feature: Auth Setup - NextAuth + GitHub Provider
 ## Status
-<!-- Not Started | In Progress | Completed -->
-
+In Progress
 ## Goals
-<!-- What this feature needs to accomplish. -->
-
+- Install NextAuth v5 (`next-auth@beta`) and `@auth/prisma-adapter`
+- Set up split auth config pattern for edge compatibility
+- Add GitHub OAuth provider
+- Protect `/dashboard/*` routes using Next.js 16 proxy
+- Redirect unauthenticated users to sign-in
 ## Notes
-<!-- Context, references, and constraints. -->
+Files to create:
+- `src/auth.config.ts` - Edge-compatible config (providers only, no adapter)
+- `src/auth.ts` - Full config with Prisma adapter and JWT strategy
+- `src/app/api/auth/[...nextauth]/route.ts` - Export handlers from auth.ts
+- `src/proxy.ts` - Route protection with redirect logic
+- `src/types/next-auth.d.ts` - Extend Session type with user.id
 
+Key gotchas:
+- Use `next-auth@beta` (not `@latest` which installs v4)
+- Proxy file must be at `src/proxy.ts` (same level as `app/`)
+- Use named export: `export const proxy = auth(...)` not default export
+- Use `session: { strategy: 'jwt' }` with split config pattern
+- Don't set custom `pages.signIn` - use NextAuth's default page
+- Use Context7 to verify the newest config and conventions
+
+Env vars: `AUTH_SECRET`, `AUTH_GITHUB_ID`, `AUTH_GITHUB_SECRET`
+
+Testing:
+1. Go to `/dashboard` - should redirect to sign-in
+2. Click "Sign in with GitHub"
+3. Verify redirect back to `/dashboard` after auth
+
+References:
+- Edge compatibility: https://authjs.dev/getting-started/installation#edge-compatibility
+- Prisma adapter: https://authjs.dev/getting-started/adapters/prisma
 ## History
-<!-- Detail history here. Keep updated. Earliest to latest. -->
-
 - **2026-05-21** — Initial Next.js and Tailwind CSS setup.
 - **2026-05-21** — Dashboard UI Phase 1: ShadCN setup, `/dashboard` route, shell layout, dark mode, display-only top bar.
 - **2026-05-25** — Dashboard UI Phase 2: sidebar with types/favorites/collections sections, user avatar footer, collapsible drawer toggle, mobile drawer overlay.
