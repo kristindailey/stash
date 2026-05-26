@@ -1,15 +1,25 @@
-# Current Feature
-<!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
-<!-- Brief description of the feature to implement -->
+# Current Feature: Email Verification on Sign Up
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- Bullet points of what success looks like -->
+- New users receive a verification email after registering
+- Email contains a unique, time-limited verification link
+- Clicking the link marks the user's email as verified (`User.emailVerified`)
+- Unverified users are blocked from signing in (or shown a clear "verify your email" state)
+- Resend-powered email delivery using `RESEND_API_KEY` from `.env`
+- Ability to resend the verification email if the link expires or is lost
 
 ## Notes
-<!-- Additional context, constraints, or details from spec -->
+- Using Resend for transactional email delivery; API key already present in `.env` as `RESEND_API_KEY`
+- Credentials flow only — GitHub OAuth users are already verified by the provider
+- Reuse NextAuth's `VerificationToken` model in the Prisma schema for token storage
+- Token should be a secure random string with a reasonable expiry (e.g., 24h)
+- Registration flow (`POST /api/auth/register`) currently creates the user and returns success — needs to also generate a token and send the email
+- Need a new route (e.g., `GET /api/auth/verify-email?token=...`) that validates the token, sets `emailVerified`, and redirects to `/login?verified=1`
+- Credentials `authorize` in `auth.ts` should reject login when `emailVerified` is null
+- Consider a "Resend verification" action on the login page when a user tries to sign in with an unverified account
 
 ## History
 - **2026-05-21** — Initial Next.js and Tailwind CSS setup.
