@@ -1,14 +1,22 @@
-# Current Feature
-<!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
+# Current Feature: Auth Phase 2 - Credentials Provider
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+Complete
 
 ## Goals
-<!-- Bullet points of what success looks like -->
+- Add Credentials (email/password) provider to NextAuth v5
+- Use bcryptjs to hash and verify passwords
+- Ensure `password` field exists on User model (add via migration if missing)
+- Wire Credentials provider in split config: placeholder in `auth.config.ts`, real `authorize` in `auth.ts`
+- Create `POST /api/auth/register` route (name, email, password, confirmPassword) with validation, duplicate check, hashing, and user creation
+- Email/password sign-in works via `/api/auth/signin` and redirects to `/dashboard`
+- GitHub OAuth continues to work alongside Credentials
 
 ## Notes
-<!-- Additional context, constraints, or details from spec -->
+- bcryptjs already installed
+- Split pattern: `auth.config.ts` is edge-safe — keep `authorize: () => null` placeholder there; override with real bcrypt logic in `auth.ts`
+- Return shape from registration route should be a clear success/error JSON response
+- Reference: https://authjs.dev/getting-started/authentication/credentials
 
 ## History
 - **2026-05-21** — Initial Next.js and Tailwind CSS setup.
