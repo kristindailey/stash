@@ -1,26 +1,15 @@
-# Current Feature: Forgot Password
+# Current Feature
 <!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
-Add a forgot password flow that lets users reset their password via a token-based email link, reusing the existing `VerificationToken` model.
+<!-- Brief description of the feature to implement -->
 
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- "Forgot password?" link on the `/login` page
-- `/forgot-password` page with email form that triggers the reset email (no enumeration in response)
-- `POST /api/auth/forgot-password` route generates a reset token (reusing `VerificationToken` model, distinct identifier prefix) and sends a reset email via Resend
-- `/reset-password?token=...` page with new password form (validation + confirmation)
-- `POST /api/auth/reset-password` consumes the token, updates `User.password` (bcryptjs), and invalidates the token
-- Tokens expire (1h TTL) and are single-use
-- Sensible error states: invalid/expired token, weak password, etc.
-- Password reset email always sends via Resend (independent of `EMAIL_VERIFICATION_ENABLED`)
+<!-- Bullet points of what success looks like -->
 
 ## Notes
-- Reuse `src/lib/email.ts` (Resend) and add `sendPasswordResetEmail`
-- Reuse `src/lib/verification-token.ts` patterns (32-byte hex, store in `VerificationToken`); use a namespaced identifier like `password-reset:<email>` to avoid colliding with email-verification tokens
-- Use bcryptjs for hashing the new password to match existing auth code
-- Keep responses no-enumeration on `/api/auth/forgot-password` (always 200 ok)
-- Follow existing page/component patterns from `/verify-email` and `/login` for styling/UX consistency
+<!-- Additional context, constraints, or details from spec -->
 
 ## History
 - **2026-05-21** — Initial Next.js and Tailwind CSS setup.
@@ -39,3 +28,4 @@ In Progress
 - **2026-05-26** — Auth Phase 3: custom `/login` + `/register` pages (Credentials + GitHub, validation, error display), `pages.signIn` override + proxy redirect updated, reusable `UserAvatar` (image or initials), inline `GithubIcon` (lucide 1.x dropped brands), sidebar footer driven by `auth()` session with avatar dropup → Sign out and gear icon → `/profile`, sonner toaster mounted with post-register success toast on `/login?registered=1`.
 - **2026-05-26** — Email Verification: Resend SDK + `src/lib/email.ts` (`sendVerificationEmail`), `src/lib/verification-token.ts` (32-byte hex, 24h TTL) reusing NextAuth `VerificationToken` model; register route generates token + sends email; `GET /api/auth/verify-email` consumes token and sets `User.emailVerified`; `POST /api/auth/resend-verification` (no-enumeration); Credentials `authorize` throws `EmailNotVerifiedError` for unverified users; dedicated `/verify-email` (check-inbox + resend + error states) and `/verify-email/verified` (success) pages; login form shows "Resend verification email" link on failed sign-in. Added `scripts/delete-non-demo-users.ts` for dev cleanup.
 - **2026-05-26** — Email Verification Toggle: `EMAIL_VERIFICATION_ENABLED` env flag via `isEmailVerificationEnabled()` in `src/lib/email.ts` (default off); register route auto-sets `emailVerified` and skips Resend when disabled; Credentials `authorize` skips `EmailNotVerifiedError`; resend-verification short-circuits; register form redirects to `/login?registered=1` when verification not required; login page hides resend link via server-passed `verificationEnabled` prop.
+- **2026-05-26** — Forgot Password: `createPasswordResetToken` / `consumePasswordResetToken` / `buildResetPasswordUrl` in `src/lib/verification-token.ts` using `password-reset:<email>` identifier prefix (1h TTL, single-use), `consumeVerificationToken` hardened to reject reset-prefixed tokens; `sendPasswordResetEmail` in `src/lib/email.ts` (always sends, independent of verification toggle); `POST /api/auth/forgot-password` (no-enumeration, only sends when `user.password` is set); `POST /api/auth/reset-password` (validates token + 8-char password + confirm, bcryptjs hash, structured `reason` on failure); `/forgot-password` + `/reset-password` pages with check-inbox / missing-token / invalid-token states; login form "Forgot password?" link and `/login?reset=1` success banner.
