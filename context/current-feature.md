@@ -1,22 +1,15 @@
-# Current Feature: Email Verification Toggle
+# Current Feature
 <!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
 <!-- Brief description of the feature to implement -->
 
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- Add a flag to easily enable/disable the email verification system
-- When disabled: registration succeeds without sending a verification email; users can log in immediately (no `EmailNotVerifiedError`)
-- When enabled: current behavior is preserved (send verification email, block unverified login, resend flow, etc.)
-- Default to disabled so registration works without a Resend-verified domain
+<!-- Bullet points of what success looks like -->
 
 ## Notes
-- Currently Resend has no verified domain, so only the account owner's Resend email can receive verification mail — blocking real registrations
-- Prefer an env variable (e.g. `EMAIL_VERIFICATION_ENABLED`) read through a single helper so call sites stay clean
-- Touch points: `POST /api/auth/register` (skip token generation + send), Credentials `authorize` in `auth.ts` (skip `EmailNotVerifiedError`), `/login` "Resend verification email" link, `/verify-email` pages, `POST /api/auth/resend-verification` route
-- When disabled, registration response should redirect users straight to `/login` (or auto-flag as verified) rather than `/verify-email`
-- Document the flag in `.env.example` if present
+<!-- Additional context, constraints, or details from spec -->
 
 ## History
 - **2026-05-21** — Initial Next.js and Tailwind CSS setup.
@@ -34,3 +27,4 @@ In Progress
 - **2026-05-26** — Auth Phase 2: Credentials provider in split config (placeholder in `auth.config.ts`, bcrypt-backed `authorize` in `auth.ts`), `POST /api/auth/register` route with field validation, duplicate-email check, and bcryptjs hashing.
 - **2026-05-26** — Auth Phase 3: custom `/login` + `/register` pages (Credentials + GitHub, validation, error display), `pages.signIn` override + proxy redirect updated, reusable `UserAvatar` (image or initials), inline `GithubIcon` (lucide 1.x dropped brands), sidebar footer driven by `auth()` session with avatar dropup → Sign out and gear icon → `/profile`, sonner toaster mounted with post-register success toast on `/login?registered=1`.
 - **2026-05-26** — Email Verification: Resend SDK + `src/lib/email.ts` (`sendVerificationEmail`), `src/lib/verification-token.ts` (32-byte hex, 24h TTL) reusing NextAuth `VerificationToken` model; register route generates token + sends email; `GET /api/auth/verify-email` consumes token and sets `User.emailVerified`; `POST /api/auth/resend-verification` (no-enumeration); Credentials `authorize` throws `EmailNotVerifiedError` for unverified users; dedicated `/verify-email` (check-inbox + resend + error states) and `/verify-email/verified` (success) pages; login form shows "Resend verification email" link on failed sign-in. Added `scripts/delete-non-demo-users.ts` for dev cleanup.
+- **2026-05-26** — Email Verification Toggle: `EMAIL_VERIFICATION_ENABLED` env flag via `isEmailVerificationEnabled()` in `src/lib/email.ts` (default off); register route auto-sets `emailVerified` and skips Resend when disabled; Credentials `authorize` skips `EmailNotVerifiedError`; resend-verification short-circuits; register form redirects to `/login?registered=1` when verification not required; login page hides resend link via server-passed `verificationEnabled` prop.
