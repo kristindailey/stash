@@ -4,36 +4,20 @@ import * as React from "react";
 import Link from "next/link";
 import {
 	ChevronDown,
-	Code,
-	File,
 	FolderOpen,
-	Image as ImageIcon,
-	Link as LinkIcon,
 	Settings,
-	Sparkles,
 	Star,
-	StickyNote,
-	Terminal,
 	type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { mockUser } from "@/lib/mock-data";
 import { Badge } from "@/components/ui/badge";
+import { ITEM_TYPE_ICONS } from "@/lib/constants/item-types";
 import type { SidebarCollection } from "@/lib/db/collections";
 import type { SidebarItemType } from "@/lib/db/items";
 import { useSidebar } from "./sidebar-context";
 
 const PRO_TYPE_NAMES = new Set(["file", "image"]);
-
-const TYPE_ICONS: Record<string, LucideIcon> = {
-	Code,
-	Sparkles,
-	Terminal,
-	StickyNote,
-	File,
-	Image: ImageIcon,
-	Link: LinkIcon,
-};
 
 type SidebarProps = {
 	itemTypes: SidebarItemType[];
@@ -83,7 +67,7 @@ export function Sidebar({
 							active
 						/>
 						{itemTypes.map((type) => {
-							const Icon = TYPE_ICONS[type.icon] ?? FolderOpen;
+							const Icon = ITEM_TYPE_ICONS[type.name] ?? FolderOpen;
 							return (
 								<SidebarLink
 									key={type.id}
