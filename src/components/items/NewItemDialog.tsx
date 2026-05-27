@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CodeEditor } from "./CodeEditor";
+import { MarkdownEditor } from "./MarkdownEditor";
 import {
 	CREATABLE_TYPES,
 	ITEM_TYPE_COLORS,
@@ -30,6 +31,7 @@ import { createItem } from "@/actions/items";
 
 const CONTENT_TYPES = new Set<CreatableType>(["snippet", "prompt", "command", "note"]);
 const LANGUAGE_TYPES = new Set<CreatableType>(["snippet", "command"]);
+const MARKDOWN_TYPES = new Set<CreatableType>(["note", "prompt"]);
 const CREATABLE_SET = new Set<string>(CREATABLE_TYPES);
 
 function typeFromPath(pathname: string | null): CreatableType {
@@ -183,6 +185,12 @@ export function NewItemDialog() {
 									value={content}
 									onChange={setContent}
 									language={language || undefined}
+								/>
+							) : MARKDOWN_TYPES.has(type) ? (
+								<MarkdownEditor
+									value={content}
+									onChange={setContent}
+									placeholder="Write markdown…"
 								/>
 							) : (
 								<Textarea

@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CodeEditor } from "./CodeEditor";
+import { MarkdownEditor } from "./MarkdownEditor";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -44,6 +45,7 @@ import { useItemDrawer } from "./item-drawer-context";
 
 const CONTENT_TYPES = new Set(["snippet", "prompt", "command", "note"]);
 const LANGUAGE_TYPES = new Set(["snippet", "command"]);
+const MARKDOWN_TYPES = new Set(["note", "prompt"]);
 const URL_TYPES = new Set(["link"]);
 
 export function ItemDrawer() {
@@ -258,6 +260,8 @@ function DrawerBody({
 								language={item.language ?? undefined}
 								readOnly
 							/>
+						) : MARKDOWN_TYPES.has(item.type) ? (
+							<MarkdownEditor value={item.content} readOnly />
 						) : (
 							<pre className="overflow-x-auto rounded-md bg-muted p-3 text-xs">
 								<code>{item.content}</code>
@@ -442,6 +446,12 @@ function DrawerEdit({
 								value={content}
 								onChange={setContent}
 								language={language || undefined}
+							/>
+						) : MARKDOWN_TYPES.has(item.type) ? (
+							<MarkdownEditor
+								value={content}
+								onChange={setContent}
+								placeholder="Write markdown…"
 							/>
 						) : (
 							<Textarea
