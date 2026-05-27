@@ -1,16 +1,14 @@
-# Current Feature
-<!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
-<!-- Brief description of the feature to implement -->
-
+# Current Feature: Items List 3-Column Grid
 ## Status
-<!-- Not Started | In Progress | Complete -->
-
+In Progress
 ## Goals
-<!-- Bullet points of what success looks like -->
-
+- Change the `/items/[type]` listing view from a 2-column grid to 3 columns on larger screens
+- Keep the layout responsive: smaller breakpoints continue to use fewer columns (e.g., 1 col mobile, 2 col tablet, 3 col desktop)
+- No changes to `ItemCard` itself unless required to fit a narrower column
 ## Notes
-<!-- Additional context, constraints, or details from spec -->
-
+- Touches the items list view introduced in the "Items List View" history entry
+- Likely a Tailwind grid class change in the page that renders the list (e.g., `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3`)
+- Verify in the browser at multiple viewport widths before completing
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
 - **Dashboard UI Phase 1** — ShadCN setup, `/dashboard` route, shell layout, dark mode, top bar.
