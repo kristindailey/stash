@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import { signInWithGitHub } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { GithubIcon } from "@/components/shared/GithubIcon";
@@ -95,17 +96,18 @@ export function LoginForm({ callbackUrl, initialError, verificationEnabled = fal
 
 	return (
 		<div className="space-y-4">
-			<Button
-				type="button"
-				variant="outline"
-				size="lg"
-				className="w-full"
-				disabled={pending}
-				onClick={() => signIn("github", { callbackUrl: safeUrl })}
-			>
-				<GithubIcon />
-				Sign in with GitHub
-			</Button>
+			<form action={signInWithGitHub}>
+				<Button
+					type="submit"
+					variant="outline"
+					size="lg"
+					className="w-full"
+					disabled={pending}
+				>
+					<GithubIcon />
+					Sign in with GitHub
+				</Button>
+			</form>
 
 			<div className="relative">
 				<div className="absolute inset-0 flex items-center">
