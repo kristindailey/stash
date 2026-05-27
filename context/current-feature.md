@@ -1,15 +1,22 @@
-# Current Feature
-<!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
-<!-- Brief description of the feature to implement -->
+# Current Feature: Markdown Editor
+
+Add a Markdown editor component for notes and prompts with Write/Preview tabs and proper dark theme styling.
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- Bullet points of what success looks like -->
+- Build `MarkdownEditor` component with Write/Preview tabbed interface
+- Use react-markdown + remark-gfm for GitHub Flavored Markdown
+- Match CodeEditor styling: `bg-[#1e1e1e]` container, `bg-[#2d2d2d]` header, copy button in header, fluid height capped at 400px
+- Support readonly mode (Preview-only) and edit mode (default Write, Preview available)
+- Replace Textarea with MarkdownEditor for `note` and `prompt` content fields only — leave snippets/commands on CodeEditor
+- Wire into NewItemDialog, ItemDrawer edit mode, and ItemDrawer view mode (readonly)
 
 ## Notes
-<!-- Additional context, constraints, or details from spec -->
+- Custom `.markdown-preview` CSS class for reliable dark-mode element styling (headings h1–h6, code blocks, inline code, lists, blockquotes, links, tables)
+- Headings must be visually distinct (size + weight); code blocks dark with monospace; inline code subtle highlight; blockquotes with left border accent; links blue with hover
+- Do NOT touch CodeEditor or its usages
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
