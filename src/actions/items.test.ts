@@ -37,6 +37,7 @@ const fakeItem = {
 	contentType: "TEXT" as const,
 	content: "code",
 	url: null,
+	fileUrl: null,
 	fileName: null,
 	fileSize: null,
 	language: "ts",
@@ -173,6 +174,62 @@ describe("createItem action", () => {
 		const result = await createItem({ type: "snippet", title: "Hi" });
 		expect(result.success).toBe(true);
 		if (result.success) expect(result.data).toBe(fakeItem);
+	});
+
+	it("requires a fileUrl for file type", async () => {
+		const result = await createItem({ type: "file", title: "Doc" });
+		expect(result.success).toBe(false);
+		if (!result.success) expect(result.error).toBe("File upload is required");
+		expect(createItemQueryMock).not.toHaveBeenCalled();
+	});
+
+	it("requires a fileUrl for image type", async () => {
+		const result = await createItem({ type: "image", title: "Pic" });
+		expect(result.success).toBe(false);
+		if (!result.success) expect(result.error).toBe("File upload is required");
+		expect(createItemQueryMock).not.toHaveBeenCalled();
+	});
+
+	it("passes upload fields through and strips content/url for file type", async () => {
+		await createItem({
+			type: "file",
+			title: "Doc",
+			content: "ignored",
+			url: "https://example.com",
+			fileUrl: "https://cdn.example.com/key.pdf",
+			fileName: "notes.pdf",
+			fileSize: 1234,
+		});
+		expect(createItemQueryMock).toHaveBeenCalledWith(
+			"user_1",
+			expect.objectContaining({
+				type: "file",
+				content: null,
+				url: null,
+				fileUrl: "https://cdn.example.com/key.pdf",
+				fileName: "notes.pdf",
+				fileSize: 1234,
+			}),
+		);
+	});
+
+	it("strips upload fields when type does not support files", async () => {
+		await createItem({
+			type: "snippet",
+			title: "Snip",
+			fileUrl: "https://cdn.example.com/key.pdf",
+			fileName: "notes.pdf",
+			fileSize: 1234,
+		});
+		expect(createItemQueryMock).toHaveBeenCalledWith(
+			"user_1",
+			expect.objectContaining({
+				type: "snippet",
+				fileUrl: null,
+				fileName: null,
+				fileSize: null,
+			}),
+		);
 	});
 });
 

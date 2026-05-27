@@ -44,6 +44,8 @@ export const CREATABLE_TYPES = [
 	"prompt",
 	"command",
 	"note",
+	"file",
+	"image",
 	"link",
 ] as const;
 
