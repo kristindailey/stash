@@ -1,4 +1,5 @@
-import Link from "next/link";
+"use client";
+
 import { FolderOpen, Pin, Star } from "lucide-react";
 import {
 	ITEM_TYPE_COLORS,
@@ -6,15 +7,18 @@ import {
 } from "@/lib/constants/item-types";
 import type { DashboardItem } from "@/lib/db/items";
 import { formatRelativeTime } from "@/lib/format-time";
+import { useItemDrawer } from "./item-drawer-context";
 
 export function ItemCard({ item }: { item: DashboardItem }) {
+	const { openItem } = useItemDrawer();
 	const Icon = ITEM_TYPE_ICONS[item.type] ?? FolderOpen;
 	const color = ITEM_TYPE_COLORS[item.type] ?? "#6b7280";
 
 	return (
-		<Link
-			href={`/items/${item.type}s/${item.id}`}
-			className="flex flex-col gap-3 rounded-lg border border-l-4 bg-card p-4 transition-colors hover:bg-accent"
+		<button
+			type="button"
+			onClick={() => openItem(item.id)}
+			className="flex flex-col gap-3 rounded-lg border border-l-4 bg-card p-4 text-left transition-colors hover:bg-accent"
 			style={{ borderLeftColor: color }}
 		>
 			<div className="flex items-start justify-between gap-2">
@@ -59,6 +63,6 @@ export function ItemCard({ item }: { item: DashboardItem }) {
 				<span>{formatRelativeTime(item.updatedAt)}</span>
 				{item.language && <span>{item.language}</span>}
 			</div>
-		</Link>
+		</button>
 	);
 }
