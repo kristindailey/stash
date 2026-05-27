@@ -1,19 +1,15 @@
-# Current Feature: Items List View
+# Current Feature
+<!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
+<!-- Brief description of the feature to implement -->
 
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- Dynamic route `/items/[type]` (e.g. `/items/snippets`, `/items/notes`) renders items filtered by item type
-- Responsive grid of `ItemCard` components, two columns at `md` and up
-- Each card has a left border colored by its item type
-- Follows existing codebase patterns (server components, `src/lib/db` fetchers, type constants)
+<!-- Bullet points of what success looks like -->
 
 ## Notes
-- Spec: `context/features/item-list-view-spec.md`
-- Sidebar already links to `/items/{name}s` (plural) — route param will be the plural type slug
-- Reuse existing `ITEM_TYPE_COLORS` / `ITEM_TYPE_ICONS` constants for the left border + chip
-- Page should live under the shared `(app)` route group so it inherits sidebar + topbar
+<!-- Additional context, constraints, or details from spec -->
 
 ## History
 - **2026-05-21** — Initial Next.js and Tailwind CSS setup.
@@ -36,3 +32,4 @@ In Progress
 - **2026-05-26** — Profile Page: moved dashboard layout into shared `(app)` route group so `/dashboard` and `/profile` share sidebar+topbar; `getProfile` in `src/lib/db/profile.ts` (auth-session user + item/collection counts + per-type breakdown including zero-count types); `src/actions/profile.ts` server actions `changePassword` (bcrypt verify current) + `deleteAccount` (email-typing confirmation, `signOut` after delete); `/profile` server component renders user header (`UserAvatar` + joined date), stats cards, type breakdown, and account sections; client `ChangePasswordSection` (hidden when no `User.password`) and `DeleteAccountSection` (email confirm, redirects to `/login`); proxy now protects `/profile`; sidebar avatar dropdown gains a `Profile` link above `Sign out`.
 - **2026-05-26** — Auth Rate Limiting: `src/lib/rate-limit.ts` (Upstash + `@upstash/ratelimit` sliding window, fail-open) with limiters for login (5/15m IP+email), register (3/1h IP), forgot-password (3/1h IP), reset-password (5/15m IP), resend-verification (3/15m IP+email); API routes return 429 JSON + `Retry-After` header; login `authorize` throws `RateLimited:<windowSeconds>` `CredentialsSignin` code, login form parses it via `result.code` (NextAuth v5 returns custom code separately from `error`); human messages use configured window duration (not sliding-window slide-out) so users see "15 minutes" consistently; forgot-password and resend-button surface 429s explicitly.
 - **2026-05-27** — GitHub OAuth Redirect Fix: new `src/actions/auth.ts` exporting `signInWithGitHub` server action (`signIn("github", { redirectTo: "/dashboard" })`); login form GitHub button now submits a `<form action={signInWithGitHub}>` instead of client-side `signIn("github", { callbackUrl })`, removing two pre-redirect client fetches (CSRF + provider config) before navigation to GitHub.
+- **2026-05-27** — Items List View: dynamic `/items/[type]` route under `(app)` group, `getItemsByType` fetcher in `src/lib/db/items.ts` (404s on unknown type), reusable `ItemCard` (left border colored by type) rendered in `grid-cols-1 md:grid-cols-2`, proxy now protects `/items/*`.
