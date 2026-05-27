@@ -172,6 +172,52 @@ export async function updateItem(
 	return toItemDetail(updated);
 }
 
+export type CreateItemData = {
+	title: string;
+	type: string;
+	description: string | null;
+	content: string | null;
+	url: string | null;
+	language: string | null;
+	tags: string[];
+};
+
+export async function createItem(
+	userId: string,
+	data: CreateItemData,
+): Promise<ItemDetail | null> {
+	const itemType = await prisma.itemType.findFirst({
+		where: { name: data.type, OR: [{ isSystem: true }, { userId }] },
+		select: { id: true },
+	});
+	if (!itemType) return null;
+
+	const contentType =
+		data.type === "link" ? "URL" : data.type === "file" || data.type === "image" ? "FILE" : "TEXT";
+
+	const created = await prisma.item.create({
+		data: {
+			title: data.title,
+			description: data.description,
+			content: data.content,
+			url: data.url,
+			language: data.language,
+			contentType,
+			user: { connect: { id: userId } },
+			itemType: { connect: { id: itemType.id } },
+			tags: {
+				connectOrCreate: data.tags.map((name) => ({
+					where: { name },
+					create: { name },
+				})),
+			},
+		},
+		include: itemDetailInclude,
+	});
+
+	return toItemDetail(created);
+}
+
 export async function deleteItem(id: string, userId: string): Promise<boolean> {
 	const existing = await prisma.item.findFirst({
 		where: { id, userId },

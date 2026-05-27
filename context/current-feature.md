@@ -1,15 +1,23 @@
-# Current Feature
-<!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
-<!-- Brief description of the feature to implement -->
+# Current Feature: Item Create
+Add new items via a shadcn Dialog opened from a "New Item" button in the top bar.
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- Bullet points of what success looks like -->
+- "New Item" button in the top bar opens a shadcn Dialog
+- Type selector for snippet, prompt, command, note, link
+- Conditional fields based on type:
+  - All: title (required), description, tags
+  - snippet/command: content, language
+  - prompt/note: content
+  - link: URL (required)
+- Zod-validated `createItem` server action
+- `createItem` query function in `lib/db/items.ts`
+- Toast on success, close modal, refresh list
 
 ## Notes
-<!-- Additional context, constraints, or details from spec -->
+- Follow existing patterns from `updateItem` action + lib query (tag handling via `connectOrCreate`)
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.

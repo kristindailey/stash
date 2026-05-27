@@ -9,6 +9,7 @@ vi.mock("@/lib/db/get-user-id", () => ({
 }));
 
 vi.mock("@/lib/db/items", () => ({
+	createItem: vi.fn(),
 	updateItem: vi.fn(),
 	deleteItem: vi.fn(),
 }));
@@ -16,13 +17,15 @@ vi.mock("@/lib/db/items", () => ({
 import { auth } from "@/auth";
 import { getDemoUserId } from "@/lib/db/get-user-id";
 import {
+	createItem as createItemQuery,
 	deleteItem as deleteItemQuery,
 	updateItem as updateItemQuery,
 } from "@/lib/db/items";
-import { deleteItem, updateItem } from "./items";
+import { createItem, deleteItem, updateItem } from "./items";
 
 const authMock = vi.mocked(auth);
 const getDemoUserIdMock = vi.mocked(getDemoUserId);
+const createItemQueryMock = vi.mocked(createItemQuery);
 const updateItemQueryMock = vi.mocked(updateItemQuery);
 const deleteItemQueryMock = vi.mocked(deleteItemQuery);
 
@@ -45,6 +48,134 @@ const fakeItem = {
 	collections: [],
 };
 
+describe("createItem action", () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+		authMock.mockResolvedValue({ user: { id: "user_1" } } as never);
+		getDemoUserIdMock.mockResolvedValue("user_1");
+		createItemQueryMock.mockResolvedValue(fakeItem);
+	});
+
+	it("rejects when not authenticated", async () => {
+		authMock.mockResolvedValue(null as never);
+		const result = await createItem({ type: "snippet", title: "Hi" });
+		expect(result).toEqual({ success: false, error: "Not authenticated" });
+		expect(createItemQueryMock).not.toHaveBeenCalled();
+	});
+
+	it("rejects an empty title", async () => {
+		const result = await createItem({ type: "snippet", title: "   " });
+		expect(result.success).toBe(false);
+		if (!result.success) expect(result.error).toBe("Title is required");
+		expect(createItemQueryMock).not.toHaveBeenCalled();
+	});
+
+	it("rejects an unknown type", async () => {
+		const result = await createItem({
+			// @ts-expect-error - testing invalid type rejection
+			type: "bogus",
+			title: "Hi",
+		});
+		expect(result.success).toBe(false);
+		expect(createItemQueryMock).not.toHaveBeenCalled();
+	});
+
+	it("requires a URL when type is link", async () => {
+		const result = await createItem({ type: "link", title: "Docs" });
+		expect(result.success).toBe(false);
+		if (!result.success) expect(result.error).toBe("URL is required for links");
+		expect(createItemQueryMock).not.toHaveBeenCalled();
+	});
+
+	it("rejects an invalid URL", async () => {
+		const result = await createItem({
+			type: "link",
+			title: "Docs",
+			url: "not-a-url",
+		});
+		expect(result.success).toBe(false);
+		expect(createItemQueryMock).not.toHaveBeenCalled();
+	});
+
+	it("strips content and language for link type", async () => {
+		await createItem({
+			type: "link",
+			title: "Docs",
+			url: "https://example.com",
+			content: "ignored",
+			language: "ignored",
+		});
+		expect(createItemQueryMock).toHaveBeenCalledWith(
+			"user_1",
+			expect.objectContaining({
+				type: "link",
+				url: "https://example.com",
+				content: null,
+				language: null,
+			}),
+		);
+	});
+
+	it("strips language for prompt and note types", async () => {
+		await createItem({
+			type: "prompt",
+			title: "Prompt",
+			content: "do the thing",
+			language: "ignored",
+		});
+		expect(createItemQueryMock).toHaveBeenCalledWith(
+			"user_1",
+			expect.objectContaining({
+				type: "prompt",
+				content: "do the thing",
+				language: null,
+				url: null,
+			}),
+		);
+	});
+
+	it("keeps content and language for snippet", async () => {
+		await createItem({
+			type: "snippet",
+			title: "useAuth",
+			content: "export function useAuth() {}",
+			language: "ts",
+		});
+		expect(createItemQueryMock).toHaveBeenCalledWith(
+			"user_1",
+			expect.objectContaining({
+				type: "snippet",
+				content: "export function useAuth() {}",
+				language: "ts",
+			}),
+		);
+	});
+
+	it("trims, deduplicates, and drops empty tags", async () => {
+		await createItem({
+			type: "snippet",
+			title: "Snippet",
+			tags: ["  react ", "react", "", "  ", "next"],
+		});
+		expect(createItemQueryMock).toHaveBeenCalledWith(
+			"user_1",
+			expect.objectContaining({ tags: ["react", "next"] }),
+		);
+	});
+
+	it("returns an error when the lib query fails", async () => {
+		createItemQueryMock.mockResolvedValue(null);
+		const result = await createItem({ type: "snippet", title: "Hi" });
+		expect(result).toEqual({ success: false, error: "Could not create item" });
+	});
+
+	it("returns the created item on success", async () => {
+		const result = await createItem({ type: "snippet", title: "Hi" });
+		expect(result.success).toBe(true);
+		if (result.success) expect(result.data).toBe(fakeItem);
+	});
+});
+
 describe("updateItem action", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -54,7 +185,7 @@ describe("updateItem action", () => {
 	});
 
 	it("rejects when not authenticated", async () => {
-		authMock.mockResolvedValue(null);
+		authMock.mockResolvedValue(null as never);
 		const result = await updateItem("item_1", { title: "Hi" });
 		expect(result).toEqual({ success: false, error: "Not authenticated" });
 		expect(updateItemQueryMock).not.toHaveBeenCalled();

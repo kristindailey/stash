@@ -4,10 +4,21 @@ import { z } from "zod";
 import { auth } from "@/auth";
 import { getDemoUserId } from "@/lib/db/get-user-id";
 import {
+	createItem as createItemQuery,
 	deleteItem as deleteItemQuery,
 	updateItem as updateItemQuery,
 	type ItemDetail,
 } from "@/lib/db/items";
+
+export const CREATABLE_TYPES = [
+	"snippet",
+	"prompt",
+	"command",
+	"note",
+	"link",
+] as const;
+
+export type CreatableType = (typeof CREATABLE_TYPES)[number];
 
 export type ActionResult<T> =
 	| { success: true; data: T }
@@ -19,7 +30,7 @@ const nullableTrimmedString = z
 	.transform((value) => (value.length === 0 ? null : value))
 	.nullable();
 
-const updateItemSchema = z.object({
+const itemFieldsShape = {
 	title: z
 		.string()
 		.transform((value) => value.trim())
@@ -37,16 +48,25 @@ const updateItemSchema = z.object({
 		.array(z.string())
 		.transform((tags) =>
 			Array.from(
-				new Set(
-					tags.map((tag) => tag.trim()).filter((tag) => tag.length > 0),
-				),
+				new Set(tags.map((tag) => tag.trim()).filter((tag) => tag.length > 0)),
 			),
 		)
 		.optional()
 		.default([]),
-});
+};
+
+const updateItemSchema = z.object(itemFieldsShape);
 
 export type UpdateItemInput = z.input<typeof updateItemSchema>;
+
+const createItemSchema = z
+	.object({ type: z.enum(CREATABLE_TYPES), ...itemFieldsShape })
+	.refine((data) => data.type !== "link" || data.url !== null, {
+		message: "URL is required for links",
+		path: ["url"],
+	});
+
+export type CreateItemInput = z.input<typeof createItemSchema>;
 
 export async function updateItem(
 	itemId: string,
@@ -81,6 +101,47 @@ export async function updateItem(
 	}
 
 	return { success: true, data: updated };
+}
+
+export async function createItem(
+	input: CreateItemInput,
+): Promise<ActionResult<ItemDetail>> {
+	const session = await auth();
+	if (!session?.user?.id) {
+		return { success: false, error: "Not authenticated" };
+	}
+
+	const parsed = createItemSchema.safeParse(input);
+	if (!parsed.success) {
+		const firstIssue = parsed.error.issues[0];
+		return {
+			success: false,
+			error: firstIssue?.message ?? "Invalid input",
+		};
+	}
+
+	const userId = await getDemoUserId();
+	if (!userId) {
+		return { success: false, error: "Could not create item" };
+	}
+
+	const { type, ...rest } = parsed.data;
+	const data = {
+		type,
+		title: rest.title,
+		description: rest.description,
+		content: type === "link" ? null : rest.content,
+		url: type === "link" ? rest.url : null,
+		language: type === "snippet" || type === "command" ? rest.language : null,
+		tags: rest.tags,
+	};
+
+	const created = await createItemQuery(userId, data);
+	if (!created) {
+		return { success: false, error: "Could not create item" };
+	}
+
+	return { success: true, data: created };
 }
 
 export async function deleteItem(

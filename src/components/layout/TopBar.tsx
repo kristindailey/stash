@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Code, FolderPlus, PanelLeft, Plus, Search } from "lucide-react";
+import { Code, FolderPlus, PanelLeft, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NewItemDialog } from "@/components/items/NewItemDialog";
 import { useSidebar } from "./sidebar-context";
 
 export function TopBar() {
@@ -50,10 +51,7 @@ export function TopBar() {
 					<FolderPlus />
 					New Collection
 				</Button>
-				<Button size="lg">
-					<Plus />
-					New Item
-				</Button>
+				<NewItemDialog />
 			</div>
 		</header>
 	);
