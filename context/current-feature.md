@@ -1,30 +1,15 @@
-# Current Feature: Rate Limiting for Auth
+# Current Feature
 <!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
 <!-- Brief description of the feature to implement -->
 
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- Add rate limiting to auth-related API routes using Upstash Redis + `@upstash/ratelimit`
-- Create reusable `src/lib/rate-limit.ts` utility (sliding window, fail-open)
-- Protect endpoints with these limits:
-  - `/api/auth/callback/credentials` — 5 / 15 min, keyed by IP + email
-  - `/api/auth/register` — 3 / 1 hour, keyed by IP
-  - `/api/auth/forgot-password` — 3 / 1 hour, keyed by IP
-  - `/api/auth/reset-password` — 5 / 15 min, keyed by IP
-  - `/api/auth/resend-verification` — 3 / 15 min, keyed by IP + email
-- Return 429 with JSON `{ error }` + `Retry-After` header
-- Surface friendly toast on the frontend for 429s
+<!-- Bullet points of what success looks like -->
 
 ## Notes
-- Extract IP from `x-forwarded-for` (Vercel) with request fallback
-- Rate limit checks return `{ success, remaining, reset }`
-- Fail open if Upstash is unavailable so auth never breaks on outage
-- Login limiting on NextAuth Credentials may need a custom sign-in handler / wrapping `authorize`
-- Env: `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`
-- Upstash free tier (10k req/day) is sufficient
-- Spec: `context/features/rate-limiting-spec.md`
+<!-- Additional context, constraints, or details from spec -->
 
 ## History
 - **2026-05-21** — Initial Next.js and Tailwind CSS setup.
@@ -45,3 +30,4 @@ In Progress
 - **2026-05-26** — Email Verification Toggle: `EMAIL_VERIFICATION_ENABLED` env flag via `isEmailVerificationEnabled()` in `src/lib/email.ts` (default off); register route auto-sets `emailVerified` and skips Resend when disabled; Credentials `authorize` skips `EmailNotVerifiedError`; resend-verification short-circuits; register form redirects to `/login?registered=1` when verification not required; login page hides resend link via server-passed `verificationEnabled` prop.
 - **2026-05-26** — Forgot Password: `createPasswordResetToken` / `consumePasswordResetToken` / `buildResetPasswordUrl` in `src/lib/verification-token.ts` using `password-reset:<email>` identifier prefix (1h TTL, single-use), `consumeVerificationToken` hardened to reject reset-prefixed tokens; `sendPasswordResetEmail` in `src/lib/email.ts` (always sends, independent of verification toggle); `POST /api/auth/forgot-password` (no-enumeration, only sends when `user.password` is set); `POST /api/auth/reset-password` (validates token + 8-char password + confirm, bcryptjs hash, structured `reason` on failure); `/forgot-password` + `/reset-password` pages with check-inbox / missing-token / invalid-token states; login form "Forgot password?" link and `/login?reset=1` success banner.
 - **2026-05-26** — Profile Page: moved dashboard layout into shared `(app)` route group so `/dashboard` and `/profile` share sidebar+topbar; `getProfile` in `src/lib/db/profile.ts` (auth-session user + item/collection counts + per-type breakdown including zero-count types); `src/actions/profile.ts` server actions `changePassword` (bcrypt verify current) + `deleteAccount` (email-typing confirmation, `signOut` after delete); `/profile` server component renders user header (`UserAvatar` + joined date), stats cards, type breakdown, and account sections; client `ChangePasswordSection` (hidden when no `User.password`) and `DeleteAccountSection` (email confirm, redirects to `/login`); proxy now protects `/profile`; sidebar avatar dropdown gains a `Profile` link above `Sign out`.
+- **2026-05-26** — Auth Rate Limiting: `src/lib/rate-limit.ts` (Upstash + `@upstash/ratelimit` sliding window, fail-open) with limiters for login (5/15m IP+email), register (3/1h IP), forgot-password (3/1h IP), reset-password (5/15m IP), resend-verification (3/15m IP+email); API routes return 429 JSON + `Retry-After` header; login `authorize` throws `RateLimited:<windowSeconds>` `CredentialsSignin` code, login form parses it via `result.code` (NextAuth v5 returns custom code separately from `error`); human messages use configured window duration (not sliding-window slide-out) so users see "15 minutes" consistently; forgot-password and resend-button surface 429s explicitly.
