@@ -38,3 +38,13 @@ export const ITEM_TYPE_LABELS: Partial<Record<string, string>> = {
 	image: "Image",
 	link: "Link",
 };
+
+export const CREATABLE_TYPES = [
+	"snippet",
+	"prompt",
+	"command",
+	"note",
+	"link",
+] as const;
+
+export type CreatableType = (typeof CREATABLE_TYPES)[number];

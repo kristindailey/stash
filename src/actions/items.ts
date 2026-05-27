@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { auth } from "@/auth";
+import { CREATABLE_TYPES } from "@/lib/constants/item-types";
 import { getDemoUserId } from "@/lib/db/get-user-id";
 import {
 	createItem as createItemQuery,
@@ -9,16 +10,6 @@ import {
 	updateItem as updateItemQuery,
 	type ItemDetail,
 } from "@/lib/db/items";
-
-export const CREATABLE_TYPES = [
-	"snippet",
-	"prompt",
-	"command",
-	"note",
-	"link",
-] as const;
-
-export type CreatableType = (typeof CREATABLE_TYPES)[number];
 
 export type ActionResult<T> =
 	| { success: true; data: T }

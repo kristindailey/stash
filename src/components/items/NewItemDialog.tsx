@@ -18,16 +18,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
+	CREATABLE_TYPES,
 	ITEM_TYPE_COLORS,
 	ITEM_TYPE_ICONS,
 	ITEM_TYPE_LABELS,
+	type CreatableType,
 } from "@/lib/constants/item-types";
 import { cn } from "@/lib/utils";
-import {
-	createItem,
-	CREATABLE_TYPES,
-	type CreatableType,
-} from "@/actions/items";
+import { createItem } from "@/actions/items";
 
 const CONTENT_TYPES = new Set<CreatableType>(["snippet", "prompt", "command", "note"]);
 const LANGUAGE_TYPES = new Set<CreatableType>(["snippet", "command"]);
