@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Code, FolderPlus, PanelLeft, Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,10 +11,16 @@ export function TopBar() {
 	return (
 		<header className="flex h-16 shrink-0 items-center border-b">
 			<div className="flex h-full shrink-0 items-center gap-2.5 border-r px-5 md:w-64">
-				<div className="flex size-8 items-center justify-center rounded-lg bg-foreground text-background">
-					<Code className="size-4" />
-				</div>
-				<span className="text-lg font-semibold tracking-tight">DevStash</span>
+				<Link
+					href="/dashboard"
+					aria-label="Go to dashboard"
+					className="flex items-center gap-2.5 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring"
+				>
+					<div className="flex size-8 items-center justify-center rounded-lg bg-foreground text-background">
+						<Code className="size-4" />
+					</div>
+					<span className="text-lg font-semibold tracking-tight">DevStash</span>
+				</Link>
 				<button
 					type="button"
 					onClick={toggle}

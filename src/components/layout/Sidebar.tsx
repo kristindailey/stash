@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
 	ChevronDown,
 	FolderOpen,
@@ -36,6 +37,7 @@ export function Sidebar({
 	user,
 }: SidebarProps) {
 	const { open, setOpen } = useSidebar();
+	const pathname = usePathname();
 	const [favoritesOpen, setFavoritesOpen] = React.useState(true);
 	const [collectionsOpen, setCollectionsOpen] = React.useState(true);
 
@@ -69,7 +71,7 @@ export function Sidebar({
 							icon={FolderOpen}
 							label="All Items"
 							count={totalItemCount}
-							active
+							active={pathname === "/items"}
 						/>
 						{itemTypes.map((type) => {
 							const Icon = ITEM_TYPE_ICONS[type.name] ?? FolderOpen;
@@ -82,6 +84,7 @@ export function Sidebar({
 									label={type.label}
 									count={type.count}
 									pro={PRO_TYPE_NAMES.has(type.name)}
+									active={pathname === type.route}
 								/>
 							);
 						})}
@@ -107,6 +110,7 @@ export function Sidebar({
 									iconFill
 									label={collection.name}
 									count={collection.itemCount}
+									active={pathname === `/collections/${collection.id}`}
 								/>
 							))}
 					</Section>
@@ -130,11 +134,17 @@ export function Sidebar({
 										icon={FolderOpen}
 										label={collection.name}
 										count={collection.itemCount}
+										active={pathname === `/collections/${collection.id}`}
 									/>
 								))}
 								<Link
 									href="/collections"
-									className="flex h-8 items-center gap-2.5 rounded-md px-2 text-sm text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+									className={cn(
+										"flex h-8 items-center gap-2.5 rounded-md px-2 text-sm transition-colors",
+										pathname === "/collections"
+											? "bg-sidebar-accent text-sidebar-accent-foreground"
+											: "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+									)}
 								>
 									<span className="flex-1 truncate">View all collections</span>
 								</Link>

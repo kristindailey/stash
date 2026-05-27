@@ -123,6 +123,19 @@ export async function getItemsByType(typeName: string): Promise<DashboardItem[] 
 	return items.map(toDashboardItem);
 }
 
+export async function getAllItems(): Promise<DashboardItem[]> {
+	const userId = await getDemoUserId();
+	if (!userId) return [];
+
+	const items = await prisma.item.findMany({
+		where: { userId },
+		orderBy: { updatedAt: "desc" },
+		include: itemInclude,
+	});
+
+	return items.map(toDashboardItem);
+}
+
 export async function getRecentItems(limit = 10): Promise<DashboardItem[]> {
 	const userId = await getDemoUserId();
 	if (!userId) return [];
