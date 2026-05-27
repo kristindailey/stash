@@ -1,23 +1,15 @@
-# Current Feature: Item Create
-Add new items via a shadcn Dialog opened from a "New Item" button in the top bar.
+# Current Feature
+<!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
+<!-- Brief description of the feature to implement -->
 
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- "New Item" button in the top bar opens a shadcn Dialog
-- Type selector for snippet, prompt, command, note, link
-- Conditional fields based on type:
-  - All: title (required), description, tags
-  - snippet/command: content, language
-  - prompt/note: content
-  - link: URL (required)
-- Zod-validated `createItem` server action
-- `createItem` query function in `lib/db/items.ts`
-- Toast on success, close modal, refresh list
+<!-- Bullet points of what success looks like -->
 
 ## Notes
-- Follow existing patterns from `updateItem` action + lib query (tag handling via `connectOrCreate`)
+<!-- Additional context, constraints, or details from spec -->
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
@@ -47,3 +39,4 @@ In Progress
 - **Item Drawer** — Right-side shadcn Sheet opens on card click, fetches full detail via `/api/items/[id]`; action bar stubbed for Favorite/Pin/Edit/Delete.
 - **Item Drawer Edit Mode** — Pencil swaps drawer into inline edit, Save/Cancel action bar, Zod-validated `updateItem` action + lib query (tag replace via `set: []` + `connectOrCreate`), toast + `router.refresh()` on save.
 - **Item Delete** — Drawer Trash opens shadcn `AlertDialog`; `deleteItem` action + lib query with ownership check, toast + drawer close + `router.refresh()` on success.
+- **Item Create** — Top bar "New Item" opens shadcn `Dialog` with type pills; conditional fields per type; Zod-validated `createItem` action + lib query (URL required for links), toast + close + `router.refresh()` on success.
