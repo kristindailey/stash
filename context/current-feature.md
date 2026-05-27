@@ -1,15 +1,19 @@
-# Current Feature
-<!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
-<!-- Brief description of the feature to implement -->
-
+# Current Feature: Code Editor
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- Bullet points of what success looks like -->
+- Build reusable `CodeEditor` component using Monaco Editor with a dark theme
+- Replace `Textarea` with `CodeEditor` for snippets and commands (keep `Textarea` for notes, prompts, and other non-code types)
+- Add macOS-style window dots (red/yellow/green) at the top of the editor
+- Add a quick copy button in the editor header
+- Show the language label in the editor header next to the copy button
+- Support both display (readonly) and edit modes
+- Fluid height with a 400px max and a themed scrollbar
 
 ## Notes
-<!-- Additional context, constraints, or details from spec -->
+- Applies to both the item drawer (display + edit modes) and the new-item dialog (edit mode)
+- Source spec: `context/features/code-editor-spec.md`
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.

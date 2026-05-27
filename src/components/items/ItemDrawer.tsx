@@ -21,6 +21,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { CodeEditor } from "./CodeEditor";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -250,19 +251,18 @@ function DrawerBody({
 				)}
 
 				{item.content && (
-					<Section
-						title="Content"
-						action={
-							item.language ? (
-								<span className="rounded bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-									{item.language}
-								</span>
-							) : null
-						}
-					>
-						<pre className="overflow-x-auto rounded-md bg-muted p-3 text-xs">
-							<code>{item.content}</code>
-						</pre>
+					<Section title="Content">
+						{LANGUAGE_TYPES.has(item.type) ? (
+							<CodeEditor
+								value={item.content}
+								language={item.language ?? undefined}
+								readOnly
+							/>
+						) : (
+							<pre className="overflow-x-auto rounded-md bg-muted p-3 text-xs">
+								<code>{item.content}</code>
+							</pre>
+						)}
 					</Section>
 				)}
 
@@ -437,13 +437,21 @@ function DrawerEdit({
 
 				{showContent && (
 					<Section title="Content">
-						<Textarea
-							value={content}
-							onChange={(e) => setContent(e.target.value)}
-							placeholder="Content"
-							rows={8}
-							className="font-mono text-xs"
-						/>
+						{showLanguage ? (
+							<CodeEditor
+								value={content}
+								onChange={setContent}
+								language={language || undefined}
+							/>
+						) : (
+							<Textarea
+								value={content}
+								onChange={(e) => setContent(e.target.value)}
+								placeholder="Content"
+								rows={8}
+								className="font-mono text-xs"
+							/>
+						)}
 					</Section>
 				)}
 
