@@ -1,21 +1,15 @@
-# Current Feature: Item Delete
+# Current Feature
+<!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
+<!-- Brief description of the feature to implement -->
+
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- Wire up the stubbed Delete action in the item drawer to actually delete the item
-- Show a shadcn AlertDialog to confirm before deleting
-- On success, close the drawer, refresh the list, and show a sonner toast
-- On failure, show an error toast and leave the item in place
+<!-- Bullet points of what success looks like -->
 
 ## Notes
-- Builds on the existing item drawer action bar (Favorite/Pin/Edit/Delete stubs)
-- Add a `deleteItem` Prisma query in `src/lib/db/items.ts` (matches the `updateItem` pattern)
-- Add a `deleteItem` server action in `src/actions/items.ts` with Zod validation and the standard `{ success, data, error }` return shape
-- Ownership check: server action must confirm the item belongs to the current user before deleting
-- Use shadcn `alert-dialog` (add via `npx shadcn@latest add alert-dialog` if not present)
-- Toast via existing sonner setup
-- Trigger `router.refresh()` after a successful delete so the items list updates
+<!-- Additional context, constraints, or details from spec -->
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
@@ -44,3 +38,4 @@ In Progress
 - **All Items Page + Dashboard Nav Fix** — New `/items` route with `getAllItems` fetcher, DevStash logo wraps to `/dashboard`, sidebar active state driven by `usePathname()` across types, collections, and "View all collections".
 - **Item Drawer** — Right-side shadcn Sheet opens on card click, fetches full detail via `/api/items/[id]`; action bar stubbed for Favorite/Pin/Edit/Delete.
 - **Item Drawer Edit Mode** — Pencil swaps drawer into inline edit, Save/Cancel action bar, Zod-validated `updateItem` action + lib query (tag replace via `set: []` + `connectOrCreate`), toast + `router.refresh()` on save.
+- **Item Delete** — Drawer Trash opens shadcn `AlertDialog`; `deleteItem` action + lib query with ownership check, toast + drawer close + `router.refresh()` on success.
