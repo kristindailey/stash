@@ -1,15 +1,22 @@
-# Current Feature
+# Current Feature: Item Drawer
 <!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
-<!-- Brief description of the feature to implement -->
+Right-side slide-in drawer for viewing full item details, replacing a dedicated item page.
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- Bullet points of what success looks like -->
+- Right-side slide-in drawer using shadcn Sheet, opens when clicking an ItemCard
+- Works on both dashboard and items list pages (single client wrapper managing state)
+- Action bar with Favorite (star, yellow when active), Pin, Copy, Edit (pencil), Delete (trash, right-aligned)
+- Display full item details (no separate item page); editor/item-specific extras deferred
+- Card data still comes from server fetch; full detail fetched on click via `/api/items/[id]`
+- Skeleton/loading state in drawer while fetching; feels snappy with no page navigation
 
 ## Notes
-<!-- Additional context, constraints, or details from spec -->
+- Query function lives in `lib/db/items.ts`; API route handles auth check and calls it
+- Visual reference: `context/screenshots/dashboard-ui-drawer.png`
+- Pages remain server components — drawer state managed by a client wrapper
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.

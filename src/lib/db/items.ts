@@ -18,6 +18,11 @@ export type DashboardItem = {
 	updatedAt: Date;
 };
 
+export type ItemDetail = DashboardItem & {
+	createdAt: Date;
+	collections: { id: string; name: string }[];
+};
+
 export type DashboardItemStats = {
 	totalItems: number;
 	totalCollections: number;
@@ -88,6 +93,29 @@ function toDashboardItem(item: ItemWithRelations): DashboardItem {
 		isFavorite: item.isFavorite,
 		isPinned: item.isPinned,
 		updatedAt: item.updatedAt,
+	};
+}
+
+export async function getItemById(
+	id: string,
+	userId: string,
+): Promise<ItemDetail | null> {
+	const item = await prisma.item.findFirst({
+		where: { id, userId },
+		include: {
+			itemType: { select: { name: true } },
+			tags: { select: { name: true } },
+			collections: {
+				select: { collection: { select: { id: true, name: true } } },
+			},
+		},
+	});
+	if (!item) return null;
+
+	return {
+		...toDashboardItem(item),
+		createdAt: item.createdAt,
+		collections: item.collections.map((c) => c.collection),
 	};
 }
 
