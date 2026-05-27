@@ -1,22 +1,15 @@
-# Current Feature: Item Drawer
+# Current Feature
 <!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
-Right-side slide-in drawer for viewing full item details, replacing a dedicated item page.
+<!-- Brief description of the feature to implement -->
 
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- Right-side slide-in drawer using shadcn Sheet, opens when clicking an ItemCard
-- Works on both dashboard and items list pages (single client wrapper managing state)
-- Action bar with Favorite (star, yellow when active), Pin, Copy, Edit (pencil), Delete (trash, right-aligned)
-- Display full item details (no separate item page); editor/item-specific extras deferred
-- Card data still comes from server fetch; full detail fetched on click via `/api/items/[id]`
-- Skeleton/loading state in drawer while fetching; feels snappy with no page navigation
+<!-- Bullet points of what success looks like -->
 
 ## Notes
-- Query function lives in `lib/db/items.ts`; API route handles auth check and calls it
-- Visual reference: `context/screenshots/dashboard-ui-drawer.png`
-- Pages remain server components — drawer state managed by a client wrapper
+<!-- Additional context, constraints, or details from spec -->
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
@@ -43,3 +36,4 @@ In Progress
 - **Vitest Setup** — Vitest scoped to `src/actions/**` and `src/lib/**`, native tsconfig path resolution, `npm run test` / `test:watch` scripts, sample tests for `format-time` and `cn`.
 - **Items List 3-Column Grid** — `/items/[type]` grid now scales to 3 columns at `lg`, keeping 1/2-col responsive behavior below.
 - **All Items Page + Dashboard Nav Fix** — New `/items` route with `getAllItems` fetcher, DevStash logo wraps to `/dashboard`, sidebar active state driven by `usePathname()` across types, collections, and "View all collections".
+- **Item Drawer** — Right-side shadcn Sheet opens on card click, fetches full detail via `/api/items/[id]`; action bar stubbed for Favorite/Pin/Edit/Delete.
