@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Plus } from "lucide-react";
 import {
@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { CodeEditor } from "./CodeEditor";
 import {
 	CREATABLE_TYPES,
 	ITEM_TYPE_COLORS,
@@ -29,11 +30,20 @@ import { createItem } from "@/actions/items";
 
 const CONTENT_TYPES = new Set<CreatableType>(["snippet", "prompt", "command", "note"]);
 const LANGUAGE_TYPES = new Set<CreatableType>(["snippet", "command"]);
+const CREATABLE_SET = new Set<string>(CREATABLE_TYPES);
+
+function typeFromPath(pathname: string | null): CreatableType {
+	const match = pathname?.match(/^\/items\/([^/]+)/);
+	const slug = match?.[1]?.replace(/s$/, "");
+	return slug && CREATABLE_SET.has(slug) ? (slug as CreatableType) : "snippet";
+}
 
 export function NewItemDialog() {
 	const router = useRouter();
+	const pathname = usePathname();
+	const defaultType = typeFromPath(pathname);
 	const [open, setOpen] = React.useState(false);
-	const [type, setType] = React.useState<CreatableType>("snippet");
+	const [type, setType] = React.useState<CreatableType>(defaultType);
 	const [title, setTitle] = React.useState("");
 	const [description, setDescription] = React.useState("");
 	const [content, setContent] = React.useState("");
@@ -43,7 +53,7 @@ export function NewItemDialog() {
 	const [saving, setSaving] = React.useState(false);
 
 	const reset = React.useCallback(() => {
-		setType("snippet");
+		setType(defaultType);
 		setTitle("");
 		setDescription("");
 		setContent("");
@@ -51,7 +61,11 @@ export function NewItemDialog() {
 		setUrl("");
 		setTagsInput("");
 		setSaving(false);
-	}, []);
+	}, [defaultType]);
+
+	React.useEffect(() => {
+		if (!open) setType(defaultType);
+	}, [defaultType, open]);
 
 	const handleOpenChange = (next: boolean) => {
 		if (saving) return;
@@ -164,13 +178,21 @@ export function NewItemDialog() {
 
 					{showContent && (
 						<Field label="Content">
-							<Textarea
-								value={content}
-								onChange={(e) => setContent(e.target.value)}
-								placeholder="Content"
-								rows={6}
-								className="font-mono text-xs"
-							/>
+							{showLanguage ? (
+								<CodeEditor
+									value={content}
+									onChange={setContent}
+									language={language || undefined}
+								/>
+							) : (
+								<Textarea
+									value={content}
+									onChange={(e) => setContent(e.target.value)}
+									placeholder="Content"
+									rows={6}
+									className="font-mono text-xs"
+								/>
+							)}
 						</Field>
 					)}
 
