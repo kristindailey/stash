@@ -1,22 +1,15 @@
-# Current Feature: Markdown Editor
-
-Add a Markdown editor component for notes and prompts with Write/Preview tabs and proper dark theme styling.
+# Current Feature
+<!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
+<!-- Brief description of the feature to implement -->
 
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- Build `MarkdownEditor` component with Write/Preview tabbed interface
-- Use react-markdown + remark-gfm for GitHub Flavored Markdown
-- Match CodeEditor styling: `bg-[#1e1e1e]` container, `bg-[#2d2d2d]` header, copy button in header, fluid height capped at 400px
-- Support readonly mode (Preview-only) and edit mode (default Write, Preview available)
-- Replace Textarea with MarkdownEditor for `note` and `prompt` content fields only — leave snippets/commands on CodeEditor
-- Wire into NewItemDialog, ItemDrawer edit mode, and ItemDrawer view mode (readonly)
+<!-- Bullet points of what success looks like -->
 
 ## Notes
-- Custom `.markdown-preview` CSS class for reliable dark-mode element styling (headings h1–h6, code blocks, inline code, lists, blockquotes, links, tables)
-- Headings must be visually distinct (size + weight); code blocks dark with monospace; inline code subtle highlight; blockquotes with left border accent; links blue with hover
-- Do NOT touch CodeEditor or its usages
+<!-- Additional context, constraints, or details from spec -->
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
@@ -48,3 +41,4 @@ In Progress
 - **Item Delete** — Drawer Trash opens shadcn `AlertDialog`; `deleteItem` action + lib query with ownership check, toast + drawer close + `router.refresh()` on success.
 - **Item Create** — Top bar "New Item" opens shadcn `Dialog` with type pills; conditional fields per type; Zod-validated `createItem` action + lib query (URL required for links), toast + close + `router.refresh()` on success.
 - **Code Editor** — Monaco-based `CodeEditor` with macOS dots, copy button, language label, themed scrollbar, auto-sizing height (max 400px); used for snippet/command content in drawer (view + edit) and new-item dialog. New Item dialog also auto-selects type from `/items/[type]` route.
+- **Markdown Editor** — `MarkdownEditor` with Write/Preview tabs, react-markdown + remark-gfm, copy button, `.markdown-preview` dark styles for headings/code/lists/blockquotes/links/tables; used for note + prompt content in drawer (view + edit) and new-item dialog.
