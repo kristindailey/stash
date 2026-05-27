@@ -172,6 +172,17 @@ export async function updateItem(
 	return toItemDetail(updated);
 }
 
+export async function deleteItem(id: string, userId: string): Promise<boolean> {
+	const existing = await prisma.item.findFirst({
+		where: { id, userId },
+		select: { id: true },
+	});
+	if (!existing) return false;
+
+	await prisma.item.delete({ where: { id } });
+	return true;
+}
+
 export async function getPinnedItems(): Promise<DashboardItem[]> {
 	const userId = await getDemoUserId();
 	if (!userId) return [];

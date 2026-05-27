@@ -10,16 +10,21 @@ vi.mock("@/lib/db/get-user-id", () => ({
 
 vi.mock("@/lib/db/items", () => ({
 	updateItem: vi.fn(),
+	deleteItem: vi.fn(),
 }));
 
 import { auth } from "@/auth";
 import { getDemoUserId } from "@/lib/db/get-user-id";
-import { updateItem as updateItemQuery } from "@/lib/db/items";
-import { updateItem } from "./items";
+import {
+	deleteItem as deleteItemQuery,
+	updateItem as updateItemQuery,
+} from "@/lib/db/items";
+import { deleteItem, updateItem } from "./items";
 
 const authMock = vi.mocked(auth);
 const getDemoUserIdMock = vi.mocked(getDemoUserId);
 const updateItemQueryMock = vi.mocked(updateItemQuery);
+const deleteItemQueryMock = vi.mocked(deleteItemQuery);
 
 const fakeItem = {
 	id: "item_1",
@@ -107,5 +112,39 @@ describe("updateItem action", () => {
 		});
 		expect(result.success).toBe(true);
 		if (result.success) expect(result.data).toBe(fakeItem);
+	});
+});
+
+describe("deleteItem action", () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+		authMock.mockResolvedValue({ user: { id: "user_1" } } as never);
+		getDemoUserIdMock.mockResolvedValue("user_1");
+		deleteItemQueryMock.mockResolvedValue(true);
+	});
+
+	it("rejects when not authenticated", async () => {
+		authMock.mockResolvedValue(null as never);
+		const result = await deleteItem("item_1");
+		expect(result).toEqual({ success: false, error: "Not authenticated" });
+		expect(deleteItemQueryMock).not.toHaveBeenCalled();
+	});
+
+	it("rejects an empty item id", async () => {
+		const result = await deleteItem("");
+		expect(result).toEqual({ success: false, error: "Invalid item id" });
+		expect(deleteItemQueryMock).not.toHaveBeenCalled();
+	});
+
+	it("returns not-found when item does not belong to user", async () => {
+		deleteItemQueryMock.mockResolvedValue(false);
+		const result = await deleteItem("item_1");
+		expect(result).toEqual({ success: false, error: "Item not found" });
+	});
+
+	it("returns the deleted item id on success", async () => {
+		const result = await deleteItem("item_1");
+		expect(deleteItemQueryMock).toHaveBeenCalledWith("item_1", "user_1");
+		expect(result).toEqual({ success: true, data: { id: "item_1" } });
 	});
 });

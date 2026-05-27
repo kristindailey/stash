@@ -3,7 +3,11 @@
 import { z } from "zod";
 import { auth } from "@/auth";
 import { getDemoUserId } from "@/lib/db/get-user-id";
-import { updateItem as updateItemQuery, type ItemDetail } from "@/lib/db/items";
+import {
+	deleteItem as deleteItemQuery,
+	updateItem as updateItemQuery,
+	type ItemDetail,
+} from "@/lib/db/items";
 
 export type ActionResult<T> =
 	| { success: true; data: T }
@@ -77,4 +81,29 @@ export async function updateItem(
 	}
 
 	return { success: true, data: updated };
+}
+
+export async function deleteItem(
+	itemId: string,
+): Promise<ActionResult<{ id: string }>> {
+	const session = await auth();
+	if (!session?.user?.id) {
+		return { success: false, error: "Not authenticated" };
+	}
+
+	if (typeof itemId !== "string" || itemId.length === 0) {
+		return { success: false, error: "Invalid item id" };
+	}
+
+	const userId = await getDemoUserId();
+	if (!userId) {
+		return { success: false, error: "Item not found" };
+	}
+
+	const deleted = await deleteItemQuery(itemId, userId);
+	if (!deleted) {
+		return { success: false, error: "Item not found" };
+	}
+
+	return { success: true, data: { id: itemId } };
 }
