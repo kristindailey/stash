@@ -1,19 +1,15 @@
-# Current Feature: Code Editor
+# Current Feature
+<!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
+<!-- Brief description of the feature to implement -->
+
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- Build reusable `CodeEditor` component using Monaco Editor with a dark theme
-- Replace `Textarea` with `CodeEditor` for snippets and commands (keep `Textarea` for notes, prompts, and other non-code types)
-- Add macOS-style window dots (red/yellow/green) at the top of the editor
-- Add a quick copy button in the editor header
-- Show the language label in the editor header next to the copy button
-- Support both display (readonly) and edit modes
-- Fluid height with a 400px max and a themed scrollbar
+<!-- Bullet points of what success looks like -->
 
 ## Notes
-- Applies to both the item drawer (display + edit modes) and the new-item dialog (edit mode)
-- Source spec: `context/features/code-editor-spec.md`
+<!-- Additional context, constraints, or details from spec -->
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
@@ -44,3 +40,4 @@ In Progress
 - **Item Drawer Edit Mode** — Pencil swaps drawer into inline edit, Save/Cancel action bar, Zod-validated `updateItem` action + lib query (tag replace via `set: []` + `connectOrCreate`), toast + `router.refresh()` on save.
 - **Item Delete** — Drawer Trash opens shadcn `AlertDialog`; `deleteItem` action + lib query with ownership check, toast + drawer close + `router.refresh()` on success.
 - **Item Create** — Top bar "New Item" opens shadcn `Dialog` with type pills; conditional fields per type; Zod-validated `createItem` action + lib query (URL required for links), toast + close + `router.refresh()` on success.
+- **Code Editor** — Monaco-based `CodeEditor` with macOS dots, copy button, language label, themed scrollbar, auto-sizing height (max 400px); used for snippet/command content in drawer (view + edit) and new-item dialog. New Item dialog also auto-selects type from `/items/[type]` route.
