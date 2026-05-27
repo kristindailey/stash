@@ -4,10 +4,19 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { isEmailVerificationEnabled } from "@/lib/email";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import authConfig from "./auth.config";
 
 class EmailNotVerifiedError extends CredentialsSignin {
 	code = "EmailNotVerified";
+}
+
+class RateLimitError extends CredentialsSignin {
+	code: string;
+	constructor(seconds: number) {
+		super();
+		this.code = `RateLimited:${seconds}`;
+	}
 }
 
 const providers = authConfig.providers.map((provider) => {
@@ -18,10 +27,15 @@ const providers = authConfig.providers.map((provider) => {
 			email: { label: "Email", type: "email" },
 			password: { label: "Password", type: "password" },
 		},
-		authorize: async (credentials) => {
+		authorize: async (credentials, request) => {
 			const email = typeof credentials?.email === "string" ? credentials.email.trim().toLowerCase() : "";
 			const password = typeof credentials?.password === "string" ? credentials.password : "";
 			if (!email || !password) return null;
+
+			const ip = getClientIp(request);
+			const rl = await checkRateLimit("login", `ip:${ip}:email:${email}`);
+			if (!rl.success) throw new RateLimitError(rl.windowSeconds);
+
 			const user = await prisma.user.findUnique({ where: { email } });
 			if (!user?.password) return null;
 			const valid = await bcrypt.compare(password, user.password);

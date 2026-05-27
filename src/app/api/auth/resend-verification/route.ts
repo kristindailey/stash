@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { isEmailVerificationEnabled, sendVerificationEmail } from "@/lib/email";
 import { buildVerifyUrl, createVerificationToken } from "@/lib/verification-token";
+import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/rate-limit";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -28,6 +29,12 @@ export async function POST(request: Request) {
 	}
 
 	const normalizedEmail = email.trim().toLowerCase();
+
+	const rl = await checkRateLimit(
+		"resendVerification",
+		`ip:${getClientIp(request)}:email:${normalizedEmail}`
+	);
+	if (!rl.success) return rateLimitResponse(rl);
 	const user = await prisma.user.findUnique({
 		where: { email: normalizedEmail },
 		select: { email: true, name: true, emailVerified: true },

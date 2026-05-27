@@ -16,6 +16,29 @@ const ERROR_MESSAGES: Record<string, string> = {
 		"This email is already linked to another sign-in method.",
 };
 
+function formatRetryAfter(seconds: number): string {
+	if (seconds <= 0) return "a moment";
+	if (seconds < 60) return `${seconds} second${seconds === 1 ? "" : "s"}`;
+	const minutes = Math.ceil(seconds / 60);
+	if (minutes < 60) return `${minutes} minute${minutes === 1 ? "" : "s"}`;
+	const hours = Math.ceil(minutes / 60);
+	return `${hours} hour${hours === 1 ? "" : "s"}`;
+}
+
+function mapSignInError(error: string | undefined, code: string | undefined): string {
+	if (code?.startsWith("RateLimited")) {
+		const seconds = Number(code.split(":")[1]);
+		const duration = Number.isFinite(seconds) && seconds > 0
+			? formatRetryAfter(seconds)
+			: "a few minutes";
+		return `Too many sign-in attempts. Please try again in ${duration}.`;
+	}
+	if (code && ERROR_MESSAGES[code]) return ERROR_MESSAGES[code];
+	if (error && ERROR_MESSAGES[error]) return ERROR_MESSAGES[error];
+	if (!error && !code) return "Sign in failed";
+	return "Invalid email or password";
+}
+
 function safeCallbackUrl(url: string | undefined): string {
 	if (!url) return "/dashboard";
 	if (!url.startsWith("/") || url.startsWith("//")) return "/dashboard";
@@ -34,7 +57,7 @@ export function LoginForm({ callbackUrl, initialError, verificationEnabled = fal
 	const [email, setEmail] = React.useState("");
 	const [password, setPassword] = React.useState("");
 	const [error, setError] = React.useState<string | null>(
-		initialError ? ERROR_MESSAGES[initialError] ?? "Sign in failed" : null
+		initialError ? mapSignInError(initialError, undefined) : null
 	);
 	const [pending, setPending] = React.useState(false);
 	const [showResend, setShowResend] = React.useState(false);
@@ -61,11 +84,7 @@ export function LoginForm({ callbackUrl, initialError, verificationEnabled = fal
 		setPending(false);
 
 		if (!result || result.error) {
-			setError(
-				result?.error
-					? ERROR_MESSAGES[result.error] ?? "Invalid email or password"
-					: "Sign in failed"
-			);
+			setError(mapSignInError(result?.error, result?.code));
 			setShowResend(true);
 			return;
 		}

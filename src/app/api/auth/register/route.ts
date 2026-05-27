@@ -7,6 +7,7 @@ import {
 	sendVerificationEmail,
 } from "@/lib/email";
 import { buildVerifyUrl, createVerificationToken } from "@/lib/verification-token";
+import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/rate-limit";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -17,6 +18,9 @@ function getBaseUrl(request: Request) {
 }
 
 export async function POST(request: Request) {
+	const rl = await checkRateLimit("register", `ip:${getClientIp(request)}`);
+	if (!rl.success) return rateLimitResponse(rl);
+
 	let body: unknown;
 	try {
 		body = await request.json();
