@@ -1,15 +1,25 @@
-# Current Feature
-<!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
-<!-- Brief description of the feature to implement -->
+# Current Feature: Item Drawer — Edit Mode
+
+Clicking the pencil icon in the item drawer swaps the action bar for Save/Cancel and turns the displayed fields into editable inputs. Save persists via a new `updateItem` server action; Cancel discards.
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- Bullet points of what success looks like -->
+- Edit button toggles the drawer between view mode and inline edit mode
+- Action bar swaps to Save / Cancel; Cancel discards, Save persists and returns to view mode
+- Editable fields: title (required), description, tags (comma-separated)
+- Type-specific editable fields: content (snippet/prompt/command/note), language (snippet/command), URL (link)
+- Item type, collections, and created/updated dates remain non-editable
+- `updateItem(itemId, data)` server action in `src/actions/items.ts` with Zod validation, session + ownership checks, `{ success, data, error }` return
+- `updateItem` query in `lib/db/items.ts` — disconnect all existing tags, connect-or-create new ones, return full `ItemDetail`
+- Toast on save success/error; Save disabled when title empty; `router.refresh()` after save
 
 ## Notes
-<!-- Additional context, constraints, or details from spec -->
+- Use controlled inputs with local state — no form library
+- Zod is the source of truth for validation; return errors in `{ success: false, error }`
+- Content textarea is plain — no code editor yet
+- Spec: `context/features/item-drawer-edit-spec.md`
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
