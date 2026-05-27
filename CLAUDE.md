@@ -20,13 +20,15 @@ Notable gotchas surfaced in those docs:
 ## Commands
 
 ```bash
-npm run dev      # Start dev server at http://localhost:3000
-npm run build    # Production build
-npm run start    # Serve the production build
-npm run lint     # ESLint
+npm run dev         # Start dev server at http://localhost:3000
+npm run build       # Production build
+npm run start       # Serve the production build
+npm run lint        # ESLint
+npm run test        # Vitest unit tests (single run)
+npm run test:watch  # Vitest in watch mode
 ```
 
-There is no test framework configured in this repo.
+Vitest covers server actions (`src/actions/**`) and utilities (`src/lib/**`) only — no React component tests. See `context/coding-standards.md` Testing section for conventions.
 
 ## Neon MCP
 
