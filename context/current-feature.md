@@ -1,15 +1,23 @@
-# Current Feature
+# Current Feature: Fix GitHub OAuth Redirect Issue
 <!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
 <!-- Brief description of the feature to implement -->
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- Bullet points of what success looks like -->
+- Replace client-side `signIn` from `next-auth/react` with a server-side `signIn` from `@/auth` for GitHub OAuth
+- Eliminate the slow/laggy redirect to `/dashboard` after GitHub sign-in
+- Credentials login flow remains unchanged
 
 ## Notes
-<!-- Additional context, constraints, or details from spec -->
+- Root cause: client-side `signIn` has unreliable redirect behavior in production
+- Use NextAuth v5 `redirectTo` option (not v4's `callbackUrl`)
+- No `SessionProvider` needed
+- Changes required:
+  - Create `src/actions/auth.ts` exporting `signInWithGitHub` server action that calls `signIn("github", { redirectTo: "/dashboard" })`
+  - Update `src/components/auth/sign-in-form.tsx`: swap the GitHub `<Button onClick>` for `<form action={signInWithGitHub}>` with a submit button; remove `isGitHubLoading` state and `handleGitHubSignIn`
+- Verify with `npm run build` and `npm run test`, then test in production
 
 ## History
 - **2026-05-21** — Initial Next.js and Tailwind CSS setup.
