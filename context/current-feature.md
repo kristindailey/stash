@@ -1,15 +1,19 @@
-# Current Feature
-<!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
-<!-- Brief description of the feature to implement -->
+# Current Feature: Items List View
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- Bullet points of what success looks like -->
+- Dynamic route `/items/[type]` (e.g. `/items/snippets`, `/items/notes`) renders items filtered by item type
+- Responsive grid of `ItemCard` components, two columns at `md` and up
+- Each card has a left border colored by its item type
+- Follows existing codebase patterns (server components, `src/lib/db` fetchers, type constants)
 
 ## Notes
-<!-- Additional context, constraints, or details from spec -->
+- Spec: `context/features/item-list-view-spec.md`
+- Sidebar already links to `/items/{name}s` (plural) — route param will be the plural type slug
+- Reuse existing `ITEM_TYPE_COLORS` / `ITEM_TYPE_ICONS` constants for the left border + chip
+- Page should live under the shared `(app)` route group so it inherits sidebar + topbar
 
 ## History
 - **2026-05-21** — Initial Next.js and Tailwind CSS setup.

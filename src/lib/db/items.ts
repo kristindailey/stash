@@ -104,6 +104,25 @@ export async function getPinnedItems(): Promise<DashboardItem[]> {
 	return items.map(toDashboardItem);
 }
 
+export async function getItemsByType(typeName: string): Promise<DashboardItem[] | null> {
+	const userId = await getDemoUserId();
+	if (!userId) return [];
+
+	const itemType = await prisma.itemType.findFirst({
+		where: { name: typeName, OR: [{ isSystem: true }, { userId }] },
+		select: { id: true },
+	});
+	if (!itemType) return null;
+
+	const items = await prisma.item.findMany({
+		where: { userId, itemTypeId: itemType.id },
+		orderBy: { updatedAt: "desc" },
+		include: itemInclude,
+	});
+
+	return items.map(toDashboardItem);
+}
+
 export async function getRecentItems(limit = 10): Promise<DashboardItem[]> {
 	const userId = await getDemoUserId();
 	if (!userId) return [];
