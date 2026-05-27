@@ -1,15 +1,30 @@
-# Current Feature
+# Current Feature: Rate Limiting for Auth
 <!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
 <!-- Brief description of the feature to implement -->
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- Bullet points of what success looks like -->
+- Add rate limiting to auth-related API routes using Upstash Redis + `@upstash/ratelimit`
+- Create reusable `src/lib/rate-limit.ts` utility (sliding window, fail-open)
+- Protect endpoints with these limits:
+  - `/api/auth/callback/credentials` — 5 / 15 min, keyed by IP + email
+  - `/api/auth/register` — 3 / 1 hour, keyed by IP
+  - `/api/auth/forgot-password` — 3 / 1 hour, keyed by IP
+  - `/api/auth/reset-password` — 5 / 15 min, keyed by IP
+  - `/api/auth/resend-verification` — 3 / 15 min, keyed by IP + email
+- Return 429 with JSON `{ error }` + `Retry-After` header
+- Surface friendly toast on the frontend for 429s
 
 ## Notes
-<!-- Additional context, constraints, or details from spec -->
+- Extract IP from `x-forwarded-for` (Vercel) with request fallback
+- Rate limit checks return `{ success, remaining, reset }`
+- Fail open if Upstash is unavailable so auth never breaks on outage
+- Login limiting on NextAuth Credentials may need a custom sign-in handler / wrapping `authorize`
+- Env: `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`
+- Upstash free tier (10k req/day) is sufficient
+- Spec: `context/features/rate-limiting-spec.md`
 
 ## History
 - **2026-05-21** — Initial Next.js and Tailwind CSS setup.

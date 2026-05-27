@@ -23,11 +23,16 @@ export function ForgotPasswordForm() {
 
 		setPending(true);
 		try {
-			await fetch("/api/auth/forgot-password", {
+			const res = await fetch("/api/auth/forgot-password", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ email }),
 			});
+			if (res.status === 429) {
+				const data = (await res.json().catch(() => null)) as { error?: string } | null;
+				setError(data?.error ?? "Too many attempts. Please try again later.");
+				return;
+			}
 			setSubmitted(true);
 		} catch {
 			setError("Something went wrong. Please try again.");
