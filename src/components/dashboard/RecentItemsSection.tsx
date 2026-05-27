@@ -17,13 +17,11 @@ export async function RecentItemsSection() {
 			{recent.length === 0 ? (
 				<p className="text-sm text-muted-foreground">No items yet.</p>
 			) : (
-				<div className="overflow-hidden rounded-lg border bg-card">
-					<ul className="divide-y">
-						{recent.map((item) => (
-							<RecentItemRow key={item.id} item={item} />
-						))}
-					</ul>
-				</div>
+				<ul className="flex flex-col gap-2">
+					{recent.map((item) => (
+						<RecentItemRow key={item.id} item={item} />
+					))}
+				</ul>
 			)}
 		</section>
 	);
@@ -38,7 +36,8 @@ function RecentItemRow({ item }: { item: DashboardItem }) {
 		<li>
 			<Link
 				href={`/items/${item.type}s/${item.id}`}
-				className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-accent"
+				className="flex items-center gap-3 rounded-lg border border-l-4 bg-card px-4 py-3 transition-colors hover:bg-accent"
+				style={{ borderLeftColor: color }}
 			>
 				<Icon className="size-4 shrink-0" style={{ color }} />
 				<div className="min-w-0 flex-1">
