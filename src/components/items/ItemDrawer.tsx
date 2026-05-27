@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
 	Copy,
+	Download,
 	FolderOpen,
 	Pencil,
 	Pin,
@@ -283,12 +284,35 @@ function DrawerBody({
 					</Section>
 				)}
 
-				{item.fileName && (
-					<Section title="File">
-						<p className="text-sm text-muted-foreground">
-							{item.fileName}
-							{item.fileSize ? ` • ${formatBytes(item.fileSize)}` : ""}
-						</p>
+				{item.contentType === "FILE" && item.fileName && (
+					<Section title={item.type === "image" ? "Image" : "File"}>
+						{item.type === "image" && item.fileUrl && (
+							/* eslint-disable-next-line @next/next/no-img-element */
+							<img
+								src={item.fileUrl}
+								alt={item.fileName}
+								className="mb-3 max-h-80 w-full rounded-md border object-contain"
+							/>
+						)}
+						<div className="flex items-center justify-between gap-3 rounded-md border bg-muted/30 p-3">
+							<div className="min-w-0">
+								<p className="truncate text-sm font-medium">{item.fileName}</p>
+								{item.fileSize ? (
+									<p className="text-xs text-muted-foreground">
+										{formatBytes(item.fileSize)}
+									</p>
+								) : null}
+							</div>
+							<Button asChild variant="outline" size="sm">
+								<a
+									href={`/api/items/${item.id}/download`}
+									download={item.fileName}
+								>
+									<Download />
+									Download
+								</a>
+							</Button>
+						</div>
 					</Section>
 				)}
 

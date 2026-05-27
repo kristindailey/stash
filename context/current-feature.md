@@ -1,15 +1,26 @@
-# Current Feature
-<!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
-<!-- Brief description of the feature to implement -->
+# Current Feature: File Upload with Cloudflare R2
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- Bullet points of what success looks like -->
+- Create upload API route that streams files to Cloudflare R2
+- Build reusable `FileUpload` component with drag-and-drop and upload progress
+- Wire `FileUpload` into the New Item dialog for `file` and `image` types
+- Delete the R2 object when its parent item is deleted
+- Add a download-proxy API route to avoid CORS issues on download
+- Add a download button in `ItemDrawer` for file-type items
+- Render image preview for images and file metadata (name/size) for files
+- Keep all Prisma/db calls in `src/lib/db/items.ts`
 
 ## Notes
-<!-- Additional context, constraints, or details from spec -->
+- **Constraints:**
+  - Images ≤ 5 MB — `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp`, `.svg`
+  - Files ≤ 10 MB — `.pdf`, `.txt`, `.md`, `.json`, `.yaml`, `.yml`, `.xml`, `.csv`, `.toml`, `.ini`
+- **Image MIME types:** `image/png`, `image/jpeg`, `image/gif`, `image/webp`, `image/svg+xml`
+- **File MIME types:** `application/pdf`, `text/plain`, `text/markdown`, `application/json`, `application/x-yaml`, `text/yaml`, `application/xml`, `text/xml`, `text/csv`, `application/toml`
+- Existing `Item` schema already has `fileUrl`, `fileName`, `fileSize` fields — no migration needed.
+- Spec: `context/features/file-image-spec.md`
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { getDemoUserId } from "@/lib/db/get-user-id";
+import { deleteFromR2, keyFromPublicUrl } from "@/lib/r2";
 
 export type DashboardItem = {
 	id: string;
@@ -9,6 +10,7 @@ export type DashboardItem = {
 	contentType: "TEXT" | "FILE" | "URL";
 	content: string | null;
 	url: string | null;
+	fileUrl: string | null;
 	fileName: string | null;
 	fileSize: number | null;
 	language: string | null;
@@ -67,6 +69,7 @@ type ItemWithRelations = {
 	contentType: "TEXT" | "FILE" | "URL";
 	content: string | null;
 	url: string | null;
+	fileUrl: string | null;
 	fileName: string | null;
 	fileSize: number | null;
 	language: string | null;
@@ -86,6 +89,7 @@ function toDashboardItem(item: ItemWithRelations): DashboardItem {
 		contentType: item.contentType,
 		content: item.content,
 		url: item.url,
+		fileUrl: item.fileUrl,
 		fileName: item.fileName,
 		fileSize: item.fileSize,
 		language: item.language,
@@ -180,6 +184,9 @@ export type CreateItemData = {
 	url: string | null;
 	language: string | null;
 	tags: string[];
+	fileUrl?: string | null;
+	fileName?: string | null;
+	fileSize?: number | null;
 };
 
 export async function createItem(
@@ -202,6 +209,9 @@ export async function createItem(
 			content: data.content,
 			url: data.url,
 			language: data.language,
+			fileUrl: data.fileUrl ?? null,
+			fileName: data.fileName ?? null,
+			fileSize: data.fileSize ?? null,
 			contentType,
 			user: { connect: { id: userId } },
 			itemType: { connect: { id: itemType.id } },
@@ -221,11 +231,23 @@ export async function createItem(
 export async function deleteItem(id: string, userId: string): Promise<boolean> {
 	const existing = await prisma.item.findFirst({
 		where: { id, userId },
-		select: { id: true },
+		select: { id: true, fileUrl: true },
 	});
 	if (!existing) return false;
 
 	await prisma.item.delete({ where: { id } });
+
+	if (existing.fileUrl) {
+		const key = keyFromPublicUrl(existing.fileUrl);
+		if (key) {
+			try {
+				await deleteFromR2(key);
+			} catch (err) {
+				console.error("R2 delete failed for key", key, err);
+			}
+		}
+	}
+
 	return true;
 }
 

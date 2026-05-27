@@ -50,12 +50,28 @@ const updateItemSchema = z.object(itemFieldsShape);
 
 export type UpdateItemInput = z.input<typeof updateItemSchema>;
 
+const uploadFieldsShape = {
+	fileUrl: nullableTrimmedString.optional().default(null),
+	fileName: nullableTrimmedString.optional().default(null),
+	fileSize: z.number().int().nonnegative().nullable().optional().default(null),
+};
+
 const createItemSchema = z
-	.object({ type: z.enum(CREATABLE_TYPES), ...itemFieldsShape })
+	.object({
+		type: z.enum(CREATABLE_TYPES),
+		...itemFieldsShape,
+		...uploadFieldsShape,
+	})
 	.refine((data) => data.type !== "link" || data.url !== null, {
 		message: "URL is required for links",
 		path: ["url"],
-	});
+	})
+	.refine(
+		(data) =>
+			(data.type !== "file" && data.type !== "image") ||
+			(data.fileUrl !== null && data.fileName !== null),
+		{ message: "File upload is required", path: ["fileUrl"] },
+	);
 
 export type CreateItemInput = z.input<typeof createItemSchema>;
 
@@ -117,13 +133,17 @@ export async function createItem(
 	}
 
 	const { type, ...rest } = parsed.data;
+	const isFile = type === "file" || type === "image";
 	const data = {
 		type,
 		title: rest.title,
 		description: rest.description,
-		content: type === "link" ? null : rest.content,
+		content: type === "link" || isFile ? null : rest.content,
 		url: type === "link" ? rest.url : null,
 		language: type === "snippet" || type === "command" ? rest.language : null,
+		fileUrl: isFile ? rest.fileUrl : null,
+		fileName: isFile ? rest.fileName : null,
+		fileSize: isFile ? rest.fileSize : null,
 		tags: rest.tags,
 	};
 

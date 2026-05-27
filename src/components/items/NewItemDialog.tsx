@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CodeEditor } from "./CodeEditor";
 import { MarkdownEditor } from "./MarkdownEditor";
+import { FileUpload, type UploadedFile } from "./FileUpload";
 import {
 	CREATABLE_TYPES,
 	ITEM_TYPE_COLORS,
@@ -32,6 +33,7 @@ import { createItem } from "@/actions/items";
 const CONTENT_TYPES = new Set<CreatableType>(["snippet", "prompt", "command", "note"]);
 const LANGUAGE_TYPES = new Set<CreatableType>(["snippet", "command"]);
 const MARKDOWN_TYPES = new Set<CreatableType>(["note", "prompt"]);
+const FILE_TYPES = new Set<CreatableType>(["file", "image"]);
 const CREATABLE_SET = new Set<string>(CREATABLE_TYPES);
 
 function typeFromPath(pathname: string | null): CreatableType {
@@ -52,6 +54,7 @@ export function NewItemDialog() {
 	const [language, setLanguage] = React.useState("");
 	const [url, setUrl] = React.useState("");
 	const [tagsInput, setTagsInput] = React.useState("");
+	const [uploaded, setUploaded] = React.useState<UploadedFile | null>(null);
 	const [saving, setSaving] = React.useState(false);
 
 	const reset = React.useCallback(() => {
@@ -62,6 +65,7 @@ export function NewItemDialog() {
 		setLanguage("");
 		setUrl("");
 		setTagsInput("");
+		setUploaded(null);
 		setSaving(false);
 	}, [defaultType]);
 
@@ -78,12 +82,14 @@ export function NewItemDialog() {
 	const showContent = CONTENT_TYPES.has(type);
 	const showLanguage = LANGUAGE_TYPES.has(type);
 	const showUrl = type === "link";
+	const showUpload = FILE_TYPES.has(type);
 
 	const trimmedTitle = title.trim();
 	const trimmedUrl = url.trim();
 	const canSave =
 		trimmedTitle.length > 0 &&
 		(!showUrl || trimmedUrl.length > 0) &&
+		(!showUpload || uploaded !== null) &&
 		!saving;
 
 	const handleSave = async () => {
@@ -100,6 +106,9 @@ export function NewItemDialog() {
 			content: showContent ? content : null,
 			language: showLanguage ? language : null,
 			url: showUrl ? url : null,
+			fileUrl: showUpload ? uploaded?.url ?? null : null,
+			fileName: showUpload ? uploaded?.fileName ?? null : null,
+			fileSize: showUpload ? uploaded?.fileSize ?? null : null,
 			tags,
 		});
 
@@ -201,6 +210,16 @@ export function NewItemDialog() {
 									className="font-mono text-xs"
 								/>
 							)}
+						</Field>
+					)}
+
+					{showUpload && (
+						<Field label={type === "image" ? "Image" : "File"}>
+							<FileUpload
+								kind={type === "image" ? "image" : "file"}
+								value={uploaded}
+								onChange={setUploaded}
+							/>
 						</Field>
 					)}
 
