@@ -1,21 +1,15 @@
-# Current Feature: Vitest Unit Testing Setup
-Wire up Vitest so we can write unit tests for server actions and utilities (no component tests).
+# Current Feature
+<!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
+<!-- Brief description of the feature to implement -->
 
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- Install Vitest with TypeScript + path-alias support
-- `npm run test` (single run) and `npm run test:watch` available
-- Scope: server actions (`src/actions/**`) and lib utilities (`src/lib/**`)
-- Co-locate test files next to source (e.g. `format-time.test.ts`)
-- Add at least one passing example test to prove the setup works
-- Update `context/ai-interaction.md` workflow + `context/coding-standards.md` testing section
+<!-- Bullet points of what success looks like -->
 
 ## Notes
-- Project is ESM (`"type": "module"`), align tooling accordingly
-- Don't pull in jsdom/Testing Library — utilities/server actions only
-- Don't test React components
+<!-- Additional context, constraints, or details from spec -->
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
@@ -39,3 +33,4 @@ In Progress
 - **Auth Rate Limiting** — Upstash sliding-window limiters on login/register/forgot/reset/resend with 429 + `Retry-After`.
 - **GitHub OAuth Redirect Fix** — `signInWithGitHub` server action replaces client-side `signIn`, removing pre-redirect fetches.
 - **Items List View** — Dynamic `/items/[type]` route, `getItemsByType` fetcher, reusable `ItemCard` in 2-column grid, proxy protects `/items/*`.
+- **Vitest Setup** — Vitest scoped to `src/actions/**` and `src/lib/**`, native tsconfig path resolution, `npm run test` / `test:watch` scripts, sample tests for `format-time` and `cn`.
