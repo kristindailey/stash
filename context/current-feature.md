@@ -1,26 +1,15 @@
-# Current Feature: File Upload with Cloudflare R2
+# Current Feature
+<!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
+<!-- Brief description of the feature to implement -->
 
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- Create upload API route that streams files to Cloudflare R2
-- Build reusable `FileUpload` component with drag-and-drop and upload progress
-- Wire `FileUpload` into the New Item dialog for `file` and `image` types
-- Delete the R2 object when its parent item is deleted
-- Add a download-proxy API route to avoid CORS issues on download
-- Add a download button in `ItemDrawer` for file-type items
-- Render image preview for images and file metadata (name/size) for files
-- Keep all Prisma/db calls in `src/lib/db/items.ts`
+<!-- Bullet points of what success looks like -->
 
 ## Notes
-- **Constraints:**
-  - Images ≤ 5 MB — `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp`, `.svg`
-  - Files ≤ 10 MB — `.pdf`, `.txt`, `.md`, `.json`, `.yaml`, `.yml`, `.xml`, `.csv`, `.toml`, `.ini`
-- **Image MIME types:** `image/png`, `image/jpeg`, `image/gif`, `image/webp`, `image/svg+xml`
-- **File MIME types:** `application/pdf`, `text/plain`, `text/markdown`, `application/json`, `application/x-yaml`, `text/yaml`, `application/xml`, `text/xml`, `text/csv`, `application/toml`
-- Existing `Item` schema already has `fileUrl`, `fileName`, `fileSize` fields — no migration needed.
-- Spec: `context/features/file-image-spec.md`
+<!-- Additional context, constraints, or details from spec -->
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
@@ -53,3 +42,4 @@ In Progress
 - **Item Create** — Top bar "New Item" opens shadcn `Dialog` with type pills; conditional fields per type; Zod-validated `createItem` action + lib query (URL required for links), toast + close + `router.refresh()` on success.
 - **Code Editor** — Monaco-based `CodeEditor` with macOS dots, copy button, language label, themed scrollbar, auto-sizing height (max 400px); used for snippet/command content in drawer (view + edit) and new-item dialog. New Item dialog also auto-selects type from `/items/[type]` route.
 - **Markdown Editor** — `MarkdownEditor` with Write/Preview tabs, react-markdown + remark-gfm, copy button, `.markdown-preview` dark styles for headings/code/lists/blockquotes/links/tables; used for note + prompt content in drawer (view + edit) and new-item dialog.
+- **File Upload + R2** — Cloudflare R2 uploads, `FileUpload` component, download proxy, image preview + download in `ItemDrawer`.
