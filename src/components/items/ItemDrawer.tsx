@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import {
 	Copy,
 	FolderOpen,
@@ -17,6 +19,8 @@ import {
 	SheetTitle,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
 	ITEM_TYPE_COLORS,
 	ITEM_TYPE_ICONS,
@@ -24,13 +28,19 @@ import {
 } from "@/lib/constants/item-types";
 import { formatRelativeTime } from "@/lib/format-time";
 import type { ItemDetail } from "@/lib/db/items";
+import { updateItem } from "@/actions/items";
 import { useItemDrawer } from "./item-drawer-context";
+
+const CONTENT_TYPES = new Set(["snippet", "prompt", "command", "note"]);
+const LANGUAGE_TYPES = new Set(["snippet", "command"]);
+const URL_TYPES = new Set(["link"]);
 
 export function ItemDrawer() {
 	const { openItemId, close } = useItemDrawer();
 	const [item, setItem] = React.useState<ItemDetail | null>(null);
 	const [loading, setLoading] = React.useState(false);
 	const [error, setError] = React.useState<string | null>(null);
+	const [mode, setMode] = React.useState<"view" | "edit">("view");
 
 	React.useEffect(() => {
 		if (!openItemId) return;
@@ -39,6 +49,7 @@ export function ItemDrawer() {
 		setLoading(true);
 		setError(null);
 		setItem(null);
+		setMode("view");
 
 		fetch(`/api/items/${openItemId}`, { signal: controller.signal })
 			.then(async (res) => {
@@ -69,8 +80,17 @@ export function ItemDrawer() {
 			<SheetContent className="w-full p-0 sm:max-w-md">
 				{loading || !item ? (
 					<DrawerSkeleton error={error} />
+				) : mode === "edit" ? (
+					<DrawerEdit
+						item={item}
+						onCancel={() => setMode("view")}
+						onSaved={(updated) => {
+							setItem(updated);
+							setMode("view");
+						}}
+					/>
 				) : (
-					<DrawerBody item={item} />
+					<DrawerBody item={item} onEdit={() => setMode("edit")} />
 				)}
 			</SheetContent>
 		</Sheet>
@@ -100,7 +120,13 @@ function DrawerSkeleton({ error }: { error: string | null }) {
 	);
 }
 
-function DrawerBody({ item }: { item: ItemDetail }) {
+function DrawerBody({
+	item,
+	onEdit,
+}: {
+	item: ItemDetail;
+	onEdit: () => void;
+}) {
 	const Icon = ITEM_TYPE_ICONS[item.type] ?? FolderOpen;
 	const color = ITEM_TYPE_COLORS[item.type] ?? "#6b7280";
 	const typeLabel = ITEM_TYPE_LABELS[item.type] ?? item.type;
@@ -140,7 +166,7 @@ function DrawerBody({ item }: { item: ItemDetail }) {
 					<Pin fill={item.isPinned ? "currentColor" : "none"} />
 					{item.isPinned ? "Pinned" : "Pin"}
 				</Button>
-				<Button variant="outline" size="sm">
+				<Button variant="outline" size="sm" onClick={onEdit}>
 					<Pencil />
 				</Button>
 				<Button variant="destructive" size="sm" className="ml-auto">
@@ -224,6 +250,163 @@ function DrawerBody({ item }: { item: ItemDetail }) {
 						</ul>
 					</Section>
 				)}
+			</div>
+		</div>
+	);
+}
+
+function DrawerEdit({
+	item,
+	onCancel,
+	onSaved,
+}: {
+	item: ItemDetail;
+	onCancel: () => void;
+	onSaved: (updated: ItemDetail) => void;
+}) {
+	const router = useRouter();
+	const Icon = ITEM_TYPE_ICONS[item.type] ?? FolderOpen;
+	const color = ITEM_TYPE_COLORS[item.type] ?? "#6b7280";
+	const typeLabel = ITEM_TYPE_LABELS[item.type] ?? item.type;
+
+	const showContent = CONTENT_TYPES.has(item.type);
+	const showLanguage = LANGUAGE_TYPES.has(item.type);
+	const showUrl = URL_TYPES.has(item.type);
+
+	const [title, setTitle] = React.useState(item.title);
+	const [description, setDescription] = React.useState(item.description ?? "");
+	const [content, setContent] = React.useState(item.content ?? "");
+	const [language, setLanguage] = React.useState(item.language ?? "");
+	const [url, setUrl] = React.useState(item.url ?? "");
+	const [tagsInput, setTagsInput] = React.useState(item.tags.join(", "));
+	const [saving, setSaving] = React.useState(false);
+
+	const trimmedTitle = title.trim();
+	const canSave = trimmedTitle.length > 0 && !saving;
+
+	const handleSave = async () => {
+		setSaving(true);
+		const tags = tagsInput
+			.split(",")
+			.map((tag) => tag.trim())
+			.filter((tag) => tag.length > 0);
+
+		const result = await updateItem(item.id, {
+			title,
+			description,
+			content: showContent ? content : null,
+			language: showLanguage ? language : null,
+			url: showUrl ? url : null,
+			tags,
+		});
+
+		setSaving(false);
+
+		if (!result.success) {
+			toast.error(result.error);
+			return;
+		}
+
+		toast.success("Item updated");
+		onSaved({
+			...result.data,
+			updatedAt: new Date(result.data.updatedAt),
+			createdAt: new Date(result.data.createdAt),
+		});
+		router.refresh();
+	};
+
+	return (
+		<div className="flex h-full flex-col overflow-hidden">
+			<SheetHeader className="gap-2 border-b p-4">
+				<div className="flex items-center gap-2 pr-8">
+					<Icon className="size-5 shrink-0" style={{ color }} />
+					<SheetTitle className="truncate text-lg font-semibold">
+						Edit {typeLabel}
+					</SheetTitle>
+				</div>
+				<SheetDescription>
+					Updated {formatRelativeTime(item.updatedAt)}
+				</SheetDescription>
+			</SheetHeader>
+
+			<div className="flex items-center gap-2 border-b p-3">
+				<Button
+					size="sm"
+					onClick={handleSave}
+					disabled={!canSave}
+				>
+					{saving ? "Saving…" : "Save"}
+				</Button>
+				<Button
+					variant="outline"
+					size="sm"
+					onClick={onCancel}
+					disabled={saving}
+				>
+					Cancel
+				</Button>
+			</div>
+
+			<div className="flex-1 overflow-y-auto">
+				<Section title="Title">
+					<Input
+						value={title}
+						onChange={(e) => setTitle(e.target.value)}
+						placeholder="Title"
+						aria-invalid={trimmedTitle.length === 0}
+					/>
+				</Section>
+
+				<Section title="Description">
+					<Textarea
+						value={description}
+						onChange={(e) => setDescription(e.target.value)}
+						placeholder="Optional description"
+						rows={3}
+					/>
+				</Section>
+
+				{showContent && (
+					<Section title="Content">
+						<Textarea
+							value={content}
+							onChange={(e) => setContent(e.target.value)}
+							placeholder="Content"
+							rows={8}
+							className="font-mono text-xs"
+						/>
+					</Section>
+				)}
+
+				{showLanguage && (
+					<Section title="Language">
+						<Input
+							value={language}
+							onChange={(e) => setLanguage(e.target.value)}
+							placeholder="e.g. typescript"
+						/>
+					</Section>
+				)}
+
+				{showUrl && (
+					<Section title="URL">
+						<Input
+							value={url}
+							onChange={(e) => setUrl(e.target.value)}
+							placeholder="https://…"
+							inputMode="url"
+						/>
+					</Section>
+				)}
+
+				<Section title="Tags">
+					<Input
+						value={tagsInput}
+						onChange={(e) => setTagsInput(e.target.value)}
+						placeholder="comma, separated, tags"
+					/>
+				</Section>
 			</div>
 		</div>
 	);

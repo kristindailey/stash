@@ -96,27 +96,80 @@ function toDashboardItem(item: ItemWithRelations): DashboardItem {
 	};
 }
 
+const itemDetailInclude = {
+	itemType: { select: { name: true } },
+	tags: { select: { name: true } },
+	collections: {
+		select: { collection: { select: { id: true, name: true } } },
+	},
+} as const;
+
+type ItemWithDetail = ItemWithRelations & {
+	createdAt: Date;
+	collections: { collection: { id: string; name: string } }[];
+};
+
+function toItemDetail(item: ItemWithDetail): ItemDetail {
+	return {
+		...toDashboardItem(item),
+		createdAt: item.createdAt,
+		collections: item.collections.map((c) => c.collection),
+	};
+}
+
 export async function getItemById(
 	id: string,
 	userId: string,
 ): Promise<ItemDetail | null> {
 	const item = await prisma.item.findFirst({
 		where: { id, userId },
-		include: {
-			itemType: { select: { name: true } },
-			tags: { select: { name: true } },
-			collections: {
-				select: { collection: { select: { id: true, name: true } } },
-			},
-		},
+		include: itemDetailInclude,
 	});
 	if (!item) return null;
 
-	return {
-		...toDashboardItem(item),
-		createdAt: item.createdAt,
-		collections: item.collections.map((c) => c.collection),
-	};
+	return toItemDetail(item);
+}
+
+export type UpdateItemData = {
+	title: string;
+	description: string | null;
+	content: string | null;
+	url: string | null;
+	language: string | null;
+	tags: string[];
+};
+
+export async function updateItem(
+	id: string,
+	userId: string,
+	data: UpdateItemData,
+): Promise<ItemDetail | null> {
+	const existing = await prisma.item.findFirst({
+		where: { id, userId },
+		select: { id: true },
+	});
+	if (!existing) return null;
+
+	const updated = await prisma.item.update({
+		where: { id },
+		data: {
+			title: data.title,
+			description: data.description,
+			content: data.content,
+			url: data.url,
+			language: data.language,
+			tags: {
+				set: [],
+				connectOrCreate: data.tags.map((name) => ({
+					where: { name },
+					create: { name },
+				})),
+			},
+		},
+		include: itemDetailInclude,
+	});
+
+	return toItemDetail(updated);
 }
 
 export async function getPinnedItems(): Promise<DashboardItem[]> {
