@@ -22,13 +22,23 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
 	ITEM_TYPE_COLORS,
 	ITEM_TYPE_ICONS,
 	ITEM_TYPE_LABELS,
 } from "@/lib/constants/item-types";
 import { formatRelativeTime } from "@/lib/format-time";
 import type { ItemDetail } from "@/lib/db/items";
-import { updateItem } from "@/actions/items";
+import { deleteItem, updateItem } from "@/actions/items";
 import { useItemDrawer } from "./item-drawer-context";
 
 const CONTENT_TYPES = new Set(["snippet", "prompt", "command", "note"]);
@@ -36,11 +46,29 @@ const LANGUAGE_TYPES = new Set(["snippet", "command"]);
 const URL_TYPES = new Set(["link"]);
 
 export function ItemDrawer() {
+	const router = useRouter();
 	const { openItemId, close } = useItemDrawer();
 	const [item, setItem] = React.useState<ItemDetail | null>(null);
 	const [loading, setLoading] = React.useState(false);
 	const [error, setError] = React.useState<string | null>(null);
 	const [mode, setMode] = React.useState<"view" | "edit">("view");
+	const [deleting, setDeleting] = React.useState(false);
+
+	const handleDelete = async () => {
+		if (!item) return;
+		setDeleting(true);
+		const result = await deleteItem(item.id);
+		setDeleting(false);
+
+		if (!result.success) {
+			toast.error(result.error);
+			return;
+		}
+
+		toast.success("Item deleted");
+		close();
+		router.refresh();
+	};
 
 	React.useEffect(() => {
 		if (!openItemId) return;
@@ -90,7 +118,12 @@ export function ItemDrawer() {
 						}}
 					/>
 				) : (
-					<DrawerBody item={item} onEdit={() => setMode("edit")} />
+					<DrawerBody
+						item={item}
+						onEdit={() => setMode("edit")}
+						onDelete={handleDelete}
+						deleting={deleting}
+					/>
 				)}
 			</SheetContent>
 		</Sheet>
@@ -123,10 +156,15 @@ function DrawerSkeleton({ error }: { error: string | null }) {
 function DrawerBody({
 	item,
 	onEdit,
+	onDelete,
+	deleting,
 }: {
 	item: ItemDetail;
 	onEdit: () => void;
+	onDelete: () => void;
+	deleting: boolean;
 }) {
+	const [confirmOpen, setConfirmOpen] = React.useState(false);
 	const Icon = ITEM_TYPE_ICONS[item.type] ?? FolderOpen;
 	const color = ITEM_TYPE_COLORS[item.type] ?? "#6b7280";
 	const typeLabel = ITEM_TYPE_LABELS[item.type] ?? item.type;
@@ -169,9 +207,39 @@ function DrawerBody({
 				<Button variant="outline" size="sm" onClick={onEdit}>
 					<Pencil />
 				</Button>
-				<Button variant="destructive" size="sm" className="ml-auto">
+				<Button
+					variant="destructive"
+					size="sm"
+					className="ml-auto"
+					onClick={() => setConfirmOpen(true)}
+					disabled={deleting}
+				>
 					<Trash2 />
 				</Button>
+				<AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+					<AlertDialogContent>
+						<AlertDialogHeader>
+							<AlertDialogTitle>Delete this item?</AlertDialogTitle>
+							<AlertDialogDescription>
+								&ldquo;{item.title}&rdquo; will be permanently deleted. This
+								cannot be undone.
+							</AlertDialogDescription>
+						</AlertDialogHeader>
+						<AlertDialogFooter>
+							<AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+							<AlertDialogAction
+								onClick={(e) => {
+									e.preventDefault();
+									onDelete();
+								}}
+								disabled={deleting}
+								className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+							>
+								{deleting ? "Deleting…" : "Delete"}
+							</AlertDialogAction>
+						</AlertDialogFooter>
+					</AlertDialogContent>
+				</AlertDialog>
 			</div>
 
 			<div className="flex-1 overflow-y-auto">

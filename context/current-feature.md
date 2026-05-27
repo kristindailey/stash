@@ -1,15 +1,21 @@
-# Current Feature
-<!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
-<!-- Brief description of the feature to implement -->
-
+# Current Feature: Item Delete
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- Bullet points of what success looks like -->
+- Wire up the stubbed Delete action in the item drawer to actually delete the item
+- Show a shadcn AlertDialog to confirm before deleting
+- On success, close the drawer, refresh the list, and show a sonner toast
+- On failure, show an error toast and leave the item in place
 
 ## Notes
-<!-- Additional context, constraints, or details from spec -->
+- Builds on the existing item drawer action bar (Favorite/Pin/Edit/Delete stubs)
+- Add a `deleteItem` Prisma query in `src/lib/db/items.ts` (matches the `updateItem` pattern)
+- Add a `deleteItem` server action in `src/actions/items.ts` with Zod validation and the standard `{ success, data, error }` return shape
+- Ownership check: server action must confirm the item belongs to the current user before deleting
+- Use shadcn `alert-dialog` (add via `npx shadcn@latest add alert-dialog` if not present)
+- Toast via existing sonner setup
+- Trigger `router.refresh()` after a successful delete so the items list updates
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
