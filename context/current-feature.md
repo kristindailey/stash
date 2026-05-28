@@ -1,18 +1,14 @@
-# Current Feature: Refactor Large Code Blocks
-
-Break up oversized files and duplicated logic into focused functions, components, and utilities, per the code-scanner audit. No behavior changes — pure refactor.
+# Current Feature
+<!-- Title above as "# Current Feature: <name>", followed by a one- or two-sentence description of the feature/fix. -->
 
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
+<!-- What this feature needs to accomplish. List concrete, checkable goals. -->
 
 ## Notes
-- Pure refactor — no behavioral or visual changes. Public component APIs/props stay stable.
-- Follow project structure: components in `src/components/[feature]/`, utils in `src/lib/`, hooks in `src/hooks/`, constants in `src/lib/constants/`.
-- Keep functions under 50 lines where reasonable; one job per component.
-- Verify with `npm run test` and `npm run build` after each priority tier.
-- Source: code-scanner audit (2026-05-28) — 3 high, 4 medium (6 items), 3 low findings.
+<!-- Implementation details, constraints, decisions, and references. -->
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
