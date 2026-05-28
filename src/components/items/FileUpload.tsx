@@ -128,6 +128,7 @@ export function FileUpload({ kind, value, onChange }: FileUploadProps) {
 			<div className="rounded-md border bg-muted/30 p-3">
 				<div className="flex items-start gap-3">
 					{kind === "image" ? (
+						/* eslint-disable-next-line @next/next/no-img-element */
 						<img
 							src={value.url}
 							alt={value.fileName}

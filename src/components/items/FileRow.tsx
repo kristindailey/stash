@@ -1,5 +1,6 @@
 "use client";
 
+import { createElement } from "react";
 import {
 	Download,
 	File,
@@ -90,7 +91,6 @@ function formatBytes(bytes: number | null): string {
 
 export function FileRow({ item }: { item: DashboardItem }) {
 	const { openItem } = useItemDrawer();
-	const Icon = iconForFileName(item.fileName);
 	const displayName = item.fileName ?? item.title;
 
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -109,7 +109,9 @@ export function FileRow({ item }: { item: DashboardItem }) {
 			className="group flex cursor-pointer flex-col gap-3 rounded-lg border bg-card p-3 transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:flex-row sm:items-center sm:gap-4 sm:px-4"
 		>
 			<div className="flex min-w-0 flex-1 items-center gap-3">
-				<Icon className="size-6 shrink-0 text-muted-foreground" />
+				{createElement(iconForFileName(item.fileName), {
+					className: "size-6 shrink-0 text-muted-foreground",
+				})}
 				<div className="min-w-0 flex-1">
 					<p className="truncate text-sm font-medium">{displayName}</p>
 					{item.title !== displayName && (

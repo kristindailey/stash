@@ -69,9 +69,11 @@ export function NewItemDialog() {
 		setSaving(false);
 	}, [defaultType]);
 
-	React.useEffect(() => {
+	const [lastDefaultType, setLastDefaultType] = React.useState(defaultType);
+	if (defaultType !== lastDefaultType) {
+		setLastDefaultType(defaultType);
 		if (!open) setType(defaultType);
-	}, [defaultType, open]);
+	}
 
 	const handleOpenChange = (next: boolean) => {
 		if (saving) return;

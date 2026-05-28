@@ -12,6 +12,7 @@ export function UserAvatar({ name, image, email, className }: UserAvatarProps) {
 
 	if (image) {
 		return (
+			/* eslint-disable-next-line @next/next/no-img-element */
 			<img
 				src={image}
 				alt={name ?? "User avatar"}

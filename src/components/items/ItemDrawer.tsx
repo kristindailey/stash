@@ -59,6 +59,15 @@ export function ItemDrawer() {
 	const [deleting, setDeleting] = React.useState(false);
 	const [togglingFavorite, setTogglingFavorite] = React.useState(false);
 	const [togglingPin, setTogglingPin] = React.useState(false);
+	const [fetchedFor, setFetchedFor] = React.useState<string | null>(null);
+
+	if (openItemId !== fetchedFor) {
+		setFetchedFor(openItemId);
+		setItem(null);
+		setError(null);
+		setMode("view");
+		setLoading(openItemId !== null);
+	}
 
 	const handleToggleFavorite = async () => {
 		if (!item || togglingFavorite) return;
@@ -124,10 +133,6 @@ export function ItemDrawer() {
 		if (!openItemId) return;
 
 		const controller = new AbortController();
-		setLoading(true);
-		setError(null);
-		setItem(null);
-		setMode("view");
 
 		fetch(`/api/items/${openItemId}`, { signal: controller.signal })
 			.then(async (res) => {
