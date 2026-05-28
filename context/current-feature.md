@@ -1,14 +1,26 @@
-# Current Feature
-<!-- Title above as "# Current Feature: <name>", followed by a one- or two-sentence description of the feature/fix. -->
+# Current Feature: Collection Create
+Wire up the top-bar "New Collection" button to open a modal for creating a collection with a name and description, mirroring the item-create flow.
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+Complete
 
 ## Goals
-<!-- What this feature needs to accomplish. List concrete, checkable goals. -->
+- Top-bar "New Collection" button opens a modal (the button stub already exists in `TopBar.tsx`).
+- Modal collects: name (required) and description (optional).
+- Zod-validated `createCollection` server action with auth check, returning the `{ success, data | error }` pattern.
+- `createCollection` lib query in `src/lib/db/collections.ts` scoped to the authenticated user.
+- Toast on success and on failure (sonner).
+- `router.refresh()` on save so the new collection appears everywhere it's listed (sidebar, dashboard collections grid).
 
 ## Notes
-<!-- Implementation details, constraints, decisions, and references. -->
+- Follow the item-create pattern closely:
+  - `NewItemDialog.tsx` → new `NewCollectionDialog.tsx` (shadcn `Dialog`, controlled open state, reset on close, disable while saving).
+  - `createItem` action in `src/actions/items.ts` → new `createCollection` in `src/actions/collections.ts` (auth via `auth()`, Zod `safeParse`, first-issue error message).
+  - `createItem` query in `src/lib/db/items.ts` → new `createCollection` query in `src/lib/db/collections.ts`.
+- Replace the stubbed `New Collection` `<Button>` in `TopBar.tsx:50-53` with `<NewCollectionDialog />`; keep `variant="outline"` and the `FolderPlus` icon.
+- Collection fields available per schema: `name`, `description` (optional), plus `isFavorite` and `defaultTypeId` — only `name` + `description` are in scope here.
+- Server action tests live in `src/actions/**`; add a `collections.test.ts` mirroring `items.test.ts` conventions (`vi.mock` Prisma/auth).
+- Match coding standards: tabs, semicolons, no comments, Zod validation, server action over API route.
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.

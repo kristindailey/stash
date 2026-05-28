@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Code, FolderPlus, PanelLeft, Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Code, PanelLeft, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { NewItemDialog } from "@/components/items/NewItemDialog";
+import { NewCollectionDialog } from "@/components/collections/NewCollectionDialog";
 import { useSidebar } from "./sidebar-context";
 
 export function TopBar() {
@@ -47,10 +47,7 @@ export function TopBar() {
 			</div>
 
 			<div className="flex shrink-0 items-center gap-2 px-5">
-				<Button variant="outline" size="lg">
-					<FolderPlus />
-					New Collection
-				</Button>
+				<NewCollectionDialog />
 				<NewItemDialog />
 			</div>
 		</header>

@@ -48,6 +48,33 @@ export async function getSidebarCollections(
 	}));
 }
 
+export type CreatedCollection = {
+	id: string;
+	name: string;
+	description: string | null;
+};
+
+export type CreateCollectionData = {
+	name: string;
+	description: string | null;
+};
+
+export async function createCollection(
+	userId: string,
+	data: CreateCollectionData,
+): Promise<CreatedCollection> {
+	const created = await prisma.collection.create({
+		data: {
+			name: data.name,
+			description: data.description,
+			user: { connect: { id: userId } },
+		},
+		select: { id: true, name: true, description: true },
+	});
+
+	return created;
+}
+
 export async function getRecentCollections(
 	userId: string,
 	limit = 6,
