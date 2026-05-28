@@ -45,6 +45,13 @@ const itemFieldsShape = {
 		)
 		.optional()
 		.default([]),
+	collectionIds: z
+		.array(z.string())
+		.transform((ids) =>
+			Array.from(new Set(ids.filter((id) => id.length > 0))),
+		)
+		.optional()
+		.default([]),
 };
 
 const updateItemSchema = z.object(itemFieldsShape);
@@ -136,6 +143,7 @@ export async function createItem(
 		fileName: isFile ? rest.fileName : null,
 		fileSize: isFile ? rest.fileSize : null,
 		tags: rest.tags,
+		collectionIds: rest.collectionIds,
 	};
 
 	const created = await createItemQuery(session.user.id, data);

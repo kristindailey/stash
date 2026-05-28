@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@/generated/prisma/client";
 import { deleteFromR2, keyFromPublicUrl } from "@/lib/r2";
+import { filterOwnedCollectionIds } from "@/lib/db/collections";
 
 export type DashboardItem = {
 	id: string;
@@ -109,6 +110,7 @@ export type UpdateItemData = {
 	url: string | null;
 	language: string | null;
 	tags: string[];
+	collectionIds: string[];
 };
 
 export async function updateItem(
@@ -116,6 +118,11 @@ export async function updateItem(
 	userId: string,
 	data: UpdateItemData,
 ): Promise<ItemDetail | null> {
+	const collectionIds = await filterOwnedCollectionIds(
+		userId,
+		data.collectionIds,
+	);
+
 	try {
 		const updated = await prisma.item.update({
 			where: { id, userId },
@@ -130,6 +137,12 @@ export async function updateItem(
 					connectOrCreate: data.tags.map((name) => ({
 						where: { name },
 						create: { name },
+					})),
+				},
+				collections: {
+					deleteMany: {},
+					create: collectionIds.map((collectionId) => ({
+						collection: { connect: { id: collectionId } },
 					})),
 				},
 			},
@@ -156,6 +169,7 @@ export type CreateItemData = {
 	url: string | null;
 	language: string | null;
 	tags: string[];
+	collectionIds: string[];
 	fileUrl?: string | null;
 	fileName?: string | null;
 	fileSize?: number | null;
@@ -170,6 +184,11 @@ export async function createItem(
 		select: { id: true },
 	});
 	if (!itemType) return null;
+
+	const collectionIds = await filterOwnedCollectionIds(
+		userId,
+		data.collectionIds,
+	);
 
 	const contentType =
 		data.type === "link" ? "URL" : data.type === "file" || data.type === "image" ? "FILE" : "TEXT";
@@ -191,6 +210,11 @@ export async function createItem(
 				connectOrCreate: data.tags.map((name) => ({
 					where: { name },
 					create: { name },
+				})),
+			},
+			collections: {
+				create: collectionIds.map((collectionId) => ({
+					collection: { connect: { id: collectionId } },
 				})),
 			},
 		},

@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ItemContentField } from "./ItemContentField";
+import { CollectionSelect } from "./CollectionSelect";
 import { DrawerSection } from "./DrawerSection";
 import {
 	CONTENT_TYPES,
@@ -23,6 +24,7 @@ import {
 	URL_TYPES,
 } from "@/lib/constants/item-types";
 import { parseTags } from "@/lib/utils";
+import { useCollectionOptions } from "@/hooks/useCollectionOptions";
 import { formatRelativeTime } from "@/lib/format-time";
 import { normalizeItemDates } from "@/hooks/useItemDetail";
 import type { ItemDetail } from "@/lib/db/items";
@@ -52,7 +54,13 @@ export function DrawerEdit({
 	const [language, setLanguage] = React.useState(item.language ?? "");
 	const [url, setUrl] = React.useState(item.url ?? "");
 	const [tagsInput, setTagsInput] = React.useState(item.tags.join(", "));
+	const [collectionIds, setCollectionIds] = React.useState<string[]>(
+		item.collections.map((c) => c.id),
+	);
 	const [saving, setSaving] = React.useState(false);
+
+	const { options: collectionOptions, loading: collectionsLoading } =
+		useCollectionOptions(true);
 
 	const trimmedTitle = title.trim();
 	const canSave = trimmedTitle.length > 0 && !saving;
@@ -67,6 +75,7 @@ export function DrawerEdit({
 			language: showLanguage ? language : null,
 			url: showUrl ? url : null,
 			tags: parseTags(tagsInput),
+			collectionIds,
 		});
 
 		setSaving(false);
@@ -166,6 +175,15 @@ export function DrawerEdit({
 						value={tagsInput}
 						onChange={(e) => setTagsInput(e.target.value)}
 						placeholder="comma, separated, tags"
+					/>
+				</DrawerSection>
+
+				<DrawerSection title="Collections">
+					<CollectionSelect
+						options={collectionOptions}
+						selected={collectionIds}
+						onChange={setCollectionIds}
+						loading={collectionsLoading}
 					/>
 				</DrawerSection>
 			</div>

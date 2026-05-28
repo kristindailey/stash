@@ -48,6 +48,35 @@ export async function getSidebarCollections(
 	}));
 }
 
+export type CollectionOption = {
+	id: string;
+	name: string;
+};
+
+export async function getCollectionOptions(
+	userId: string,
+): Promise<CollectionOption[]> {
+	return prisma.collection.findMany({
+		where: { userId },
+		orderBy: { name: "asc" },
+		select: { id: true, name: true },
+	});
+}
+
+export async function filterOwnedCollectionIds(
+	userId: string,
+	ids: string[],
+): Promise<string[]> {
+	if (ids.length === 0) return [];
+
+	const owned = await prisma.collection.findMany({
+		where: { userId, id: { in: ids } },
+		select: { id: true },
+	});
+
+	return owned.map((c) => c.id);
+}
+
 export type CreatedCollection = {
 	id: string;
 	name: string;
