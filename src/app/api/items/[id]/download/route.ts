@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { getDemoUserId } from "@/lib/db/get-user-id";
 import { getItemById } from "@/lib/db/items";
 import { getFromR2, keyFromPublicUrl } from "@/lib/r2";
 
@@ -15,13 +14,8 @@ export async function GET(
 		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
 
-	const userId = await getDemoUserId();
-	if (!userId) {
-		return NextResponse.json({ error: "Not found" }, { status: 404 });
-	}
-
 	const { id } = await params;
-	const item = await getItemById(id, userId);
+	const item = await getItemById(id, session.user.id);
 	if (!item || item.contentType !== "FILE" || !item.fileName) {
 		return NextResponse.json({ error: "Not found" }, { status: 404 });
 	}

@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import { getDemoUserId } from "@/lib/db/get-user-id";
 import { deleteFromR2, keyFromPublicUrl } from "@/lib/r2";
 
 export type DashboardItem = {
@@ -289,10 +288,7 @@ export async function deleteItem(id: string, userId: string): Promise<boolean> {
 	return true;
 }
 
-export async function getPinnedItems(): Promise<DashboardItem[]> {
-	const userId = await getDemoUserId();
-	if (!userId) return [];
-
+export async function getPinnedItems(userId: string): Promise<DashboardItem[]> {
 	const items = await prisma.item.findMany({
 		where: { userId, isPinned: true },
 		orderBy: { updatedAt: "desc" },
@@ -302,10 +298,10 @@ export async function getPinnedItems(): Promise<DashboardItem[]> {
 	return items.map(toDashboardItem);
 }
 
-export async function getItemsByType(typeName: string): Promise<DashboardItem[] | null> {
-	const userId = await getDemoUserId();
-	if (!userId) return [];
-
+export async function getItemsByType(
+	userId: string,
+	typeName: string,
+): Promise<DashboardItem[] | null> {
 	const itemType = await prisma.itemType.findFirst({
 		where: { name: typeName, OR: [{ isSystem: true }, { userId }] },
 		select: { id: true },
@@ -321,10 +317,7 @@ export async function getItemsByType(typeName: string): Promise<DashboardItem[] 
 	return items.map(toDashboardItem);
 }
 
-export async function getAllItems(): Promise<DashboardItem[]> {
-	const userId = await getDemoUserId();
-	if (!userId) return [];
-
+export async function getAllItems(userId: string): Promise<DashboardItem[]> {
 	const items = await prisma.item.findMany({
 		where: { userId },
 		orderBy: { updatedAt: "desc" },
@@ -334,10 +327,10 @@ export async function getAllItems(): Promise<DashboardItem[]> {
 	return items.map(toDashboardItem);
 }
 
-export async function getRecentItems(limit = 10): Promise<DashboardItem[]> {
-	const userId = await getDemoUserId();
-	if (!userId) return [];
-
+export async function getRecentItems(
+	userId: string,
+	limit = 10,
+): Promise<DashboardItem[]> {
 	const items = await prisma.item.findMany({
 		where: { userId },
 		orderBy: { updatedAt: "desc" },
@@ -348,10 +341,9 @@ export async function getRecentItems(limit = 10): Promise<DashboardItem[]> {
 	return items.map(toDashboardItem);
 }
 
-export async function getSidebarItemTypes(): Promise<SidebarItemTypes> {
-	const userId = await getDemoUserId();
-	if (!userId) return { totalCount: 0, types: [] };
-
+export async function getSidebarItemTypes(
+	userId: string,
+): Promise<SidebarItemTypes> {
 	const [itemTypes, counts] = await Promise.all([
 		prisma.itemType.findMany({
 			where: { OR: [{ isSystem: true }, { userId }] },
@@ -390,17 +382,9 @@ export async function getSidebarItemTypes(): Promise<SidebarItemTypes> {
 	return { totalCount, types };
 }
 
-export async function getDashboardStats(): Promise<DashboardItemStats> {
-	const userId = await getDemoUserId();
-	if (!userId) {
-		return {
-			totalItems: 0,
-			totalCollections: 0,
-			favoriteItems: 0,
-			favoriteCollections: 0,
-		};
-	}
-
+export async function getDashboardStats(
+	userId: string,
+): Promise<DashboardItemStats> {
 	const [totalItems, totalCollections, favoriteItems, favoriteCollections] =
 		await Promise.all([
 			prisma.item.count({ where: { userId } }),

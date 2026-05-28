@@ -3,7 +3,6 @@
 import { z } from "zod";
 import { auth } from "@/auth";
 import { CREATABLE_TYPES } from "@/lib/constants/item-types";
-import { getDemoUserId } from "@/lib/db/get-user-id";
 import {
 	createItem as createItemQuery,
 	deleteItem as deleteItemQuery,
@@ -99,12 +98,7 @@ export async function updateItem(
 		};
 	}
 
-	const userId = await getDemoUserId();
-	if (!userId) {
-		return { success: false, error: "Item not found" };
-	}
-
-	const updated = await updateItemQuery(itemId, userId, parsed.data);
+	const updated = await updateItemQuery(itemId, session.user.id, parsed.data);
 	if (!updated) {
 		return { success: false, error: "Item not found" };
 	}
@@ -129,11 +123,6 @@ export async function createItem(
 		};
 	}
 
-	const userId = await getDemoUserId();
-	if (!userId) {
-		return { success: false, error: "Could not create item" };
-	}
-
 	const { type, ...rest } = parsed.data;
 	const isFile = type === "file" || type === "image";
 	const data = {
@@ -149,7 +138,7 @@ export async function createItem(
 		tags: rest.tags,
 	};
 
-	const created = await createItemQuery(userId, data);
+	const created = await createItemQuery(session.user.id, data);
 	if (!created) {
 		return { success: false, error: "Could not create item" };
 	}
@@ -169,12 +158,7 @@ export async function toggleFavorite(
 		return { success: false, error: "Invalid item id" };
 	}
 
-	const userId = await getDemoUserId();
-	if (!userId) {
-		return { success: false, error: "Item not found" };
-	}
-
-	const updated = await toggleItemFavoriteQuery(itemId, userId);
+	const updated = await toggleItemFavoriteQuery(itemId, session.user.id);
 	if (!updated) {
 		return { success: false, error: "Item not found" };
 	}
@@ -194,12 +178,7 @@ export async function togglePin(
 		return { success: false, error: "Invalid item id" };
 	}
 
-	const userId = await getDemoUserId();
-	if (!userId) {
-		return { success: false, error: "Item not found" };
-	}
-
-	const updated = await toggleItemPinnedQuery(itemId, userId);
+	const updated = await toggleItemPinnedQuery(itemId, session.user.id);
 	if (!updated) {
 		return { success: false, error: "Item not found" };
 	}
@@ -219,12 +198,7 @@ export async function deleteItem(
 		return { success: false, error: "Invalid item id" };
 	}
 
-	const userId = await getDemoUserId();
-	if (!userId) {
-		return { success: false, error: "Item not found" };
-	}
-
-	const deleted = await deleteItemQuery(itemId, userId);
+	const deleted = await deleteItemQuery(itemId, session.user.id);
 	if (!deleted) {
 		return { success: false, error: "Item not found" };
 	}

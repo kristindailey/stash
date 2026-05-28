@@ -6,8 +6,8 @@ import {
 } from "lucide-react";
 import { getDashboardStats } from "@/lib/db/items";
 
-export async function StatsCards() {
-	const stats = await getDashboardStats();
+export async function StatsCards({ userId }: { userId: string }) {
+	const stats = await getDashboardStats(userId);
 
 	return (
 		<div className="grid grid-cols-2 gap-4 lg:grid-cols-4">

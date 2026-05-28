@@ -1,5 +1,6 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { FolderOpen } from "lucide-react";
+import { auth } from "@/auth";
 import { FileRow } from "@/components/items/FileRow";
 import { ImageCard } from "@/components/items/ImageCard";
 import { ItemCard } from "@/components/items/ItemCard";
@@ -18,8 +19,11 @@ export default async function ItemsByTypePage({
 	const { type } = await params;
 	if (!type.endsWith("s")) notFound();
 
+	const session = await auth();
+	if (!session?.user?.id) redirect("/login");
+
 	const singular = type.slice(0, -1);
-	const items = await getItemsByType(singular);
+	const items = await getItemsByType(session.user.id, singular);
 	if (items === null) notFound();
 
 	const Icon = ITEM_TYPE_ICONS[singular] ?? FolderOpen;

@@ -10,8 +10,8 @@ import {
 	type DashboardCollection,
 } from "@/lib/db/collections";
 
-export async function CollectionsSection() {
-	const collections = await getRecentCollections(6);
+export async function CollectionsSection({ userId }: { userId: string }) {
+	const collections = await getRecentCollections(userId, 6);
 
 	return (
 		<section>

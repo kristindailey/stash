@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import { getDemoUserId } from "@/lib/db/get-user-id";
 
 export type CollectionTypeCount = {
 	name: string;
@@ -25,10 +24,9 @@ export type SidebarCollection = {
 	updatedAt: Date;
 };
 
-export async function getSidebarCollections(): Promise<SidebarCollection[]> {
-	const userId = await getDemoUserId();
-	if (!userId) return [];
-
+export async function getSidebarCollections(
+	userId: string,
+): Promise<SidebarCollection[]> {
 	const collections = await prisma.collection.findMany({
 		where: { userId },
 		orderBy: { updatedAt: "desc" },
@@ -51,11 +49,9 @@ export async function getSidebarCollections(): Promise<SidebarCollection[]> {
 }
 
 export async function getRecentCollections(
+	userId: string,
 	limit = 6,
 ): Promise<DashboardCollection[]> {
-	const userId = await getDemoUserId();
-	if (!userId) return [];
-
 	const collections = await prisma.collection.findMany({
 		where: { userId },
 		orderBy: { updatedAt: "desc" },

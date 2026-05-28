@@ -1,15 +1,16 @@
-# Current Feature
-<!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
-<!-- Brief description of the feature to implement -->
+# Current Feature: Fix user isolation (security)
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- Bullet points of what success looks like -->
+- Remove `getDemoUserId()` shim everywhere it's used.
+- Server actions, API routes, and server components must scope DB operations to the authenticated `session.user.id`, not the hardcoded demo account.
 
 ## Notes
-<!-- Additional context, constraints, or details from spec -->
+- Query helpers in `src/lib/db/items.ts` and `src/lib/db/collections.ts` now take `userId` as a parameter.
+- Callers (server actions, API routes, pages, dashboard sections) read the id from `auth()` and pass it down.
+- `src/lib/db/get-user-id.ts` is deleted.
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
