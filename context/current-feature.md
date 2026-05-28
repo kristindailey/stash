@@ -1,23 +1,14 @@
-# Current Feature: Item Collection Assignment
-
-Let users add an item to one or more collections directly from the new-item and edit-item forms via a collection selector input.
+# Current Feature
+<!-- Title above as "# Current Feature: <name>", followed by a one- or two-sentence description of the feature/fix. -->
 
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- Add a collection selector input to the New Item dialog (multi-select from available collections).
-- Add the same collection selector to the Item Drawer edit mode.
-- Persist selected collections to the `ItemCollection` join table on create and update.
-- On edit, pre-populate the selector with the item's current collection memberships.
-- `createItem` and `updateItem` actions/queries accept and sync collection IDs (validated with Zod, user-scoped).
-- No collection page/display work — assignment only.
+<!-- What this feature needs to accomplish. List concrete, checkable goals. -->
 
 ## Notes
-- Schema already supports many-to-many via `ItemCollection` (itemId + collectionId).
-- Need a user-scoped fetcher for available collections to populate the selector.
-- Update sync should reconcile membership (add new, remove unselected) similar to the tag replace pattern (`set: []` + reconnect).
-- Reuse existing shadcn primitives for the multi-select UI; match the New Item / Edit drawer patterns.
+<!-- Implementation details, constraints, decisions, and references. -->
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
@@ -56,3 +47,4 @@ In Progress
 - **File List View** — `FileRow` component with extension-based lucide icons, name/size/date/download columns, keyboard-accessible row opens `ItemDrawer`, download `<a>` stops propagation; `/items/files` swaps grid for single-column list, stacks on mobile.
 - **Quick Copy Icon** — `CopyButton` in `ItemCard` top-right (Copy→Pin→Star), copies content/URL, skipped for file/image; sonner toast on copy.
 - **Collection Create** — Top bar "New Collection" opens shadcn `Dialog` with name + description; Zod-validated `createCollection` action + user-scoped lib query, toast + close + `router.refresh()` on success.
+- **Item Collection Assignment** — `CollectionSelect` popover multi-select in New Item dialog and drawer edit, fed by `useCollectionOptions` hook + `GET /api/collections`; `collectionIds` validated in Zod shape, user-scoped via `filterOwnedCollectionIds`, synced on create and update (`deleteMany` + `create` reconcile).
