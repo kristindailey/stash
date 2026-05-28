@@ -1,21 +1,15 @@
-# Current Feature: Quick Copy Icon on Item Cards
+# Current Feature
 <!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
 <!-- Brief description of the feature to implement -->
 
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- Add a copy icon to `ItemCard` (and where applicable on other cards) that copies the item's primary content to the clipboard
-- Copy behavior is type-aware: snippet/command/prompt/note copy `content`; link copies `url`; file/image copies `fileUrl`
-- Icon button stops click propagation so clicking copy does not open the drawer
-- Show a sonner toast on successful copy and on failure
-- Visible on hover (desktop); keyboard-accessible and tappable on touch
+<!-- Bullet points of what success looks like -->
 
 ## Notes
-- Use lucide `Copy` icon; place in the card's existing action area alongside pin/favorite indicators
-- Use `navigator.clipboard.writeText` with a fallback message if unavailable
-- No copy icon when there is nothing to copy (e.g., empty content / missing url)
+<!-- Additional context, constraints, or details from spec -->
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
@@ -52,3 +46,4 @@ In Progress
 - **Image Gallery View** — `ImageCard` with `aspect-video` thumbnail, `object-cover`, 5%/300ms hover zoom, pin/favorite overlay; `/items/images` swaps `ItemCard` for `ImageCard` in the existing 3-col grid.
 - **Item Drawer Favorite + Pin** — `toggleFavorite`/`togglePin` server actions + lib queries (ownership check, preserves `updatedAt` so toggling doesn't bump Recent), drawer buttons optimistic-flip with rollback-on-error and `router.refresh()` to sync cards/counts.
 - **File List View** — `FileRow` component with extension-based lucide icons, name/size/date/download columns, keyboard-accessible row opens `ItemDrawer`, download `<a>` stops propagation; `/items/files` swaps grid for single-column list, stacks on mobile.
+- **Quick Copy Icon** — `CopyButton` in `ItemCard` top-right (Copy→Pin→Star), copies content/URL, skipped for file/image; sonner toast on copy.
