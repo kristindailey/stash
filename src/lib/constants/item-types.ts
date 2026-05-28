@@ -50,3 +50,14 @@ export const CREATABLE_TYPES = [
 ] as const;
 
 export type CreatableType = (typeof CREATABLE_TYPES)[number];
+
+export const CONTENT_TYPES = new Set<string>([
+	"snippet",
+	"prompt",
+	"command",
+	"note",
+]);
+export const LANGUAGE_TYPES = new Set<string>(["snippet", "command"]);
+export const MARKDOWN_TYPES = new Set<string>(["note", "prompt"]);
+export const FILE_TYPES = new Set<string>(["file", "image"]);
+export const URL_TYPES = new Set<string>(["link"]);

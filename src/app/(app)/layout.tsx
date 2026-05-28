@@ -6,7 +6,7 @@ import { TopBar } from "@/components/layout/TopBar";
 import { ItemDrawer } from "@/components/items/ItemDrawer";
 import { ItemDrawerProvider } from "@/components/items/item-drawer-context";
 import { getSidebarCollections } from "@/lib/db/collections";
-import { getSidebarItemTypes } from "@/lib/db/items";
+import { getSidebarItemTypes } from "@/lib/db/sidebar";
 
 export const dynamic = "force-dynamic";
 
