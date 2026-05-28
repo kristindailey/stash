@@ -1,22 +1,15 @@
-# Current Feature: Fix Item Drawer Favorite + Pin Buttons
+# Current Feature
+<!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
+<!-- Brief description of the feature to implement -->
 
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- Favorite button in `ItemDrawer` toggles `isFavorite` on the item
-- Pin button in `ItemDrawer` toggles `isPinned` on the item
-- Visual state updates immediately in the drawer after click
-- Lists/cards (`ItemCard`, `ImageCard`, pinned section, favorites count) reflect the change after action completes
-- Works for all item types (snippets, prompts, commands, notes, files, images, links)
+<!-- Bullet points of what success looks like -->
 
 ## Notes
-- Root cause: the Favorite and Pin `<Button>` elements at `src/components/items/ItemDrawer.tsx:200-210` render current state but have no `onClick` — clicks do nothing
-- Pattern to follow: existing `updateItem` / `deleteItem` server actions + lib queries
-- Add `toggleFavorite` and `togglePin` server actions in `src/actions/items.ts` returning updated `ItemDetail`
-- Add matching query helpers in `src/lib/db/items.ts` with ownership check (mirror `updateItem`/`deleteItem`)
-- Drawer should update local `item` state, then `router.refresh()` so cards and dashboard counts update
-- Add Vitest coverage for both new actions
+<!-- Additional context, constraints, or details from spec -->
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
@@ -51,3 +44,4 @@ In Progress
 - **Markdown Editor** — `MarkdownEditor` with Write/Preview tabs, react-markdown + remark-gfm, copy button, `.markdown-preview` dark styles for headings/code/lists/blockquotes/links/tables; used for note + prompt content in drawer (view + edit) and new-item dialog.
 - **File Upload + R2** — Cloudflare R2 uploads, `FileUpload` component, download proxy, image preview + download in `ItemDrawer`.
 - **Image Gallery View** — `ImageCard` with `aspect-video` thumbnail, `object-cover`, 5%/300ms hover zoom, pin/favorite overlay; `/items/images` swaps `ItemCard` for `ImageCard` in the existing 3-col grid.
+- **Item Drawer Favorite + Pin** — `toggleFavorite`/`togglePin` server actions + lib queries (ownership check, preserves `updatedAt` so toggling doesn't bump Recent), drawer buttons optimistic-flip with rollback-on-error and `router.refresh()` to sync cards/counts.
