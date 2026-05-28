@@ -1,15 +1,15 @@
-# Current Feature
-<!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
-<!-- Brief description of the feature to implement -->
+# Current Feature: Fix R2 public URL bypass (security)
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- Bullet points of what success looks like -->
+Stop rendering the public R2 CDN URL (`item.fileUrl`) in the DOM. Images served through the authenticated `/api/items/[id]/download` proxy instead.
 
 ## Notes
-<!-- Additional context, constraints, or details from spec -->
+- `ImageCard` and `ItemDrawer` image preview now use the proxy URL.
+- `FileUpload` preview uses a local blob URL from the chosen File so a fresh upload doesn't lean on the public URL either.
+- Follow-up infra task: make the R2 bucket private. Code already routes file access through the proxy, which uses S3 credentials — private bucket will Just Work.
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.

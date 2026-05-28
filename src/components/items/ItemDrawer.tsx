@@ -361,10 +361,10 @@ function DrawerBody({
 
 				{item.contentType === "FILE" && item.fileName && (
 					<Section title={item.type === "image" ? "Image" : "File"}>
-						{item.type === "image" && item.fileUrl && (
+						{item.type === "image" && (
 							/* eslint-disable-next-line @next/next/no-img-element */
 							<img
-								src={item.fileUrl}
+								src={`/api/items/${item.id}/download`}
 								alt={item.fileName}
 								className="mb-3 max-h-80 w-full rounded-md border object-contain"
 							/>

@@ -15,10 +15,10 @@ export function ImageCard({ item }: { item: DashboardItem }) {
 			className="group flex flex-col overflow-hidden rounded-lg border bg-card text-left transition-colors hover:bg-accent"
 		>
 			<div className="relative aspect-video w-full overflow-hidden bg-muted">
-				{item.fileUrl ? (
+				{item.fileName ? (
 					/* eslint-disable-next-line @next/next/no-img-element */
 					<img
-						src={item.fileUrl}
+						src={`/api/items/${item.id}/download`}
 						alt={item.title}
 						className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
 					/>
