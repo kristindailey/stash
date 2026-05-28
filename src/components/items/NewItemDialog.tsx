@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ItemContentField } from "./ItemContentField";
+import { CollectionSelect } from "./CollectionSelect";
 import { FileUpload, type UploadedFile } from "./FileUpload";
 import {
 	CONTENT_TYPES,
@@ -31,6 +32,7 @@ import {
 } from "@/lib/constants/item-types";
 import { cn, parseTags } from "@/lib/utils";
 import { useCurrentItemType } from "@/hooks/useCurrentItemType";
+import { useCollectionOptions } from "@/hooks/useCollectionOptions";
 import { createItem } from "@/actions/items";
 
 export function NewItemDialog() {
@@ -44,8 +46,12 @@ export function NewItemDialog() {
 	const [language, setLanguage] = React.useState("");
 	const [url, setUrl] = React.useState("");
 	const [tagsInput, setTagsInput] = React.useState("");
+	const [collectionIds, setCollectionIds] = React.useState<string[]>([]);
 	const [uploaded, setUploaded] = React.useState<UploadedFile | null>(null);
 	const [saving, setSaving] = React.useState(false);
+
+	const { options: collectionOptions, loading: collectionsLoading } =
+		useCollectionOptions(open);
 
 	const reset = React.useCallback(() => {
 		setType(defaultType);
@@ -55,6 +61,7 @@ export function NewItemDialog() {
 		setLanguage("");
 		setUrl("");
 		setTagsInput("");
+		setCollectionIds([]);
 		setUploaded(null);
 		setSaving(false);
 	}, [defaultType]);
@@ -99,6 +106,7 @@ export function NewItemDialog() {
 			fileName: showUpload ? uploaded?.fileName ?? null : null,
 			fileSize: showUpload ? uploaded?.fileSize ?? null : null,
 			tags,
+			collectionIds,
 		});
 
 		setSaving(false);
@@ -225,6 +233,15 @@ export function NewItemDialog() {
 							value={tagsInput}
 							onChange={(e) => setTagsInput(e.target.value)}
 							placeholder="comma, separated, tags"
+						/>
+					</Field>
+
+					<Field label="Collections">
+						<CollectionSelect
+							options={collectionOptions}
+							selected={collectionIds}
+							onChange={setCollectionIds}
+							loading={collectionsLoading}
 						/>
 					</Field>
 				</div>

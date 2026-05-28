@@ -1,14 +1,23 @@
-# Current Feature
-<!-- Title above as "# Current Feature: <name>", followed by a one- or two-sentence description of the feature/fix. -->
+# Current Feature: Item Collection Assignment
+
+Let users add an item to one or more collections directly from the new-item and edit-item forms via a collection selector input.
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- What this feature needs to accomplish. List concrete, checkable goals. -->
+- Add a collection selector input to the New Item dialog (multi-select from available collections).
+- Add the same collection selector to the Item Drawer edit mode.
+- Persist selected collections to the `ItemCollection` join table on create and update.
+- On edit, pre-populate the selector with the item's current collection memberships.
+- `createItem` and `updateItem` actions/queries accept and sync collection IDs (validated with Zod, user-scoped).
+- No collection page/display work — assignment only.
 
 ## Notes
-<!-- Implementation details, constraints, decisions, and references. -->
+- Schema already supports many-to-many via `ItemCollection` (itemId + collectionId).
+- Need a user-scoped fetcher for available collections to populate the selector.
+- Update sync should reconcile membership (add new, remove unselected) similar to the tag replace pattern (`set: []` + reconnect).
+- Reuse existing shadcn primitives for the multi-select UI; match the New Item / Edit drawer patterns.
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
