@@ -12,6 +12,8 @@ vi.mock("@/lib/db/items", () => ({
 	createItem: vi.fn(),
 	updateItem: vi.fn(),
 	deleteItem: vi.fn(),
+	toggleItemFavorite: vi.fn(),
+	toggleItemPinned: vi.fn(),
 }));
 
 import { auth } from "@/auth";
@@ -19,15 +21,25 @@ import { getDemoUserId } from "@/lib/db/get-user-id";
 import {
 	createItem as createItemQuery,
 	deleteItem as deleteItemQuery,
+	toggleItemFavorite as toggleItemFavoriteQuery,
+	toggleItemPinned as toggleItemPinnedQuery,
 	updateItem as updateItemQuery,
 } from "@/lib/db/items";
-import { createItem, deleteItem, updateItem } from "./items";
+import {
+	createItem,
+	deleteItem,
+	toggleFavorite,
+	togglePin,
+	updateItem,
+} from "./items";
 
 const authMock = vi.mocked(auth);
 const getDemoUserIdMock = vi.mocked(getDemoUserId);
 const createItemQueryMock = vi.mocked(createItemQuery);
 const updateItemQueryMock = vi.mocked(updateItemQuery);
 const deleteItemQueryMock = vi.mocked(deleteItemQuery);
+const toggleItemFavoriteQueryMock = vi.mocked(toggleItemFavoriteQuery);
+const toggleItemPinnedQueryMock = vi.mocked(toggleItemPinnedQuery);
 
 const fakeItem = {
 	id: "item_1",
@@ -334,5 +346,81 @@ describe("deleteItem action", () => {
 		const result = await deleteItem("item_1");
 		expect(deleteItemQueryMock).toHaveBeenCalledWith("item_1", "user_1");
 		expect(result).toEqual({ success: true, data: { id: "item_1" } });
+	});
+});
+
+describe("toggleFavorite action", () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+		authMock.mockResolvedValue({ user: { id: "user_1" } } as never);
+		getDemoUserIdMock.mockResolvedValue("user_1");
+		toggleItemFavoriteQueryMock.mockResolvedValue({
+			...fakeItem,
+			isFavorite: true,
+		});
+	});
+
+	it("rejects when not authenticated", async () => {
+		authMock.mockResolvedValue(null as never);
+		const result = await toggleFavorite("item_1");
+		expect(result).toEqual({ success: false, error: "Not authenticated" });
+		expect(toggleItemFavoriteQueryMock).not.toHaveBeenCalled();
+	});
+
+	it("rejects an empty item id", async () => {
+		const result = await toggleFavorite("");
+		expect(result).toEqual({ success: false, error: "Invalid item id" });
+		expect(toggleItemFavoriteQueryMock).not.toHaveBeenCalled();
+	});
+
+	it("returns not-found when item does not belong to user", async () => {
+		toggleItemFavoriteQueryMock.mockResolvedValue(null);
+		const result = await toggleFavorite("item_1");
+		expect(result).toEqual({ success: false, error: "Item not found" });
+	});
+
+	it("returns the updated item on success", async () => {
+		const result = await toggleFavorite("item_1");
+		expect(toggleItemFavoriteQueryMock).toHaveBeenCalledWith("item_1", "user_1");
+		expect(result.success).toBe(true);
+		if (result.success) expect(result.data.isFavorite).toBe(true);
+	});
+});
+
+describe("togglePin action", () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+		authMock.mockResolvedValue({ user: { id: "user_1" } } as never);
+		getDemoUserIdMock.mockResolvedValue("user_1");
+		toggleItemPinnedQueryMock.mockResolvedValue({
+			...fakeItem,
+			isPinned: true,
+		});
+	});
+
+	it("rejects when not authenticated", async () => {
+		authMock.mockResolvedValue(null as never);
+		const result = await togglePin("item_1");
+		expect(result).toEqual({ success: false, error: "Not authenticated" });
+		expect(toggleItemPinnedQueryMock).not.toHaveBeenCalled();
+	});
+
+	it("rejects an empty item id", async () => {
+		const result = await togglePin("");
+		expect(result).toEqual({ success: false, error: "Invalid item id" });
+		expect(toggleItemPinnedQueryMock).not.toHaveBeenCalled();
+	});
+
+	it("returns not-found when item does not belong to user", async () => {
+		toggleItemPinnedQueryMock.mockResolvedValue(null);
+		const result = await togglePin("item_1");
+		expect(result).toEqual({ success: false, error: "Item not found" });
+	});
+
+	it("returns the updated item on success", async () => {
+		const result = await togglePin("item_1");
+		expect(toggleItemPinnedQueryMock).toHaveBeenCalledWith("item_1", "user_1");
+		expect(result.success).toBe(true);
+		if (result.success) expect(result.data.isPinned).toBe(true);
 	});
 });
