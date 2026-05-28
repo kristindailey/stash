@@ -1,4 +1,6 @@
 import { prisma } from "@/lib/prisma";
+import { buildTypeCounts } from "@/lib/db/type-counts";
+import { capitalize } from "@/lib/utils";
 
 export type SidebarItemType = {
 	id: string;
@@ -40,28 +42,22 @@ export async function getSidebarItemTypes(
 		}),
 	]);
 
-	const countMap = new Map(counts.map((c) => [c.itemTypeId, c._count._all]));
 	const totalCount = counts.reduce((sum, c) => sum + c._count._all, 0);
 
-	const orderIndex = (name: string) => {
-		const i = SYSTEM_TYPE_ORDER.indexOf(name);
-		return i === -1 ? SYSTEM_TYPE_ORDER.length : i;
-	};
-
-	const types: SidebarItemType[] = itemTypes
-		.map((t) => ({
+	const types = buildTypeCounts(
+		itemTypes,
+		counts,
+		SYSTEM_TYPE_ORDER,
+		(t, count): SidebarItemType => ({
 			id: t.id,
 			name: t.name,
-			label: `${t.name.charAt(0).toUpperCase()}${t.name.slice(1)}s`,
+			label: `${capitalize(t.name)}s`,
 			icon: t.icon,
 			color: t.color,
-			count: countMap.get(t.id) ?? 0,
+			count,
 			route: `/items/${t.name}s`,
-		}))
-		.sort(
-			(a, b) =>
-				orderIndex(a.name) - orderIndex(b.name) || a.name.localeCompare(b.name),
-		);
+		}),
+	);
 
 	return { totalCount, types };
 }

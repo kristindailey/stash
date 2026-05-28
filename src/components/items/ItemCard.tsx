@@ -1,6 +1,6 @@
 "use client";
 
-import { FolderOpen, Pin, Star } from "lucide-react";
+import { FolderOpen } from "lucide-react";
 import {
 	ITEM_TYPE_COLORS,
 	ITEM_TYPE_ICONS,
@@ -8,6 +8,7 @@ import {
 import type { DashboardItem } from "@/lib/db/items";
 import { formatRelativeTime } from "@/lib/format-time";
 import { CopyButton, getCopyText } from "./CopyButton";
+import { ItemStatusBadges } from "./ItemStatusBadges";
 import { useItemDrawer } from "./item-drawer-context";
 
 function copyLabelFor(type: string): string {
@@ -48,14 +49,10 @@ export function ItemCard({ item }: { item: DashboardItem }) {
 					{copyText && (
 						<CopyButton text={copyText} label={copyLabelFor(item.type)} />
 					)}
-					{item.isPinned && <Pin className="size-3.5" fill="currentColor" />}
-					{item.isFavorite && (
-						<Star
-							className="size-3.5"
-							style={{ color: "#f59e0b" }}
-							fill="currentColor"
-						/>
-					)}
+					<ItemStatusBadges
+						isPinned={item.isPinned}
+						isFavorite={item.isFavorite}
+					/>
 				</div>
 			</div>
 

@@ -10,6 +10,7 @@ import {
 	ITEM_TYPE_LABELS,
 } from "@/lib/constants/item-types";
 import { getItemsByType } from "@/lib/db/dashboard";
+import { capitalize } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -64,8 +65,4 @@ export default async function ItemsByTypePage({
 			)}
 		</div>
 	);
-}
-
-function capitalize(s: string) {
-	return s.charAt(0).toUpperCase() + s.slice(1);
 }

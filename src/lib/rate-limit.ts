@@ -1,5 +1,6 @@
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
+import { formatRetryAfter } from "@/lib/format-retry-after";
 
 const url = process.env.UPSTASH_REDIS_REST_URL;
 const token = process.env.UPSTASH_REDIS_REST_TOKEN;
@@ -85,15 +86,6 @@ export async function checkRateLimit(name: RateLimitName, key: string): Promise<
 		console.error(`[rate-limit] ${name} check failed, failing open`, err);
 		return { success: true, limit: 0, remaining: 0, reset: 0, retryAfterSeconds: 0, windowSeconds };
 	}
-}
-
-export function formatRetryAfter(seconds: number): string {
-	if (seconds <= 0) return "a moment";
-	if (seconds < 60) return `${seconds} second${seconds === 1 ? "" : "s"}`;
-	const minutes = Math.ceil(seconds / 60);
-	if (minutes < 60) return `${minutes} minute${minutes === 1 ? "" : "s"}`;
-	const hours = Math.ceil(minutes / 60);
-	return `${hours} hour${hours === 1 ? "" : "s"}`;
 }
 
 export function rateLimitResponse(result: RateLimitResult): Response {

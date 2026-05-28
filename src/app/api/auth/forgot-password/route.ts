@@ -4,8 +4,7 @@ import { sendPasswordResetEmail } from "@/lib/email";
 import { buildResetPasswordUrl, createPasswordResetToken } from "@/lib/verification-token";
 import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/rate-limit";
 import { getBaseUrl } from "@/lib/get-base-url";
-
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+import { EMAIL_REGEX } from "@/lib/constants/auth";
 
 export async function POST(request: Request) {
 	const rl = await checkRateLimit("forgotPassword", `ip:${getClientIp(request)}`);

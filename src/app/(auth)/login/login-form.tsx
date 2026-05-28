@@ -8,23 +8,14 @@ import { signInWithGitHub } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { GithubIcon } from "@/components/shared/GithubIcon";
-
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+import { EMAIL_REGEX } from "@/lib/constants/auth";
+import { formatRetryAfter } from "@/lib/format-retry-after";
 
 const ERROR_MESSAGES: Record<string, string> = {
 	CredentialsSignin: "Invalid email or password",
 	OAuthAccountNotLinked:
 		"This email is already linked to another sign-in method.",
 };
-
-function formatRetryAfter(seconds: number): string {
-	if (seconds <= 0) return "a moment";
-	if (seconds < 60) return `${seconds} second${seconds === 1 ? "" : "s"}`;
-	const minutes = Math.ceil(seconds / 60);
-	if (minutes < 60) return `${minutes} minute${minutes === 1 ? "" : "s"}`;
-	const hours = Math.ceil(minutes / 60);
-	return `${hours} hour${hours === 1 ? "" : "s"}`;
-}
 
 function mapSignInError(error: string | undefined, code: string | undefined): string {
 	if (code?.startsWith("RateLimited")) {
