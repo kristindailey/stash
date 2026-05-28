@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import {
-	Copy,
 	Download,
 	FolderOpen,
 	Pencil,
@@ -56,11 +55,6 @@ export function DrawerBody({
 	const color = ITEM_TYPE_COLORS[item.type] ?? "#6b7280";
 	const typeLabel = ITEM_TYPE_LABELS[item.type] ?? item.type;
 
-	const copyContent = React.useCallback(() => {
-		const text = item.content ?? item.url ?? "";
-		if (text) navigator.clipboard.writeText(text);
-	}, [item]);
-
 	return (
 		<div className="flex h-full flex-col overflow-hidden">
 			<SheetHeader className="gap-2 border-b p-4">
@@ -76,12 +70,6 @@ export function DrawerBody({
 			</SheetHeader>
 
 			<div className="flex items-center gap-2 border-b p-3">
-				{item.contentType !== "FILE" && (
-					<Button variant="outline" size="sm" onClick={copyContent}>
-						<Copy />
-						Copy
-					</Button>
-				)}
 				<ToggleButton
 					icon={Star}
 					active={item.isFavorite}
