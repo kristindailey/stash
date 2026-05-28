@@ -1,86 +1,14 @@
 "use client";
 
 import { createElement } from "react";
-import {
-	Download,
-	File,
-	FileArchive,
-	FileAudio,
-	FileCode,
-	FileImage,
-	FileJson,
-	FileSpreadsheet,
-	FileText,
-	FileVideo,
-	Pin,
-	Star,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { DashboardItem } from "@/lib/db/items";
 import { formatBytes } from "@/lib/constants/file-upload";
+import { iconForFileName } from "@/lib/constants/file-icons";
 import { formatRelativeTime } from "@/lib/format-time";
+import { ItemStatusBadges } from "./ItemStatusBadges";
 import { useItemDrawer } from "./item-drawer-context";
-
-const EXT_ICONS: Record<string, LucideIcon> = {
-	pdf: FileText,
-	doc: FileText,
-	docx: FileText,
-	txt: FileText,
-	md: FileText,
-	rtf: FileText,
-	xls: FileSpreadsheet,
-	xlsx: FileSpreadsheet,
-	csv: FileSpreadsheet,
-	tsv: FileSpreadsheet,
-	zip: FileArchive,
-	rar: FileArchive,
-	tar: FileArchive,
-	gz: FileArchive,
-	"7z": FileArchive,
-	json: FileJson,
-	jpg: FileImage,
-	jpeg: FileImage,
-	png: FileImage,
-	gif: FileImage,
-	webp: FileImage,
-	svg: FileImage,
-	mp4: FileVideo,
-	mov: FileVideo,
-	avi: FileVideo,
-	mkv: FileVideo,
-	webm: FileVideo,
-	mp3: FileAudio,
-	wav: FileAudio,
-	ogg: FileAudio,
-	flac: FileAudio,
-	js: FileCode,
-	jsx: FileCode,
-	ts: FileCode,
-	tsx: FileCode,
-	py: FileCode,
-	rb: FileCode,
-	go: FileCode,
-	rs: FileCode,
-	java: FileCode,
-	c: FileCode,
-	cpp: FileCode,
-	h: FileCode,
-	css: FileCode,
-	scss: FileCode,
-	html: FileCode,
-	sh: FileCode,
-	yml: FileCode,
-	yaml: FileCode,
-	toml: FileCode,
-	xml: FileCode,
-};
-
-function iconForFileName(fileName: string | null): LucideIcon {
-	if (!fileName) return File;
-	const ext = fileName.split(".").pop()?.toLowerCase() ?? "";
-	return EXT_ICONS[ext] ?? File;
-}
 
 export function FileRow({ item }: { item: DashboardItem }) {
 	const { openItem } = useItemDrawer();
@@ -115,14 +43,10 @@ export function FileRow({ item }: { item: DashboardItem }) {
 				</div>
 				{(item.isPinned || item.isFavorite) && (
 					<div className="flex shrink-0 items-center gap-1.5 text-muted-foreground">
-						{item.isPinned && <Pin className="size-3.5" fill="currentColor" />}
-						{item.isFavorite && (
-							<Star
-								className="size-3.5"
-								style={{ color: "#f59e0b" }}
-								fill="currentColor"
-							/>
-						)}
+						<ItemStatusBadges
+							isPinned={item.isPinned}
+							isFavorite={item.isFavorite}
+						/>
 					</div>
 				)}
 			</div>

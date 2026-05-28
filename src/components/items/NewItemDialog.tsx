@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Plus } from "lucide-react";
 import {
@@ -30,20 +30,12 @@ import {
 	type CreatableType,
 } from "@/lib/constants/item-types";
 import { cn, parseTags } from "@/lib/utils";
+import { useCurrentItemType } from "@/hooks/useCurrentItemType";
 import { createItem } from "@/actions/items";
-
-const CREATABLE_SET = new Set<string>(CREATABLE_TYPES);
-
-function typeFromPath(pathname: string | null): CreatableType {
-	const match = pathname?.match(/^\/items\/([^/]+)/);
-	const slug = match?.[1]?.replace(/s$/, "");
-	return slug && CREATABLE_SET.has(slug) ? (slug as CreatableType) : "snippet";
-}
 
 export function NewItemDialog() {
 	const router = useRouter();
-	const pathname = usePathname();
-	const defaultType = typeFromPath(pathname);
+	const defaultType = useCurrentItemType();
 	const [open, setOpen] = React.useState(false);
 	const [type, setType] = React.useState<CreatableType>(defaultType);
 	const [title, setTitle] = React.useState("");

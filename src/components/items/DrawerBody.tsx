@@ -1,7 +1,16 @@
 "use client";
 
 import * as React from "react";
-import { Copy, Download, FolderOpen, Pencil, Pin, Star, Trash2 } from "lucide-react";
+import {
+	Copy,
+	Download,
+	FolderOpen,
+	Pencil,
+	Pin,
+	Star,
+	Trash2,
+	type LucideIcon,
+} from "lucide-react";
 import {
 	SheetDescription,
 	SheetHeader,
@@ -73,27 +82,23 @@ export function DrawerBody({
 						Copy
 					</Button>
 				)}
-				<Button
-					variant="outline"
-					size="sm"
+				<ToggleButton
+					icon={Star}
+					active={item.isFavorite}
+					activeLabel="Favorited"
+					inactiveLabel="Favorite"
+					activeColor="#f59e0b"
 					onClick={onToggleFavorite}
 					disabled={togglingFavorite}
-				>
-					<Star
-						style={item.isFavorite ? { color: "#f59e0b" } : undefined}
-						fill={item.isFavorite ? "currentColor" : "none"}
-					/>
-					{item.isFavorite ? "Favorited" : "Favorite"}
-				</Button>
-				<Button
-					variant="outline"
-					size="sm"
+				/>
+				<ToggleButton
+					icon={Pin}
+					active={item.isPinned}
+					activeLabel="Pinned"
+					inactiveLabel="Pin"
 					onClick={onTogglePin}
 					disabled={togglingPin}
-				>
-					<Pin fill={item.isPinned ? "currentColor" : "none"} />
-					{item.isPinned ? "Pinned" : "Pin"}
-				</Button>
+				/>
 				<Button variant="outline" size="sm" onClick={onEdit}>
 					<Pencil />
 				</Button>
@@ -217,5 +222,33 @@ export function DrawerBody({
 				)}
 			</div>
 		</div>
+	);
+}
+
+function ToggleButton({
+	icon: Icon,
+	active,
+	activeLabel,
+	inactiveLabel,
+	activeColor,
+	onClick,
+	disabled,
+}: {
+	icon: LucideIcon;
+	active: boolean;
+	activeLabel: string;
+	inactiveLabel: string;
+	activeColor?: string;
+	onClick: () => void;
+	disabled: boolean;
+}) {
+	return (
+		<Button variant="outline" size="sm" onClick={onClick} disabled={disabled}>
+			<Icon
+				style={active && activeColor ? { color: activeColor } : undefined}
+				fill={active ? "currentColor" : "none"}
+			/>
+			{active ? activeLabel : inactiveLabel}
+		</Button>
 	);
 }

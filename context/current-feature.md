@@ -7,35 +7,6 @@ In Progress
 
 ## Goals
 
-### High Priority
-- **Decompose `ItemDrawer.tsx` (622 lines)** into focused units:
-  - Extract fetch/sync logic → `src/hooks/useItemDetail.ts`
-  - Split `DrawerBody` → `src/components/items/DrawerBody.tsx`
-  - Split `DrawerEdit` → `src/components/items/DrawerEdit.tsx`
-  - Split `DrawerSkeleton` → `src/components/items/DrawerSkeleton.tsx`
-  - Extract inline delete `AlertDialog` → `src/components/items/DeleteItemDialog.tsx`
-  - Promote `Section` primitive → `src/components/items/DrawerSection.tsx`
-- **Extract shared content-type rendering** used by both `NewItemDialog` and `DrawerEdit`:
-  - `src/components/items/ItemContentField.tsx` (CodeEditor / MarkdownEditor / Textarea switch)
-  - `parseTags()` helper → `src/lib/utils.ts`
-- **Split `src/lib/db/items.ts` (408 lines)**:
-  - Keep CRUD + mappers in `items.ts`
-  - Move dashboard reads (`getPinnedItems`, `getRecentItems`, `getAllItems`, `getItemsByType`, `getDashboardStats`) → `src/lib/db/dashboard.ts`
-  - Move `getSidebarItemTypes` → `src/lib/db/sidebar.ts`
-
-### Medium Priority
-- Dedupe `formatRetryAfter` — import from `@/lib/rate-limit` in `login-form.tsx`
-- Centralize `EMAIL_REGEX` (5 copies) → `src/lib/constants/auth.ts`
-- Extract `typeFromPath` → `src/hooks/useCurrentItemType.ts`
-- Extract shared `buildTypeCounts()` used by `getProfile` + `getSidebarItemTypes`
-- Extract `buildEmailHtml()` + `buildEmailGreeting()` in `src/lib/email.ts`
-- Extract `ToggleButton` local helper in `DrawerBody` (favorite/pin)
-
-### Low Priority
-- Move `capitalize` → `src/lib/utils.ts`
-- Extract `ItemStatusBadges` (pin/star) shared by `ItemCard`, `ImageCard`, `FileRow`
-- Move `EXT_ICONS` + `iconForFileName` → `src/lib/constants/file-icons.ts`
-
 ## Notes
 - Pure refactor — no behavioral or visual changes. Public component APIs/props stay stable.
 - Follow project structure: components in `src/components/[feature]/`, utils in `src/lib/`, hooks in `src/hooks/`, constants in `src/lib/constants/`.

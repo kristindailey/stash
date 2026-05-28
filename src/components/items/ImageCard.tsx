@@ -1,8 +1,9 @@
 "use client";
 
-import { Image as ImageIcon, Pin, Star } from "lucide-react";
+import { Image as ImageIcon } from "lucide-react";
 import type { DashboardItem } from "@/lib/db/items";
 import { formatRelativeTime } from "@/lib/format-time";
+import { ItemStatusBadges } from "./ItemStatusBadges";
 import { useItemDrawer } from "./item-drawer-context";
 
 export function ImageCard({ item }: { item: DashboardItem }) {
@@ -29,14 +30,10 @@ export function ImageCard({ item }: { item: DashboardItem }) {
 				)}
 				{(item.isPinned || item.isFavorite) && (
 					<div className="absolute right-2 top-2 flex items-center gap-1.5 rounded-md bg-background/80 px-1.5 py-1 text-muted-foreground backdrop-blur-sm">
-						{item.isPinned && <Pin className="size-3.5" fill="currentColor" />}
-						{item.isFavorite && (
-							<Star
-								className="size-3.5"
-								style={{ color: "#f59e0b" }}
-								fill="currentColor"
-							/>
-						)}
+						<ItemStatusBadges
+							isPinned={item.isPinned}
+							isFavorite={item.isFavorite}
+						/>
 					</div>
 				)}
 			</div>

@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { buildTypeCounts } from "@/lib/db/type-counts";
 
 export type ProfileUser = {
 	id: string;
@@ -69,19 +70,12 @@ export async function getProfile(): Promise<ProfileData | null> {
 
 	if (!user) return null;
 
-	const countMap = new Map(counts.map((c) => [c.itemTypeId, c._count._all]));
-	const orderIndex = (name: string) => {
-		const i = TYPE_ORDER.indexOf(name);
-		return i === -1 ? TYPE_ORDER.length : i;
-	};
-
-	const byType: ProfileTypeBreakdown[] = itemTypes
-		.map((t) => ({ name: t.name, count: countMap.get(t.id) ?? 0 }))
-		.sort(
-			(a, b) =>
-				orderIndex(a.name) - orderIndex(b.name) ||
-				a.name.localeCompare(b.name),
-		);
+	const byType = buildTypeCounts(
+		itemTypes,
+		counts,
+		TYPE_ORDER,
+		(t, count): ProfileTypeBreakdown => ({ name: t.name, count }),
+	);
 
 	return {
 		user: {
