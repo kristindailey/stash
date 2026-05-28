@@ -1,16 +1,15 @@
-# Current Feature: Fix user isolation (security)
+# Current Feature
+<!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
+<!-- Brief description of the feature to implement -->
 
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- Remove `getDemoUserId()` shim everywhere it's used.
-- Server actions, API routes, and server components must scope DB operations to the authenticated `session.user.id`, not the hardcoded demo account.
+<!-- Bullet points of what success looks like -->
 
 ## Notes
-- Query helpers in `src/lib/db/items.ts` and `src/lib/db/collections.ts` now take `userId` as a parameter.
-- Callers (server actions, API routes, pages, dashboard sections) read the id from `auth()` and pass it down.
-- `src/lib/db/get-user-id.ts` is deleted.
+<!-- Additional context, constraints, or details from spec -->
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
@@ -48,3 +47,4 @@ In Progress
 - **Item Drawer Favorite + Pin** — `toggleFavorite`/`togglePin` server actions + lib queries (ownership check, preserves `updatedAt` so toggling doesn't bump Recent), drawer buttons optimistic-flip with rollback-on-error and `router.refresh()` to sync cards/counts.
 - **File List View** — `FileRow` component with extension-based lucide icons, name/size/date/download columns, keyboard-accessible row opens `ItemDrawer`, download `<a>` stops propagation; `/items/files` swaps grid for single-column list, stacks on mobile.
 - **Quick Copy Icon** — `CopyButton` in `ItemCard` top-right (Copy→Pin→Star), copies content/URL, skipped for file/image; sonner toast on copy.
+- **Fix User Isolation** — Removed `getDemoUserId()` shim; query helpers in `items.ts`/`collections.ts` now take `userId` param, server actions/API routes/pages thread `session.user.id` from `auth()` instead of the hardcoded demo account.
