@@ -131,4 +131,12 @@ describe("formatBytes", () => {
 	it("formats megabyte sizes with one decimal", () => {
 		expect(formatBytes(3 * 1024 * 1024)).toBe("3.0 MB");
 	});
+
+	it("formats gigabyte sizes with two decimals", () => {
+		expect(formatBytes(2 * 1024 * 1024 * 1024)).toBe("2.00 GB");
+	});
+
+	it("renders an em-dash for null", () => {
+		expect(formatBytes(null)).toBe("—");
+	});
 });

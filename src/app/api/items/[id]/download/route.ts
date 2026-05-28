@@ -48,7 +48,7 @@ export async function GET(
 	}
 	headers.set(
 		"Content-Disposition",
-		`attachment; filename="${encodeURIComponent(item.fileName)}"`,
+		`attachment; filename*=UTF-8''${encodeURIComponent(item.fileName)}`,
 	);
 	headers.set("Cache-Control", "private, max-age=0, no-store");
 

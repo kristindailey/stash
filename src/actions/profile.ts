@@ -24,6 +24,9 @@ export async function changePassword(input: {
 	if (typeof newPassword !== "string" || newPassword.length < 8) {
 		return { success: false, error: "Password must be at least 8 characters" };
 	}
+	if (newPassword.length > 128) {
+		return { success: false, error: "Password must be 128 characters or fewer" };
+	}
 	if (newPassword !== confirmPassword) {
 		return { success: false, error: "Passwords do not match" };
 	}
