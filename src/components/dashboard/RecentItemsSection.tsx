@@ -1,4 +1,4 @@
-import { getRecentItems } from "@/lib/db/items";
+import { getRecentItems } from "@/lib/db/dashboard";
 import { RecentItemRow } from "./RecentItemRow";
 
 export async function RecentItemsSection({ userId }: { userId: string }) {

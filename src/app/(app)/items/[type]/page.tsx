@@ -9,7 +9,7 @@ import {
 	ITEM_TYPE_ICONS,
 	ITEM_TYPE_LABELS,
 } from "@/lib/constants/item-types";
-import { getItemsByType } from "@/lib/db/items";
+import { getItemsByType } from "@/lib/db/dashboard";
 
 export const dynamic = "force-dynamic";
 

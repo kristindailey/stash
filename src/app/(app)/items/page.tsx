@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { FolderOpen } from "lucide-react";
 import { auth } from "@/auth";
 import { ItemCard } from "@/components/items/ItemCard";
-import { getAllItems } from "@/lib/db/items";
+import { getAllItems } from "@/lib/db/dashboard";
 
 export const dynamic = "force-dynamic";
 

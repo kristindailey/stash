@@ -17,23 +17,21 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { CodeEditor } from "./CodeEditor";
-import { MarkdownEditor } from "./MarkdownEditor";
+import { ItemContentField } from "./ItemContentField";
 import { FileUpload, type UploadedFile } from "./FileUpload";
 import {
+	CONTENT_TYPES,
 	CREATABLE_TYPES,
+	FILE_TYPES,
 	ITEM_TYPE_COLORS,
 	ITEM_TYPE_ICONS,
 	ITEM_TYPE_LABELS,
+	LANGUAGE_TYPES,
 	type CreatableType,
 } from "@/lib/constants/item-types";
-import { cn } from "@/lib/utils";
+import { cn, parseTags } from "@/lib/utils";
 import { createItem } from "@/actions/items";
 
-const CONTENT_TYPES = new Set<CreatableType>(["snippet", "prompt", "command", "note"]);
-const LANGUAGE_TYPES = new Set<CreatableType>(["snippet", "command"]);
-const MARKDOWN_TYPES = new Set<CreatableType>(["note", "prompt"]);
-const FILE_TYPES = new Set<CreatableType>(["file", "image"]);
 const CREATABLE_SET = new Set<string>(CREATABLE_TYPES);
 
 function typeFromPath(pathname: string | null): CreatableType {
@@ -96,10 +94,7 @@ export function NewItemDialog() {
 
 	const handleSave = async () => {
 		setSaving(true);
-		const tags = tagsInput
-			.split(",")
-			.map((tag) => tag.trim())
-			.filter((tag) => tag.length > 0);
+		const tags = parseTags(tagsInput);
 
 		const result = await createItem({
 			type,
@@ -191,27 +186,13 @@ export function NewItemDialog() {
 
 					{showContent && (
 						<Field label="Content">
-							{showLanguage ? (
-								<CodeEditor
-									value={content}
-									onChange={setContent}
-									language={language || undefined}
-								/>
-							) : MARKDOWN_TYPES.has(type) ? (
-								<MarkdownEditor
-									value={content}
-									onChange={setContent}
-									placeholder="Write markdown…"
-								/>
-							) : (
-								<Textarea
-									value={content}
-									onChange={(e) => setContent(e.target.value)}
-									placeholder="Content"
-									rows={6}
-									className="font-mono text-xs"
-								/>
-							)}
+							<ItemContentField
+								type={type}
+								value={content}
+								onChange={setContent}
+								language={language}
+								rows={6}
+							/>
 						</Field>
 					)}
 

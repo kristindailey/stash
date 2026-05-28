@@ -4,7 +4,7 @@ import {
 	Star,
 	type LucideIcon,
 } from "lucide-react";
-import { getDashboardStats } from "@/lib/db/items";
+import { getDashboardStats } from "@/lib/db/dashboard";
 
 export async function StatsCards({ userId }: { userId: string }) {
 	const stats = await getDashboardStats(userId);

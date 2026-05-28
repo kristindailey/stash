@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { ITEM_TYPE_ICONS } from "@/lib/constants/item-types";
 import type { SidebarCollection } from "@/lib/db/collections";
-import type { SidebarItemType } from "@/lib/db/items";
+import type { SidebarItemType } from "@/lib/db/sidebar";
 import { SidebarUser } from "./SidebarUser";
 import { useSidebar } from "./sidebar-context";
 
