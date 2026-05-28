@@ -37,6 +37,42 @@ export async function getItemsByType(
 	return items.map(toDashboardItem);
 }
 
+export type CollectionWithItems = {
+	id: string;
+	name: string;
+	description: string | null;
+	isFavorite: boolean;
+	items: DashboardItem[];
+};
+
+export async function getCollectionWithItems(
+	userId: string,
+	collectionId: string,
+): Promise<CollectionWithItems | null> {
+	const collection = await prisma.collection.findFirst({
+		where: { id: collectionId, userId },
+		select: {
+			id: true,
+			name: true,
+			description: true,
+			isFavorite: true,
+			items: {
+				orderBy: { item: { updatedAt: "desc" } },
+				select: { item: { include: itemInclude } },
+			},
+		},
+	});
+	if (!collection) return null;
+
+	return {
+		id: collection.id,
+		name: collection.name,
+		description: collection.description,
+		isFavorite: collection.isFavorite,
+		items: collection.items.map((link) => toDashboardItem(link.item)),
+	};
+}
+
 export async function getAllItems(userId: string): Promise<DashboardItem[]> {
 	const items = await prisma.item.findMany({
 		where: { userId },

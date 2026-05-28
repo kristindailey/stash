@@ -104,24 +104,18 @@ export async function createCollection(
 	return created;
 }
 
-export async function getRecentCollections(
-	userId: string,
-	limit = 6,
-): Promise<DashboardCollection[]> {
-	const collections = await prisma.collection.findMany({
-		where: { userId },
-		orderBy: { updatedAt: "desc" },
-		take: limit,
-		select: {
-			id: true,
-			name: true,
-			description: true,
-			isFavorite: true,
-			updatedAt: true,
-			_count: { select: { items: true } },
-		},
-	});
+type CollectionRow = {
+	id: string;
+	name: string;
+	description: string | null;
+	isFavorite: boolean;
+	updatedAt: Date;
+	_count: { items: number };
+};
 
+async function withTypeCounts(
+	collections: CollectionRow[],
+): Promise<DashboardCollection[]> {
 	if (collections.length === 0) return [];
 
 	const collectionIds = collections.map((c) => c.id);
@@ -161,4 +155,39 @@ export async function getRecentCollections(
 			updatedAt: collection.updatedAt,
 		};
 	});
+}
+
+const dashboardCollectionSelect = {
+	id: true,
+	name: true,
+	description: true,
+	isFavorite: true,
+	updatedAt: true,
+	_count: { select: { items: true } },
+} as const;
+
+export async function getRecentCollections(
+	userId: string,
+	limit = 6,
+): Promise<DashboardCollection[]> {
+	const collections = await prisma.collection.findMany({
+		where: { userId },
+		orderBy: { updatedAt: "desc" },
+		take: limit,
+		select: dashboardCollectionSelect,
+	});
+
+	return withTypeCounts(collections);
+}
+
+export async function getAllCollections(
+	userId: string,
+): Promise<DashboardCollection[]> {
+	const collections = await prisma.collection.findMany({
+		where: { userId },
+		orderBy: { updatedAt: "desc" },
+		select: dashboardCollectionSelect,
+	});
+
+	return withTypeCounts(collections);
 }

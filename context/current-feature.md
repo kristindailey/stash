@@ -1,14 +1,20 @@
-# Current Feature
-<!-- Title above as "# Current Feature: <name>", followed by a one- or two-sentence description of the feature/fix. -->
+# Current Feature: Collections Pages
+A `/collections` index listing all collections and a `/collections/[id]` detail page showing the items in a given collection, wired up from the sidebar and collection cards.
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- What this feature needs to accomplish. List concrete, checkable goals. -->
+- Create the `/collections` page that shows all of the user's collections
+- Create the `/collections/[id]` page that shows the items belonging to that collection
+- Reuse the existing cards (collection cards on the index, `ItemCard`/`ImageCard`/`FileRow` on the detail page)
+- Link the sidebar "View all collections" entry to `/collections`
+- Link each collection card to its specific `/collections/[id]` page
 
 ## Notes
-<!-- Implementation details, constraints, decisions, and references. -->
+- Reuse existing collection card UI from the dashboard's recent collections grid where possible.
+- Detail page should render items with the same card components used on `/items/[type]` (including image/file variants where applicable).
+- Pages live under the `(app)` route group and must be covered by the proxy that protects authenticated routes.
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
