@@ -1,26 +1,14 @@
-# Current Feature: Collection Create
-Wire up the top-bar "New Collection" button to open a modal for creating a collection with a name and description, mirroring the item-create flow.
+# Current Feature
+<!-- Title above as "# Current Feature: <name>", followed by a one- or two-sentence description of the feature/fix. -->
 
 ## Status
-Complete
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- Top-bar "New Collection" button opens a modal (the button stub already exists in `TopBar.tsx`).
-- Modal collects: name (required) and description (optional).
-- Zod-validated `createCollection` server action with auth check, returning the `{ success, data | error }` pattern.
-- `createCollection` lib query in `src/lib/db/collections.ts` scoped to the authenticated user.
-- Toast on success and on failure (sonner).
-- `router.refresh()` on save so the new collection appears everywhere it's listed (sidebar, dashboard collections grid).
+<!-- What this feature needs to accomplish. List concrete, checkable goals. -->
 
 ## Notes
-- Follow the item-create pattern closely:
-  - `NewItemDialog.tsx` → new `NewCollectionDialog.tsx` (shadcn `Dialog`, controlled open state, reset on close, disable while saving).
-  - `createItem` action in `src/actions/items.ts` → new `createCollection` in `src/actions/collections.ts` (auth via `auth()`, Zod `safeParse`, first-issue error message).
-  - `createItem` query in `src/lib/db/items.ts` → new `createCollection` query in `src/lib/db/collections.ts`.
-- Replace the stubbed `New Collection` `<Button>` in `TopBar.tsx:50-53` with `<NewCollectionDialog />`; keep `variant="outline"` and the `FolderPlus` icon.
-- Collection fields available per schema: `name`, `description` (optional), plus `isFavorite` and `defaultTypeId` — only `name` + `description` are in scope here.
-- Server action tests live in `src/actions/**`; add a `collections.test.ts` mirroring `items.test.ts` conventions (`vi.mock` Prisma/auth).
-- Match coding standards: tabs, semicolons, no comments, Zod validation, server action over API route.
+<!-- Implementation details, constraints, decisions, and references. -->
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
@@ -58,3 +46,4 @@ Complete
 - **Item Drawer Favorite + Pin** — `toggleFavorite`/`togglePin` server actions + lib queries (ownership check, preserves `updatedAt` so toggling doesn't bump Recent), drawer buttons optimistic-flip with rollback-on-error and `router.refresh()` to sync cards/counts.
 - **File List View** — `FileRow` component with extension-based lucide icons, name/size/date/download columns, keyboard-accessible row opens `ItemDrawer`, download `<a>` stops propagation; `/items/files` swaps grid for single-column list, stacks on mobile.
 - **Quick Copy Icon** — `CopyButton` in `ItemCard` top-right (Copy→Pin→Star), copies content/URL, skipped for file/image; sonner toast on copy.
+- **Collection Create** — Top bar "New Collection" opens shadcn `Dialog` with name + description; Zod-validated `createCollection` action + user-scoped lib query, toast + close + `router.refresh()` on success.
