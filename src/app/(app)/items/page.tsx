@@ -1,11 +1,16 @@
+import { redirect } from "next/navigation";
 import { FolderOpen } from "lucide-react";
+import { auth } from "@/auth";
 import { ItemCard } from "@/components/items/ItemCard";
 import { getAllItems } from "@/lib/db/items";
 
 export const dynamic = "force-dynamic";
 
 export default async function AllItemsPage() {
-	const items = await getAllItems();
+	const session = await auth();
+	if (!session?.user?.id) redirect("/login");
+
+	const items = await getAllItems(session.user.id);
 
 	return (
 		<div className="flex flex-col gap-6">

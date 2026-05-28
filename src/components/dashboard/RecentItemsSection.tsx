@@ -1,8 +1,8 @@
 import { getRecentItems } from "@/lib/db/items";
 import { RecentItemRow } from "./RecentItemRow";
 
-export async function RecentItemsSection() {
-	const recent = await getRecentItems(10);
+export async function RecentItemsSection({ userId }: { userId: string }) {
+	const recent = await getRecentItems(userId, 10);
 
 	return (
 		<section>

@@ -4,10 +4,6 @@ vi.mock("@/auth", () => ({
 	auth: vi.fn(),
 }));
 
-vi.mock("@/lib/db/get-user-id", () => ({
-	getDemoUserId: vi.fn(),
-}));
-
 vi.mock("@/lib/db/items", () => ({
 	createItem: vi.fn(),
 	updateItem: vi.fn(),
@@ -17,7 +13,6 @@ vi.mock("@/lib/db/items", () => ({
 }));
 
 import { auth } from "@/auth";
-import { getDemoUserId } from "@/lib/db/get-user-id";
 import {
 	createItem as createItemQuery,
 	deleteItem as deleteItemQuery,
@@ -34,7 +29,6 @@ import {
 } from "./items";
 
 const authMock = vi.mocked(auth);
-const getDemoUserIdMock = vi.mocked(getDemoUserId);
 const createItemQueryMock = vi.mocked(createItemQuery);
 const updateItemQueryMock = vi.mocked(updateItemQuery);
 const deleteItemQueryMock = vi.mocked(deleteItemQuery);
@@ -65,7 +59,6 @@ describe("createItem action", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		authMock.mockResolvedValue({ user: { id: "user_1" } } as never);
-		getDemoUserIdMock.mockResolvedValue("user_1");
 		createItemQueryMock.mockResolvedValue(fakeItem);
 	});
 
@@ -249,7 +242,6 @@ describe("updateItem action", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		authMock.mockResolvedValue({ user: { id: "user_1" } } as never);
-		getDemoUserIdMock.mockResolvedValue("user_1");
 		updateItemQueryMock.mockResolvedValue(fakeItem);
 	});
 
@@ -319,7 +311,6 @@ describe("deleteItem action", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		authMock.mockResolvedValue({ user: { id: "user_1" } } as never);
-		getDemoUserIdMock.mockResolvedValue("user_1");
 		deleteItemQueryMock.mockResolvedValue(true);
 	});
 
@@ -353,7 +344,6 @@ describe("toggleFavorite action", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		authMock.mockResolvedValue({ user: { id: "user_1" } } as never);
-		getDemoUserIdMock.mockResolvedValue("user_1");
 		toggleItemFavoriteQueryMock.mockResolvedValue({
 			...fakeItem,
 			isFavorite: true,
@@ -391,7 +381,6 @@ describe("togglePin action", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		authMock.mockResolvedValue({ user: { id: "user_1" } } as never);
-		getDemoUserIdMock.mockResolvedValue("user_1");
 		toggleItemPinnedQueryMock.mockResolvedValue({
 			...fakeItem,
 			isPinned: true,

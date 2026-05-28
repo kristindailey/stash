@@ -47,3 +47,4 @@
 - **Item Drawer Favorite + Pin** — `toggleFavorite`/`togglePin` server actions + lib queries (ownership check, preserves `updatedAt` so toggling doesn't bump Recent), drawer buttons optimistic-flip with rollback-on-error and `router.refresh()` to sync cards/counts.
 - **File List View** — `FileRow` component with extension-based lucide icons, name/size/date/download columns, keyboard-accessible row opens `ItemDrawer`, download `<a>` stops propagation; `/items/files` swaps grid for single-column list, stacks on mobile.
 - **Quick Copy Icon** — `CopyButton` in `ItemCard` top-right (Copy→Pin→Star), copies content/URL, skipped for file/image; sonner toast on copy.
+- **Fix User Isolation** — Removed `getDemoUserId()` shim; query helpers in `items.ts`/`collections.ts` now take `userId` param, server actions/API routes/pages thread `session.user.id` from `auth()` instead of the hardcoded demo account.

@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { SidebarProvider } from "@/components/layout/sidebar-context";
@@ -14,19 +15,19 @@ export default async function DashboardLayout({
 }: {
 	children: React.ReactNode;
 }) {
-	const [session, itemTypes, collections] = await Promise.all([
-		auth(),
-		getSidebarItemTypes(),
-		getSidebarCollections(),
+	const session = await auth();
+	if (!session?.user?.id) redirect("/login");
+
+	const [itemTypes, collections] = await Promise.all([
+		getSidebarItemTypes(session.user.id),
+		getSidebarCollections(session.user.id),
 	]);
 
-	const sessionUser = session?.user
-		? {
-				name: session.user.name ?? null,
-				email: session.user.email ?? null,
-				image: session.user.image ?? null,
-		  }
-		: null;
+	const sessionUser = {
+		name: session.user.name ?? null,
+		email: session.user.email ?? null,
+		image: session.user.image ?? null,
+	};
 
 	return (
 		<SidebarProvider>

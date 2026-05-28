@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { getDemoUserId } from "@/lib/db/get-user-id";
 import { buildObjectKey, publicUrlFor, uploadToR2 } from "@/lib/r2";
 import { validateUpload, type UploadKind } from "@/lib/constants/file-upload";
 
@@ -9,11 +8,6 @@ export const runtime = "nodejs";
 export async function POST(request: Request) {
 	const session = await auth();
 	if (!session?.user?.id) {
-		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-	}
-
-	const userId = await getDemoUserId();
-	if (!userId) {
 		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
 
@@ -47,7 +41,7 @@ export async function POST(request: Request) {
 		);
 	}
 
-	const key = buildObjectKey(userId, file.name);
+	const key = buildObjectKey(session.user.id, file.name);
 	const bytes = new Uint8Array(await file.arrayBuffer());
 	const contentType = file.type || "application/octet-stream";
 
