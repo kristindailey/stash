@@ -1,15 +1,15 @@
-# Current Feature: Fix R2 public URL bypass (security)
+# Current Feature
+<!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
+<!-- Brief description of the feature to implement -->
 
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-Stop rendering the public R2 CDN URL (`item.fileUrl`) in the DOM. Images served through the authenticated `/api/items/[id]/download` proxy instead.
+<!-- Bullet points of what success looks like -->
 
 ## Notes
-- `ImageCard` and `ItemDrawer` image preview now use the proxy URL.
-- `FileUpload` preview uses a local blob URL from the chosen File so a fresh upload doesn't lean on the public URL either.
-- Follow-up infra task: make the R2 bucket private. Code already routes file access through the proxy, which uses S3 credentials — private bucket will Just Work.
+<!-- Additional context, constraints, or details from spec -->
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
@@ -47,4 +47,3 @@ Stop rendering the public R2 CDN URL (`item.fileUrl`) in the DOM. Images served 
 - **Item Drawer Favorite + Pin** — `toggleFavorite`/`togglePin` server actions + lib queries (ownership check, preserves `updatedAt` so toggling doesn't bump Recent), drawer buttons optimistic-flip with rollback-on-error and `router.refresh()` to sync cards/counts.
 - **File List View** — `FileRow` component with extension-based lucide icons, name/size/date/download columns, keyboard-accessible row opens `ItemDrawer`, download `<a>` stops propagation; `/items/files` swaps grid for single-column list, stacks on mobile.
 - **Quick Copy Icon** — `CopyButton` in `ItemCard` top-right (Copy→Pin→Star), copies content/URL, skipped for file/image; sonner toast on copy.
-- **Fix User Isolation** — Removed `getDemoUserId()` shim; query helpers in `items.ts`/`collections.ts` now take `userId` param, server actions/API routes/pages thread `session.user.id` from `auth()` instead of the hardcoded demo account.
