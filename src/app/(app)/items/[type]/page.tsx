@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { FolderOpen } from "lucide-react";
+import { FileRow } from "@/components/items/FileRow";
 import { ImageCard } from "@/components/items/ImageCard";
 import { ItemCard } from "@/components/items/ItemCard";
 import {
@@ -40,6 +41,12 @@ export default async function ItemsByTypePage({
 				<p className="text-sm text-muted-foreground">
 					No {pluralLabel.toLowerCase()} yet.
 				</p>
+			) : singular === "file" ? (
+				<div className="flex flex-col gap-2">
+					{items.map((item) => (
+						<FileRow key={item.id} item={item} />
+					))}
+				</div>
 			) : (
 				<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
 					{items.map((item) =>
