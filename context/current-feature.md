@@ -1,15 +1,21 @@
-# Current Feature
+# Current Feature: Quick Copy Icon on Item Cards
 <!-- Feature name appended after H1 when active, e.g. "# Current Feature: Add Navbar" -->
 <!-- Brief description of the feature to implement -->
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- Bullet points of what success looks like -->
+- Add a copy icon to `ItemCard` (and where applicable on other cards) that copies the item's primary content to the clipboard
+- Copy behavior is type-aware: snippet/command/prompt/note copy `content`; link copies `url`; file/image copies `fileUrl`
+- Icon button stops click propagation so clicking copy does not open the drawer
+- Show a sonner toast on successful copy and on failure
+- Visible on hover (desktop); keyboard-accessible and tappable on touch
 
 ## Notes
-<!-- Additional context, constraints, or details from spec -->
+- Use lucide `Copy` icon; place in the card's existing action area alongside pin/favorite indicators
+- Use `navigator.clipboard.writeText` with a fallback message if unavailable
+- No copy icon when there is nothing to copy (e.g., empty content / missing url)
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.

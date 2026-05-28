@@ -7,18 +7,34 @@ import {
 } from "@/lib/constants/item-types";
 import type { DashboardItem } from "@/lib/db/items";
 import { formatRelativeTime } from "@/lib/format-time";
+import { CopyButton, getCopyText } from "./CopyButton";
 import { useItemDrawer } from "./item-drawer-context";
+
+function copyLabelFor(type: string): string {
+	if (type === "link") return "link";
+	return type;
+}
 
 export function ItemCard({ item }: { item: DashboardItem }) {
 	const { openItem } = useItemDrawer();
 	const Icon = ITEM_TYPE_ICONS[item.type] ?? FolderOpen;
 	const color = ITEM_TYPE_COLORS[item.type] ?? "#6b7280";
+	const copyText = getCopyText(item);
+
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+		if (e.key === "Enter" || e.key === " ") {
+			e.preventDefault();
+			openItem(item.id);
+		}
+	};
 
 	return (
-		<button
-			type="button"
+		<div
+			role="button"
+			tabIndex={0}
 			onClick={() => openItem(item.id)}
-			className="flex flex-col gap-3 rounded-lg border border-l-4 bg-card p-4 text-left transition-colors hover:bg-accent"
+			onKeyDown={handleKeyDown}
+			className="group flex cursor-pointer flex-col gap-3 rounded-lg border border-l-4 bg-card p-4 text-left transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
 			style={{ borderLeftColor: color }}
 		>
 			<div className="flex items-start justify-between gap-2">
@@ -29,6 +45,9 @@ export function ItemCard({ item }: { item: DashboardItem }) {
 					</h3>
 				</div>
 				<div className="flex shrink-0 items-center gap-1.5 text-muted-foreground">
+					{copyText && (
+						<CopyButton text={copyText} label={copyLabelFor(item.type)} />
+					)}
 					{item.isPinned && <Pin className="size-3.5" fill="currentColor" />}
 					{item.isFavorite && (
 						<Star
@@ -63,6 +82,6 @@ export function ItemCard({ item }: { item: DashboardItem }) {
 				<span>{formatRelativeTime(item.updatedAt)}</span>
 				{item.language && <span>{item.language}</span>}
 			</div>
-		</button>
+		</div>
 	);
 }
