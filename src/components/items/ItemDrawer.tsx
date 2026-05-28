@@ -251,10 +251,12 @@ function DrawerBody({
 			</SheetHeader>
 
 			<div className="flex items-center gap-2 border-b p-3">
-				<Button variant="outline" size="sm" onClick={copyContent}>
-					<Copy />
-					Copy
-				</Button>
+				{item.contentType !== "FILE" && (
+					<Button variant="outline" size="sm" onClick={copyContent}>
+						<Copy />
+						Copy
+					</Button>
+				)}
 				<Button
 					variant="outline"
 					size="sm"
