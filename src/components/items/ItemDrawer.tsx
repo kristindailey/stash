@@ -41,7 +41,7 @@ import {
 } from "@/lib/constants/item-types";
 import { formatRelativeTime } from "@/lib/format-time";
 import type { ItemDetail } from "@/lib/db/items";
-import { deleteItem, updateItem } from "@/actions/items";
+import { deleteItem, toggleFavorite, togglePin, updateItem } from "@/actions/items";
 import { useItemDrawer } from "./item-drawer-context";
 
 const CONTENT_TYPES = new Set(["snippet", "prompt", "command", "note"]);
@@ -57,6 +57,52 @@ export function ItemDrawer() {
 	const [error, setError] = React.useState<string | null>(null);
 	const [mode, setMode] = React.useState<"view" | "edit">("view");
 	const [deleting, setDeleting] = React.useState(false);
+	const [togglingFavorite, setTogglingFavorite] = React.useState(false);
+	const [togglingPin, setTogglingPin] = React.useState(false);
+
+	const handleToggleFavorite = async () => {
+		if (!item || togglingFavorite) return;
+		const previous = item;
+		setItem({ ...item, isFavorite: !item.isFavorite });
+		setTogglingFavorite(true);
+		const result = await toggleFavorite(item.id);
+		setTogglingFavorite(false);
+
+		if (!result.success) {
+			setItem(previous);
+			toast.error(result.error);
+			return;
+		}
+
+		setItem({
+			...result.data,
+			updatedAt: new Date(result.data.updatedAt),
+			createdAt: new Date(result.data.createdAt),
+		});
+		router.refresh();
+	};
+
+	const handleTogglePin = async () => {
+		if (!item || togglingPin) return;
+		const previous = item;
+		setItem({ ...item, isPinned: !item.isPinned });
+		setTogglingPin(true);
+		const result = await togglePin(item.id);
+		setTogglingPin(false);
+
+		if (!result.success) {
+			setItem(previous);
+			toast.error(result.error);
+			return;
+		}
+
+		setItem({
+			...result.data,
+			updatedAt: new Date(result.data.updatedAt),
+			createdAt: new Date(result.data.createdAt),
+		});
+		router.refresh();
+	};
 
 	const handleDelete = async () => {
 		if (!item) return;
@@ -127,6 +173,10 @@ export function ItemDrawer() {
 						onEdit={() => setMode("edit")}
 						onDelete={handleDelete}
 						deleting={deleting}
+						onToggleFavorite={handleToggleFavorite}
+						onTogglePin={handleTogglePin}
+						togglingFavorite={togglingFavorite}
+						togglingPin={togglingPin}
 					/>
 				)}
 			</SheetContent>
@@ -162,11 +212,19 @@ function DrawerBody({
 	onEdit,
 	onDelete,
 	deleting,
+	onToggleFavorite,
+	onTogglePin,
+	togglingFavorite,
+	togglingPin,
 }: {
 	item: ItemDetail;
 	onEdit: () => void;
 	onDelete: () => void;
 	deleting: boolean;
+	onToggleFavorite: () => void;
+	onTogglePin: () => void;
+	togglingFavorite: boolean;
+	togglingPin: boolean;
 }) {
 	const [confirmOpen, setConfirmOpen] = React.useState(false);
 	const Icon = ITEM_TYPE_ICONS[item.type] ?? FolderOpen;
@@ -197,14 +255,24 @@ function DrawerBody({
 					<Copy />
 					Copy
 				</Button>
-				<Button variant="outline" size="sm">
+				<Button
+					variant="outline"
+					size="sm"
+					onClick={onToggleFavorite}
+					disabled={togglingFavorite}
+				>
 					<Star
 						style={item.isFavorite ? { color: "#f59e0b" } : undefined}
 						fill={item.isFavorite ? "currentColor" : "none"}
 					/>
 					{item.isFavorite ? "Favorited" : "Favorite"}
 				</Button>
-				<Button variant="outline" size="sm">
+				<Button
+					variant="outline"
+					size="sm"
+					onClick={onTogglePin}
+					disabled={togglingPin}
+				>
 					<Pin fill={item.isPinned ? "currentColor" : "none"} />
 					{item.isPinned ? "Pinned" : "Pin"}
 				</Button>

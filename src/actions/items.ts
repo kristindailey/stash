@@ -7,6 +7,8 @@ import { getDemoUserId } from "@/lib/db/get-user-id";
 import {
 	createItem as createItemQuery,
 	deleteItem as deleteItemQuery,
+	toggleItemFavorite as toggleItemFavoriteQuery,
+	toggleItemPinned as toggleItemPinnedQuery,
 	updateItem as updateItemQuery,
 	type ItemDetail,
 } from "@/lib/db/items";
@@ -153,6 +155,56 @@ export async function createItem(
 	}
 
 	return { success: true, data: created };
+}
+
+export async function toggleFavorite(
+	itemId: string,
+): Promise<ActionResult<ItemDetail>> {
+	const session = await auth();
+	if (!session?.user?.id) {
+		return { success: false, error: "Not authenticated" };
+	}
+
+	if (typeof itemId !== "string" || itemId.length === 0) {
+		return { success: false, error: "Invalid item id" };
+	}
+
+	const userId = await getDemoUserId();
+	if (!userId) {
+		return { success: false, error: "Item not found" };
+	}
+
+	const updated = await toggleItemFavoriteQuery(itemId, userId);
+	if (!updated) {
+		return { success: false, error: "Item not found" };
+	}
+
+	return { success: true, data: updated };
+}
+
+export async function togglePin(
+	itemId: string,
+): Promise<ActionResult<ItemDetail>> {
+	const session = await auth();
+	if (!session?.user?.id) {
+		return { success: false, error: "Not authenticated" };
+	}
+
+	if (typeof itemId !== "string" || itemId.length === 0) {
+		return { success: false, error: "Invalid item id" };
+	}
+
+	const userId = await getDemoUserId();
+	if (!userId) {
+		return { success: false, error: "Item not found" };
+	}
+
+	const updated = await toggleItemPinnedQuery(itemId, userId);
+	if (!updated) {
+		return { success: false, error: "Item not found" };
+	}
+
+	return { success: true, data: updated };
 }
 
 export async function deleteItem(

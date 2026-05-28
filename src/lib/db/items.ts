@@ -228,6 +228,44 @@ export async function createItem(
 	return toItemDetail(created);
 }
 
+export async function toggleItemFavorite(
+	id: string,
+	userId: string,
+): Promise<ItemDetail | null> {
+	const existing = await prisma.item.findFirst({
+		where: { id, userId },
+		select: { isFavorite: true, updatedAt: true },
+	});
+	if (!existing) return null;
+
+	const updated = await prisma.item.update({
+		where: { id },
+		data: { isFavorite: !existing.isFavorite, updatedAt: existing.updatedAt },
+		include: itemDetailInclude,
+	});
+
+	return toItemDetail(updated);
+}
+
+export async function toggleItemPinned(
+	id: string,
+	userId: string,
+): Promise<ItemDetail | null> {
+	const existing = await prisma.item.findFirst({
+		where: { id, userId },
+		select: { isPinned: true, updatedAt: true },
+	});
+	if (!existing) return null;
+
+	const updated = await prisma.item.update({
+		where: { id },
+		data: { isPinned: !existing.isPinned, updatedAt: existing.updatedAt },
+		include: itemDetailInclude,
+	});
+
+	return toItemDetail(updated);
+}
+
 export async function deleteItem(id: string, userId: string): Promise<boolean> {
 	const existing = await prisma.item.findFirst({
 		where: { id, userId },
