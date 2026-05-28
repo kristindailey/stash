@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { FolderOpen } from "lucide-react";
+import { ImageCard } from "@/components/items/ImageCard";
 import { ItemCard } from "@/components/items/ItemCard";
 import {
 	ITEM_TYPE_COLORS,
@@ -41,9 +42,13 @@ export default async function ItemsByTypePage({
 				</p>
 			) : (
 				<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-					{items.map((item) => (
-						<ItemCard key={item.id} item={item} />
-					))}
+					{items.map((item) =>
+						singular === "image" ? (
+							<ImageCard key={item.id} item={item} />
+						) : (
+							<ItemCard key={item.id} item={item} />
+						),
+					)}
 				</div>
 			)}
 		</div>
