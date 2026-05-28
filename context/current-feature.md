@@ -43,3 +43,4 @@
 - **Code Editor** — Monaco-based `CodeEditor` with macOS dots, copy button, language label, themed scrollbar, auto-sizing height (max 400px); used for snippet/command content in drawer (view + edit) and new-item dialog. New Item dialog also auto-selects type from `/items/[type]` route.
 - **Markdown Editor** — `MarkdownEditor` with Write/Preview tabs, react-markdown + remark-gfm, copy button, `.markdown-preview` dark styles for headings/code/lists/blockquotes/links/tables; used for note + prompt content in drawer (view + edit) and new-item dialog.
 - **File Upload + R2** — Cloudflare R2 uploads, `FileUpload` component, download proxy, image preview + download in `ItemDrawer`.
+- **Image Gallery View** — `ImageCard` with `aspect-video` thumbnail, `object-cover`, 5%/300ms hover zoom, pin/favorite overlay; `/items/images` swaps `ItemCard` for `ImageCard` in the existing 3-col grid.
