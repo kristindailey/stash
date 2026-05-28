@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@/generated/prisma/client";
 import { deleteFromR2, keyFromPublicUrl } from "@/lib/r2";
 
 export type DashboardItem = {
@@ -147,32 +148,36 @@ export async function updateItem(
 	userId: string,
 	data: UpdateItemData,
 ): Promise<ItemDetail | null> {
-	const existing = await prisma.item.findFirst({
-		where: { id, userId },
-		select: { id: true },
-	});
-	if (!existing) return null;
-
-	const updated = await prisma.item.update({
-		where: { id },
-		data: {
-			title: data.title,
-			description: data.description,
-			content: data.content,
-			url: data.url,
-			language: data.language,
-			tags: {
-				set: [],
-				connectOrCreate: data.tags.map((name) => ({
-					where: { name },
-					create: { name },
-				})),
+	try {
+		const updated = await prisma.item.update({
+			where: { id, userId },
+			data: {
+				title: data.title,
+				description: data.description,
+				content: data.content,
+				url: data.url,
+				language: data.language,
+				tags: {
+					set: [],
+					connectOrCreate: data.tags.map((name) => ({
+						where: { name },
+						create: { name },
+					})),
+				},
 			},
-		},
-		include: itemDetailInclude,
-	});
+			include: itemDetailInclude,
+		});
 
-	return toItemDetail(updated);
+		return toItemDetail(updated);
+	} catch (err) {
+		if (
+			err instanceof Prisma.PrismaClientKnownRequestError &&
+			err.code === "P2025"
+		) {
+			return null;
+		}
+		throw err;
+	}
 }
 
 export type CreateItemData = {

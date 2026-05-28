@@ -39,6 +39,7 @@ import {
 	ITEM_TYPE_ICONS,
 	ITEM_TYPE_LABELS,
 } from "@/lib/constants/item-types";
+import { formatBytes } from "@/lib/constants/file-upload";
 import { formatRelativeTime } from "@/lib/format-time";
 import type { ItemDetail } from "@/lib/db/items";
 import { deleteItem, toggleFavorite, togglePin, updateItem } from "@/actions/items";
@@ -619,8 +620,3 @@ function Section({
 	);
 }
 
-function formatBytes(bytes: number) {
-	if (bytes < 1024) return `${bytes} B`;
-	if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-	return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}

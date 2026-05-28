@@ -18,6 +18,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { DashboardItem } from "@/lib/db/items";
+import { formatBytes } from "@/lib/constants/file-upload";
 import { formatRelativeTime } from "@/lib/format-time";
 import { useItemDrawer } from "./item-drawer-context";
 
@@ -79,14 +80,6 @@ function iconForFileName(fileName: string | null): LucideIcon {
 	if (!fileName) return File;
 	const ext = fileName.split(".").pop()?.toLowerCase() ?? "";
 	return EXT_ICONS[ext] ?? File;
-}
-
-function formatBytes(bytes: number | null): string {
-	if (bytes === null || bytes === undefined) return "—";
-	if (bytes < 1024) return `${bytes} B`;
-	if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-	if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-	return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
 }
 
 export function FileRow({ item }: { item: DashboardItem }) {

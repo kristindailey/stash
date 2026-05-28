@@ -3,14 +3,9 @@ import { prisma } from "@/lib/prisma";
 import { sendPasswordResetEmail } from "@/lib/email";
 import { buildResetPasswordUrl, createPasswordResetToken } from "@/lib/verification-token";
 import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/rate-limit";
+import { getBaseUrl } from "@/lib/get-base-url";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function getBaseUrl(request: Request) {
-	if (process.env.AUTH_URL) return process.env.AUTH_URL;
-	if (process.env.NEXT_PUBLIC_APP_URL) return process.env.NEXT_PUBLIC_APP_URL;
-	return new URL(request.url).origin;
-}
 
 export async function POST(request: Request) {
 	const rl = await checkRateLimit("forgotPassword", `ip:${getClientIp(request)}`);
