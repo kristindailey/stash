@@ -30,6 +30,13 @@ export function FileUpload({ kind, value, onChange }: FileUploadProps) {
 	const [uploading, setUploading] = React.useState(false);
 	const [progress, setProgress] = React.useState(0);
 	const [error, setError] = React.useState<string | null>(null);
+	const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
+
+	React.useEffect(() => {
+		return () => {
+			if (previewUrl) URL.revokeObjectURL(previewUrl);
+		};
+	}, [previewUrl]);
 
 	const config = getUploadConfig(kind);
 	const accept = config.extensions.join(",");
@@ -67,6 +74,9 @@ export function FileUpload({ kind, value, onChange }: FileUploadProps) {
 				if (xhr.status >= 200 && xhr.status < 300) {
 					try {
 						const data = JSON.parse(xhr.responseText) as UploadedFile;
+						setPreviewUrl(
+							kind === "image" ? URL.createObjectURL(file) : null,
+						);
 						onChange(data);
 					} catch {
 						setError("Invalid server response");
@@ -118,6 +128,7 @@ export function FileUpload({ kind, value, onChange }: FileUploadProps) {
 	const handleDragLeave = () => setDragging(false);
 
 	const handleClear = () => {
+		setPreviewUrl(null);
 		onChange(null);
 		setError(null);
 		if (inputRef.current) inputRef.current.value = "";
@@ -127,10 +138,10 @@ export function FileUpload({ kind, value, onChange }: FileUploadProps) {
 		return (
 			<div className="rounded-md border bg-muted/30 p-3">
 				<div className="flex items-start gap-3">
-					{kind === "image" ? (
+					{kind === "image" && previewUrl ? (
 						/* eslint-disable-next-line @next/next/no-img-element */
 						<img
-							src={value.url}
+							src={previewUrl}
 							alt={value.fileName}
 							className="size-16 shrink-0 rounded object-cover"
 						/>
