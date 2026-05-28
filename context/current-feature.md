@@ -1,20 +1,14 @@
-# Current Feature: Collections Pages
-A `/collections` index listing all collections and a `/collections/[id]` detail page showing the items in a given collection, wired up from the sidebar and collection cards.
+# Current Feature
+<!-- Title above as "# Current Feature: <name>", followed by a one- or two-sentence description of the feature/fix. -->
 
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- Create the `/collections` page that shows all of the user's collections
-- Create the `/collections/[id]` page that shows the items belonging to that collection
-- Reuse the existing cards (collection cards on the index, `ItemCard`/`ImageCard`/`FileRow` on the detail page)
-- Link the sidebar "View all collections" entry to `/collections`
-- Link each collection card to its specific `/collections/[id]` page
+<!-- What this feature needs to accomplish. List concrete, checkable goals. -->
 
 ## Notes
-- Reuse existing collection card UI from the dashboard's recent collections grid where possible.
-- Detail page should render items with the same card components used on `/items/[type]` (including image/file variants where applicable).
-- Pages live under the `(app)` route group and must be covered by the proxy that protects authenticated routes.
+<!-- Implementation details, constraints, decisions, and references. -->
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
@@ -54,3 +48,4 @@ In Progress
 - **Quick Copy Icon** — `CopyButton` in `ItemCard` top-right (Copy→Pin→Star), copies content/URL, skipped for file/image; sonner toast on copy.
 - **Collection Create** — Top bar "New Collection" opens shadcn `Dialog` with name + description; Zod-validated `createCollection` action + user-scoped lib query, toast + close + `router.refresh()` on success.
 - **Item Collection Assignment** — `CollectionSelect` popover multi-select in New Item dialog and drawer edit, fed by `useCollectionOptions` hook + `GET /api/collections`; `collectionIds` validated in Zod shape, user-scoped via `filterOwnedCollectionIds`, synced on create and update (`deleteMany` + `create` reconcile).
+- **Collections Pages** — `/collections` index and `/collections/[id]` detail; detail page splits items into an `ItemCard` grid plus separate Images and Files sections; proxy protects `/collections/*`.
