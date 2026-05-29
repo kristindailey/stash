@@ -1,14 +1,24 @@
-# Current Feature
-<!-- Title above as "# Current Feature: <name>", followed by a one- or two-sentence description of the feature/fix. -->
+# Current Feature: Collection Edit/Delete/Favorite Actions
+
+Add edit, delete, and favorite actions for collections — both on the `/collections/[id]` detail page and on the cards at the `/collections` index.
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- What this feature needs to accomplish. List concrete, checkable goals. -->
+- On `/collections/[id]`: add buttons to edit, delete, and favorite the collection.
+- Edit opens a modal to edit the collection metadata (name, description).
+- Delete shows a confirmation before removing the collection.
+- Deleting a collection must NOT delete its items — they just stop belonging to that collection.
+- On `/collections` cards: add a 3-dots icon that opens a dropdown with edit, delete, and favorite.
+- Clicking anywhere else on the card navigates to that collection's detail page.
 
 ## Notes
-<!-- Implementation details, constraints, decisions, and references. -->
+- Reuse the existing collection create patterns (shadcn `Dialog`, Zod-validated server action + user-scoped lib query, toast + `router.refresh()`).
+- Favorite should mirror the item `toggleFavorite` pattern (ownership check, optimistic flip with rollback).
+- Delete confirmation via shadcn `AlertDialog`, matching the item delete flow.
+- The 3-dots dropdown uses shadcn `DropdownMenu`; stop event propagation so the menu doesn't trigger card navigation.
+- Collection `onDelete: Cascade` only applies to the `ItemCollection` join rows, so items themselves are preserved by design.
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
