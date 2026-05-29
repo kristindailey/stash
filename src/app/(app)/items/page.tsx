@@ -2,15 +2,22 @@ import { redirect } from "next/navigation";
 import { FolderOpen } from "lucide-react";
 import { auth } from "@/auth";
 import { ItemCard } from "@/components/items/ItemCard";
-import { getAllItems } from "@/lib/db/dashboard";
+import { Pagination } from "@/components/shared/Pagination";
+import { ITEMS_PER_PAGE } from "@/lib/constants/pagination";
+import { getPaginatedItems } from "@/lib/db/dashboard";
+import { parsePage } from "@/lib/pagination";
 
 export const dynamic = "force-dynamic";
 
-export default async function AllItemsPage() {
+export default async function AllItemsPage({
+	searchParams,
+}: PageProps<"/items">) {
 	const session = await auth();
 	if (!session?.user?.id) redirect("/login");
 
-	const items = await getAllItems(session.user.id);
+	const page = parsePage((await searchParams).page);
+	const { items, totalCount } = await getPaginatedItems(session.user.id, page);
+	const totalPages = Math.max(1, Math.ceil(totalCount / ITEMS_PER_PAGE));
 
 	return (
 		<div className="flex flex-col gap-6">
@@ -18,11 +25,11 @@ export default async function AllItemsPage() {
 				<FolderOpen className="size-6 shrink-0 text-muted-foreground" />
 				<h1 className="text-2xl font-semibold">All Items</h1>
 				<span className="text-sm text-muted-foreground">
-					{items.length} {items.length === 1 ? "item" : "items"}
+					{totalCount} {totalCount === 1 ? "item" : "items"}
 				</span>
 			</header>
 
-			{items.length === 0 ? (
+			{totalCount === 0 ? (
 				<p className="text-sm text-muted-foreground">No items yet.</p>
 			) : (
 				<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -31,6 +38,8 @@ export default async function AllItemsPage() {
 					))}
 				</div>
 			)}
+
+			<Pagination basePath="/items" currentPage={page} totalPages={totalPages} />
 		</div>
 	);
 }

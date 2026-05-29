@@ -4,18 +4,22 @@ import { auth } from "@/auth";
 import { FileRow } from "@/components/items/FileRow";
 import { ImageCard } from "@/components/items/ImageCard";
 import { ItemCard } from "@/components/items/ItemCard";
+import { Pagination } from "@/components/shared/Pagination";
 import {
 	ITEM_TYPE_COLORS,
 	ITEM_TYPE_ICONS,
 	ITEM_TYPE_LABELS,
 } from "@/lib/constants/item-types";
+import { ITEMS_PER_PAGE } from "@/lib/constants/pagination";
 import { getItemsByType } from "@/lib/db/dashboard";
+import { parsePage } from "@/lib/pagination";
 import { capitalize } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
 export default async function ItemsByTypePage({
 	params,
+	searchParams,
 }: PageProps<"/items/[type]">) {
 	const { type } = await params;
 	if (!type.endsWith("s")) notFound();
@@ -23,9 +27,13 @@ export default async function ItemsByTypePage({
 	const session = await auth();
 	if (!session?.user?.id) redirect("/login");
 
+	const page = parsePage((await searchParams).page);
 	const singular = type.slice(0, -1);
-	const items = await getItemsByType(session.user.id, singular);
-	if (items === null) notFound();
+	const result = await getItemsByType(session.user.id, singular, page);
+	if (result === null) notFound();
+
+	const { items, totalCount } = result;
+	const totalPages = Math.max(1, Math.ceil(totalCount / ITEMS_PER_PAGE));
 
 	const Icon = ITEM_TYPE_ICONS[singular] ?? FolderOpen;
 	const color = ITEM_TYPE_COLORS[singular] ?? "#6b7280";
@@ -38,11 +46,11 @@ export default async function ItemsByTypePage({
 				<Icon className="size-6 shrink-0" style={{ color }} />
 				<h1 className="text-2xl font-semibold">{pluralLabel}</h1>
 				<span className="text-sm text-muted-foreground">
-					{items.length} {items.length === 1 ? "item" : "items"}
+					{totalCount} {totalCount === 1 ? "item" : "items"}
 				</span>
 			</header>
 
-			{items.length === 0 ? (
+			{totalCount === 0 ? (
 				<p className="text-sm text-muted-foreground">
 					No {pluralLabel.toLowerCase()} yet.
 				</p>
@@ -63,6 +71,12 @@ export default async function ItemsByTypePage({
 					)}
 				</div>
 			)}
+
+			<Pagination
+				basePath={`/items/${type}`}
+				currentPage={page}
+				totalPages={totalPages}
+			/>
 		</div>
 	);
 }

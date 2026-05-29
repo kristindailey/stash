@@ -2,15 +2,16 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@/lib/prisma", () => ({
 	prisma: {
-		collection: { findMany: vi.fn() },
+		collection: { findMany: vi.fn(), count: vi.fn() },
 		itemCollection: { findMany: vi.fn() },
 	},
 }));
 
 import { prisma } from "@/lib/prisma";
-import { getAllCollections } from "./collections";
+import { getAllCollections, getPaginatedCollections } from "./collections";
 
 const collectionFindManyMock = vi.mocked(prisma.collection.findMany);
+const collectionCountMock = vi.mocked(prisma.collection.count);
 const itemCollectionFindManyMock = vi.mocked(prisma.itemCollection.findMany);
 
 const updatedAt = new Date("2026-05-01T00:00:00Z");
@@ -76,5 +77,26 @@ describe("getAllCollections", () => {
 		expect(collection.typeCounts).toEqual([]);
 		expect(collection.dominantType).toBeNull();
 		expect(collection.isFavorite).toBe(true);
+	});
+});
+
+describe("getPaginatedCollections", () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+	});
+
+	it("applies skip/take for the requested page and returns the total count", async () => {
+		collectionFindManyMock.mockResolvedValue([] as never);
+		collectionCountMock.mockResolvedValue(50 as never);
+
+		const result = await getPaginatedCollections("user_1", 2, 21);
+
+		expect(result.totalCount).toBe(50);
+		expect(collectionFindManyMock).toHaveBeenCalledWith(
+			expect.objectContaining({ skip: 21, take: 21 }),
+		);
+		expect(collectionCountMock).toHaveBeenCalledWith({
+			where: { userId: "user_1" },
+		});
 	});
 });

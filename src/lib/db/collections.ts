@@ -1,5 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@/generated/prisma/client";
+import {
+	COLLECTIONS_PER_PAGE,
+	DASHBOARD_COLLECTIONS_LIMIT,
+} from "@/lib/constants/pagination";
 
 export type CollectionTypeCount = {
 	name: string;
@@ -236,7 +240,7 @@ const dashboardCollectionSelect = {
 
 export async function getRecentCollections(
 	userId: string,
-	limit = 6,
+	limit = DASHBOARD_COLLECTIONS_LIMIT,
 ): Promise<DashboardCollection[]> {
 	const collections = await prisma.collection.findMany({
 		where: { userId },
@@ -258,4 +262,28 @@ export async function getAllCollections(
 	});
 
 	return withTypeCounts(collections);
+}
+
+export type PaginatedCollections = {
+	collections: DashboardCollection[];
+	totalCount: number;
+};
+
+export async function getPaginatedCollections(
+	userId: string,
+	page = 1,
+	perPage = COLLECTIONS_PER_PAGE,
+): Promise<PaginatedCollections> {
+	const [collections, totalCount] = await Promise.all([
+		prisma.collection.findMany({
+			where: { userId },
+			orderBy: { updatedAt: "desc" },
+			skip: (page - 1) * perPage,
+			take: perPage,
+			select: dashboardCollectionSelect,
+		}),
+		prisma.collection.count({ where: { userId } }),
+	]);
+
+	return { collections: await withTypeCounts(collections), totalCount };
 }
