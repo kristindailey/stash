@@ -50,3 +50,4 @@
 - **Item Collection Assignment** — `CollectionSelect` popover multi-select in New Item dialog and drawer edit, fed by `useCollectionOptions` hook + `GET /api/collections`; `collectionIds` validated in Zod shape, user-scoped via `filterOwnedCollectionIds`, synced on create and update (`deleteMany` + `create` reconcile).
 - **Collections Pages** — `/collections` index and `/collections/[id]` detail; detail page splits items into an `ItemCard` grid plus separate Images and Files sections; proxy protects `/collections/*`.
 - **Collection Edit/Delete/Favorite** — update/toggle-favorite/delete actions + queries (items preserved on delete); shared edit + delete dialogs, `DropdownMenu` on index cards, action buttons on detail page.
+- **Global Search / Command Palette** — `cmdk` palette opened via Cmd/Ctrl+K or TopBar button; client-side fuzzy search over pre-fetched `getSearchData`, grouped Items/Collections, selects open item drawer or collection page.
