@@ -1,19 +1,14 @@
-# Current Feature: Favorites Page Sorting
-Add client-side sorting to the favorites page so users can reorder favorited items by name, date, and item type, with item type as the default sort.
+# Current Feature
+<!-- Title above as "# Current Feature: <name>", followed by a one- or two-sentence description of the feature/fix. -->
 
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- Add a sort control to the favorites page with three options: Name, Date, and Item Type.
-- Default the sort to Item Type.
-- Sorting happens client-side over the already-fetched favorites (no refetch).
-- Sort the Items section by the selected field (Name = title A→Z, Date = `updatedAt` newest first, Item Type = grouped/ordered by type).
+<!-- What this feature needs to accomplish. List concrete, checkable goals. -->
 
 ## Notes
-- `FavoritesList` is a client component (`src/components/favorites/FavoritesList.tsx`) rendering Items and Collections sections.
-- Decision: one shared, items-aware sort control. Name/Date sort both sections; Item Type orders items by type (using `CREATABLE_TYPES` order) and leaves collections in their default newest-first order.
-- Reuse existing constants/helpers: `ITEM_TYPE_LABELS`, `formatRelativeTime`. Keep tabs/semicolons/no-comments style.
+<!-- Implementation details, constraints, decisions, and references. -->
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
@@ -60,3 +55,4 @@ In Progress
 - **Settings Page** — Protected `/settings` route; sidebar gear icon retargeted from `/profile`; change-password + delete-account sections moved out of profile into settings.
 - **Editor Preferences** — `editorPreferences` JSON column + migration; auto-saving font/tab/theme/word-wrap/minimap settings via `EditorPreferencesProvider` applied to `CodeEditor`.
 - **Favorites Page** — Protected `/favorites` route; `getFavorites` fetcher, `FavoritesList` with `/items/files`-style rows and sidebar "View all favorites" link.
+- **Favorites Page Sorting** — Client-side sort control on the title row (Newest/Name/Type, defaults to Newest); Type uses `CREATABLE_TYPES` order, collections stay newest-first on Type.
