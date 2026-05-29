@@ -1,21 +1,14 @@
-# Current Feature: Settings Page
-Add a dedicated `/settings` page wired to the sidebar gear icon, and relocate the Account actions (change password + delete account) from the profile page to it.
+# Current Feature
+<!-- Title above as "# Current Feature: <name>", followed by a one- or two-sentence description of the feature/fix. -->
 
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- Create a protected `/settings` route under the `(app)` route group.
-- Point the sidebar gear icon (`SidebarUser`) at `/settings` instead of `/profile`.
-- Move the change-password and delete-account sections out of the profile page and into the settings page.
-- Keep the profile page focused on identity + stats once the Account section is removed.
+<!-- What this feature needs to accomplish. List concrete, checkable goals. -->
 
 ## Notes
-- Gear icon lives in `src/components/layout/SidebarUser.tsx` (currently `href="/profile"`).
-- Account section currently in `src/app/(app)/profile/page.tsx`: `ChangePasswordSection` and `DeleteAccountSection` (both in `src/app/(app)/profile/`). The "forgot password" referenced in the spec maps to the existing `ChangePasswordSection`.
-- Route protection: `/profile` and other `(app)`/dashboard routes are protected via the auth proxy/matcher — add `/settings` to that protection.
-- `ChangePasswordSection` is gated on `user.hasPassword`; `DeleteAccountSection` needs `email`. Both come from `getProfile()` in `src/lib/db/profile.ts`.
-- Move the section components into a settings folder (or shared location) and update imports; confirm no other page references them.
+<!-- Implementation details, constraints, decisions, and references. -->
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
@@ -59,3 +52,4 @@ In Progress
 - **Collection Edit/Delete/Favorite** — update/toggle-favorite/delete actions + queries (items preserved on delete); shared edit + delete dialogs, `DropdownMenu` on index cards, action buttons on detail page.
 - **Global Search / Command Palette** — `cmdk` palette opened via Cmd/Ctrl+K or TopBar button; client-side fuzzy search over pre-fetched `getSearchData`, grouped Items/Collections, selects open item drawer or collection page.
 - **Pagination** — DB-level `skip`/`take` + count on item/collection listings; `Pagination` component + `parsePage`/`getPageRange` utils (fixed 7-slot range), page sizes in `lib/constants/pagination.ts`.
+- **Settings Page** — Protected `/settings` route; sidebar gear icon retargeted from `/profile`; change-password + delete-account sections moved out of profile into settings.
