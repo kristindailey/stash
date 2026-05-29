@@ -1,14 +1,22 @@
-# Current Feature
-<!-- Title above as "# Current Feature: <name>", followed by a one- or two-sentence description of the feature/fix. -->
+# Current Feature: Auth Pages Top Nav
+Add a homepage-style top navigation bar to the `/login` and `/register` pages so users can get back to the marketing homepage (`/`) or jump to its `#features` / `#pricing` sections.
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- What this feature needs to accomplish. List concrete, checkable goals. -->
+- `/login` and `/register` render a top nav consistent with the marketing `MarketingNav` look.
+- Brand/logo links back to `/`.
+- Nav exposes Features and Pricing links that navigate to the homepage anchors (`/#features`, `/#pricing`) and land on the right section.
+- Nav does not duplicate the page's own Sign In / Get Started actions in a confusing way (the auth pages already handle their own CTAs).
+- Layout still centers the auth form and looks correct below the fixed nav on mobile and desktop.
 
 ## Notes
-<!-- Implementation details, constraints, decisions, and references. -->
+- Auth pages live under `src/app/(auth)/` (login, register, forgot-password, reset-password, verify-email) with no shared layout; only `/login` and `/register` are in scope.
+- Existing `MarketingNav` uses bare `#features` / `#pricing` anchors that only work on `/`. On auth pages these must be absolute (`/#features`, `/#pricing`) so they route to the homepage and scroll to the section.
+- Reuse `Brand` from `src/components/marketing/Brand.tsx` and match the nav styling in `src/components/marketing/MarketingNav.tsx`.
+- Consider a dedicated auth nav (static, non-fixed or with proper top padding) rather than reusing the scroll-driven fixed `MarketingNav`, since auth pages are short and centered.
+- `MarketingNav` already links Sign In → `/login` and Get Started → `/register`; on the auth pages those right-side CTAs are redundant — keep nav focused on Home/Features/Pricing.
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
