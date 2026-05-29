@@ -1,14 +1,19 @@
-# Current Feature
-<!-- Title above as "# Current Feature: <name>", followed by a one- or two-sentence description of the feature/fix. -->
+# Current Feature: Favorites Page Sorting
+Add client-side sorting to the favorites page so users can reorder favorited items by name, date, and item type, with item type as the default sort.
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- What this feature needs to accomplish. List concrete, checkable goals. -->
+- Add a sort control to the favorites page with three options: Name, Date, and Item Type.
+- Default the sort to Item Type.
+- Sorting happens client-side over the already-fetched favorites (no refetch).
+- Sort the Items section by the selected field (Name = title A→Z, Date = `updatedAt` newest first, Item Type = grouped/ordered by type).
 
 ## Notes
-<!-- Implementation details, constraints, decisions, and references. -->
+- `FavoritesList` is a client component (`src/components/favorites/FavoritesList.tsx`) rendering Items and Collections sections.
+- Decision: one shared, items-aware sort control. Name/Date sort both sections; Item Type orders items by type (using `CREATABLE_TYPES` order) and leaves collections in their default newest-first order.
+- Reuse existing constants/helpers: `ITEM_TYPE_LABELS`, `formatRelativeTime`. Keep tabs/semicolons/no-comments style.
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
