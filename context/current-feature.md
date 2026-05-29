@@ -56,3 +56,4 @@
 - **Editor Preferences** — `editorPreferences` JSON column + migration; auto-saving font/tab/theme/word-wrap/minimap settings via `EditorPreferencesProvider` applied to `CodeEditor`.
 - **Favorites Page** — Protected `/favorites` route; `getFavorites` fetcher, `FavoritesList` with `/items/files`-style rows and sidebar "View all favorites" link.
 - **Favorites Page Sorting** — Client-side sort control on the title row (Newest/Name/Type, defaults to Newest); Type uses `CREATABLE_TYPES` order, collections stay newest-first on Type.
+- **Items Pinned Section** — `/items/[type]` shows a Pinned section above the main list; `getPinnedItemsByType` fetcher, `getItemsByType` filters out pinned, shared `ItemsGrid` helper, placeholder when none.
