@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@/generated/prisma/client";
 
 export type CollectionTypeCount = {
 	name: string;
@@ -102,6 +103,73 @@ export async function createCollection(
 	});
 
 	return created;
+}
+
+export type UpdateCollectionData = {
+	name: string;
+	description: string | null;
+};
+
+export async function updateCollection(
+	id: string,
+	userId: string,
+	data: UpdateCollectionData,
+): Promise<CreatedCollection | null> {
+	try {
+		const updated = await prisma.collection.update({
+			where: { id, userId },
+			data: { name: data.name, description: data.description },
+			select: { id: true, name: true, description: true },
+		});
+
+		return updated;
+	} catch (err) {
+		if (
+			err instanceof Prisma.PrismaClientKnownRequestError &&
+			err.code === "P2025"
+		) {
+			return null;
+		}
+		throw err;
+	}
+}
+
+export type CollectionFavoriteState = CreatedCollection & {
+	isFavorite: boolean;
+};
+
+export async function toggleCollectionFavorite(
+	id: string,
+	userId: string,
+): Promise<CollectionFavoriteState | null> {
+	const existing = await prisma.collection.findFirst({
+		where: { id, userId },
+		select: { isFavorite: true, updatedAt: true },
+	});
+	if (!existing) return null;
+
+	const updated = await prisma.collection.update({
+		where: { id },
+		data: { isFavorite: !existing.isFavorite, updatedAt: existing.updatedAt },
+		select: { id: true, name: true, description: true, isFavorite: true },
+	});
+
+	return updated;
+}
+
+export async function deleteCollection(
+	id: string,
+	userId: string,
+): Promise<boolean> {
+	const existing = await prisma.collection.findFirst({
+		where: { id, userId },
+		select: { id: true },
+	});
+	if (!existing) return false;
+
+	await prisma.collection.delete({ where: { id } });
+
+	return true;
 }
 
 type CollectionRow = {

@@ -4,6 +4,10 @@ import { z } from "zod";
 import { auth } from "@/auth";
 import {
 	createCollection as createCollectionQuery,
+	deleteCollection as deleteCollectionQuery,
+	toggleCollectionFavorite as toggleCollectionFavoriteQuery,
+	updateCollection as updateCollectionQuery,
+	type CollectionFavoriteState,
 	type CreatedCollection,
 } from "@/lib/db/collections";
 
@@ -47,4 +51,85 @@ export async function createCollection(
 	const created = await createCollectionQuery(session.user.id, parsed.data);
 
 	return { success: true, data: created };
+}
+
+const updateCollectionSchema = createCollectionSchema;
+
+export type UpdateCollectionInput = z.input<typeof updateCollectionSchema>;
+
+export async function updateCollection(
+	collectionId: string,
+	input: UpdateCollectionInput,
+): Promise<ActionResult<CreatedCollection>> {
+	const session = await auth();
+	if (!session?.user?.id) {
+		return { success: false, error: "Not authenticated" };
+	}
+
+	if (typeof collectionId !== "string" || collectionId.length === 0) {
+		return { success: false, error: "Invalid collection id" };
+	}
+
+	const parsed = updateCollectionSchema.safeParse(input);
+	if (!parsed.success) {
+		const firstIssue = parsed.error.issues[0];
+		return {
+			success: false,
+			error: firstIssue?.message ?? "Invalid input",
+		};
+	}
+
+	const updated = await updateCollectionQuery(
+		collectionId,
+		session.user.id,
+		parsed.data,
+	);
+	if (!updated) {
+		return { success: false, error: "Collection not found" };
+	}
+
+	return { success: true, data: updated };
+}
+
+export async function toggleCollectionFavorite(
+	collectionId: string,
+): Promise<ActionResult<CollectionFavoriteState>> {
+	const session = await auth();
+	if (!session?.user?.id) {
+		return { success: false, error: "Not authenticated" };
+	}
+
+	if (typeof collectionId !== "string" || collectionId.length === 0) {
+		return { success: false, error: "Invalid collection id" };
+	}
+
+	const updated = await toggleCollectionFavoriteQuery(
+		collectionId,
+		session.user.id,
+	);
+	if (!updated) {
+		return { success: false, error: "Collection not found" };
+	}
+
+	return { success: true, data: updated };
+}
+
+export async function deleteCollection(
+	collectionId: string,
+): Promise<ActionResult<{ id: string }>> {
+	const session = await auth();
+	if (!session?.user?.id) {
+		return { success: false, error: "Not authenticated" };
+	}
+
+	if (typeof collectionId !== "string" || collectionId.length === 0) {
+		return { success: false, error: "Invalid collection id" };
+	}
+
+	const deleted = await deleteCollectionQuery(collectionId, session.user.id);
+	if (!deleted) {
+		return { success: false, error: "Collection not found" };
+	}
+
+	return { success: true, data: { id: collectionId } };
 }

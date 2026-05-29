@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { FolderOpen, Star } from "lucide-react";
 import { auth } from "@/auth";
+import { CollectionDetailActions } from "@/components/collections/CollectionDetailActions";
 import { FileRow } from "@/components/items/FileRow";
 import { ImageCard } from "@/components/items/ImageCard";
 import { ItemCard } from "@/components/items/ItemCard";
@@ -41,6 +42,9 @@ export default async function CollectionDetailPage({
 					<span className="text-sm text-muted-foreground">
 						{items.length} {items.length === 1 ? "item" : "items"}
 					</span>
+					<div className="ml-auto">
+						<CollectionDetailActions collection={collection} />
+					</div>
 				</div>
 				{collection.description && (
 					<p className="text-sm text-muted-foreground">

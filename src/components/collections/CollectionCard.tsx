@@ -5,6 +5,7 @@ import {
 	ITEM_TYPE_ICONS,
 	ITEM_TYPE_LABELS,
 } from "@/lib/constants/item-types";
+import { CollectionCardMenu } from "@/components/collections/CollectionCardMenu";
 import type { DashboardCollection } from "@/lib/db/collections";
 
 export function CollectionCard({
@@ -18,25 +19,34 @@ export function CollectionCard({
 		: undefined;
 
 	return (
-		<Link
-			href={`/collections/${collection.id}`}
-			className="flex flex-col gap-3 rounded-lg border border-l-4 bg-card p-4 transition-colors hover:bg-accent"
+		<div
+			className="relative flex flex-col gap-3 rounded-lg border border-l-4 bg-card p-4 transition-colors hover:bg-accent"
 			style={borderColor ? { borderLeftColor: borderColor } : undefined}
 		>
+			<Link
+				href={`/collections/${collection.id}`}
+				className="absolute inset-0 rounded-lg"
+				aria-label={`Open ${collection.name}`}
+			/>
 			<div className="flex items-center gap-2">
 				<Icon
-					className="size-4 shrink-0"
+					className="pointer-events-none size-4 shrink-0"
 					style={collection.isFavorite ? { color: "#f59e0b" } : undefined}
 					fill={collection.isFavorite ? "currentColor" : "none"}
 				/>
-				<h3 className="truncate font-semibold">{collection.name}</h3>
+				<h3 className="pointer-events-none truncate font-semibold">
+					{collection.name}
+				</h3>
+				<div className="relative z-10 ml-auto">
+					<CollectionCardMenu collection={collection} />
+				</div>
 			</div>
 			{collection.description ? (
-				<p className="line-clamp-2 text-sm text-muted-foreground">
+				<p className="pointer-events-none line-clamp-2 text-sm text-muted-foreground">
 					{collection.description}
 				</p>
 			) : null}
-			<div className="mt-auto flex items-center justify-between gap-2">
+			<div className="pointer-events-none mt-auto flex items-center justify-between gap-2">
 				<div className="flex items-center gap-1.5">
 					{collection.typeCounts.map(({ name, count }) => {
 						const TypeIcon = ITEM_TYPE_ICONS[name];
@@ -62,6 +72,6 @@ export function CollectionCard({
 					{collection.itemCount === 1 ? "item" : "items"}
 				</p>
 			</div>
-		</Link>
+		</div>
 	);
 }
