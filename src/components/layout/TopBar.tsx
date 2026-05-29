@@ -29,7 +29,7 @@ export function TopBar() {
 					type="button"
 					onClick={toggle}
 					aria-label="Toggle sidebar"
-					className="ml-auto flex h-7 w-5 items-center justify-end rounded-md text-muted-foreground hover:text-foreground"
+					className="ml-auto flex size-9 items-center justify-center rounded-md text-muted-foreground outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
 				>
 					<PanelLeft className="size-4" />
 				</button>
@@ -43,7 +43,7 @@ export function TopBar() {
 					className="relative hidden h-9 w-full max-w-xl items-center rounded-md border bg-transparent pr-16 pl-9 text-left text-sm text-muted-foreground outline-none hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-ring md:flex"
 				>
 					<Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
-					<span>Search items, collections, tags…</span>
+					<span className="whitespace-nowrap">Search items, collections, tags…</span>
 					<kbd className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 rounded border bg-muted px-1.5 py-0.5 font-sans text-[11px] font-medium">
 						⌘ K
 					</kbd>

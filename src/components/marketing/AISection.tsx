@@ -51,8 +51,12 @@ export function AISection() {
 								useDebounce.ts
 							</span>
 						</div>
-						<pre className="overflow-x-auto px-5 py-5 text-[0.82rem] leading-[1.7] text-[#c5ccd6]">
-							<code>
+						<pre
+							className="overflow-x-auto px-5 py-5 text-[0.82rem] leading-[1.7] text-[#c5ccd6]"
+							role="img"
+							aria-label="Code example: a useDebounce React hook"
+						>
+							<code aria-hidden="true">
 								<span className="text-purple-400">import</span>
 								{" { useState, useEffect } "}
 								<span className="text-purple-400">from</span>{" "}
