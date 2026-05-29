@@ -79,29 +79,63 @@ function renderFeatures() {
 	).join("");
 }
 
-function renderPreviewCards() {
-	const wrap = document.getElementById("previewCards");
+const PREVIEW_TYPES = [
+	{ key: "snippet", label: "Snippets", active: true },
+	{ key: "prompt", label: "Prompts" },
+	{ key: "command", label: "Commands" },
+	{ key: "note", label: "Notes" },
+	{ key: "file", label: "Files" },
+	{ key: "image", label: "Images" },
+	{ key: "url", label: "Links" },
+];
+
+const PREVIEW_COLLECTIONS = [
+	{ name: "React Patterns", key: "snippet" },
+	{ name: "AI Prompts", key: "prompt" },
+	{ name: "Shell Cmds", key: "command" },
+];
+
+const PREVIEW_RECENT = [
+	{ title: "useDebounce hook", key: "snippet" },
+	{ title: "Code review prompt", key: "prompt" },
+	{ title: "git reset --hard", key: "command" },
+	{ title: "Deploy checklist", key: "note" },
+];
+
+function renderPreviewTypes() {
+	const wrap = document.getElementById("previewTypes");
 	if (!wrap) return;
-	const order = [
-		"snippet",
-		"prompt",
-		"command",
-		"note",
-		"url",
-		"image",
-		"file",
-		"command",
-	];
-	wrap.innerHTML = order
-		.map(
-			(key) =>
-				`<div class="preview-card" style="--c:${TYPE_COLORS[key]}">
-					<span class="preview-card__title"></span>
-					<span class="preview-card__line"></span>
-					<span class="preview-card__line preview-card__line--short"></span>
-				</div>`
-		)
-		.join("");
+	wrap.innerHTML = PREVIEW_TYPES.map(
+		(t) =>
+			`<span class="preview__type${t.active ? " preview__type--active" : ""}">
+				<span class="preview__type-dot" style="--c:${TYPE_COLORS[t.key]}"></span>
+				${t.label}
+			</span>`
+	).join("");
+}
+
+function renderPreviewCollections() {
+	const wrap = document.getElementById("previewCollections");
+	if (!wrap) return;
+	wrap.innerHTML = PREVIEW_COLLECTIONS.map(
+		(c) =>
+			`<div class="preview__collection" style="--c:${TYPE_COLORS[c.key]}">
+				<span class="preview__collection-name">${c.name}</span>
+				<span class="preview__collection-meta"></span>
+			</div>`
+	).join("");
+}
+
+function renderPreviewRecent() {
+	const wrap = document.getElementById("previewRecent");
+	if (!wrap) return;
+	wrap.innerHTML = PREVIEW_RECENT.map(
+		(r) =>
+			`<div class="preview__recent-row">
+				<span class="preview__recent-dot" style="--c:${TYPE_COLORS[r.key]}"></span>
+				<span class="preview__recent-title">${r.title}</span>
+			</div>`
+	).join("");
 }
 
 function setYear() {
@@ -267,7 +301,9 @@ function initChaos() {
 document.addEventListener("DOMContentLoaded", () => {
 	setYear();
 	renderFeatures();
-	renderPreviewCards();
+	renderPreviewTypes();
+	renderPreviewCollections();
+	renderPreviewRecent();
 	initNavScroll();
 	initReveal();
 	initPricingToggle();

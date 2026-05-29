@@ -41,7 +41,6 @@
 
 		<header class="hero" id="top">
 			<div class="hero__text reveal">
-				<span class="pill">Your developer brain, organized</span>
 				<h1 class="hero__title">
 					Stop Losing Your
 					<span class="gradient-text">Developer Knowledge</span>
@@ -83,20 +82,20 @@
 						<div class="preview__body">
 							<div class="preview__sidebar">
 								<div class="preview__brand"></div>
-								<span class="preview__nav preview__nav--active"></span>
-								<span class="preview__nav"></span>
-								<span class="preview__nav"></span>
-								<span class="preview__nav"></span>
-								<span class="preview__nav"></span>
-								<span class="preview__nav"></span>
+								<div class="preview__types" id="previewTypes"></div>
 								<span class="preview__divider"></span>
-								<span class="preview__nav preview__nav--sm"></span>
-								<span class="preview__nav preview__nav--sm"></span>
 								<span class="preview__nav preview__nav--sm"></span>
 								<span class="preview__nav preview__nav--sm"></span>
 							</div>
 							<div class="preview__main">
-								<div class="preview__cards" id="previewCards"></div>
+								<div class="preview__section">
+									<span class="preview__label">Collections</span>
+									<div class="preview__collections" id="previewCollections"></div>
+								</div>
+								<div class="preview__section">
+									<span class="preview__label">Recent Items</span>
+									<div class="preview__recent" id="previewRecent"></div>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -104,14 +103,16 @@
 			</div>
 		</header>
 
-		<section class="section" id="features">
-			<div class="section__head reveal">
-				<h2 class="section__title">Everything in one place</h2>
-				<p class="section__sub">
-					Capture any kind of developer knowledge and find it again in seconds.
-				</p>
+		<section class="band" id="features">
+			<div class="band__inner">
+				<div class="section__head reveal">
+					<h2 class="section__title">Everything in one place</h2>
+					<p class="section__sub">
+						Capture any kind of developer knowledge and find it again in seconds.
+					</p>
+				</div>
+				<div class="features" id="features-grid"></div>
 			</div>
-			<div class="features" id="features-grid"></div>
 		</section>
 
 		<section class="section ai" id="ai">
