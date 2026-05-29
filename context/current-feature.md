@@ -1,24 +1,14 @@
-# Current Feature: Collection Edit/Delete/Favorite Actions
-
-Add edit, delete, and favorite actions for collections — both on the `/collections/[id]` detail page and on the cards at the `/collections` index.
+# Current Feature
+<!-- Title above as "# Current Feature: <name>", followed by a one- or two-sentence description of the feature/fix. -->
 
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- On `/collections/[id]`: add buttons to edit, delete, and favorite the collection.
-- Edit opens a modal to edit the collection metadata (name, description).
-- Delete shows a confirmation before removing the collection.
-- Deleting a collection must NOT delete its items — they just stop belonging to that collection.
-- On `/collections` cards: add a 3-dots icon that opens a dropdown with edit, delete, and favorite.
-- Clicking anywhere else on the card navigates to that collection's detail page.
+<!-- What this feature needs to accomplish. List concrete, checkable goals. -->
 
 ## Notes
-- Reuse the existing collection create patterns (shadcn `Dialog`, Zod-validated server action + user-scoped lib query, toast + `router.refresh()`).
-- Favorite should mirror the item `toggleFavorite` pattern (ownership check, optimistic flip with rollback).
-- Delete confirmation via shadcn `AlertDialog`, matching the item delete flow.
-- The 3-dots dropdown uses shadcn `DropdownMenu`; stop event propagation so the menu doesn't trigger card navigation.
-- Collection `onDelete: Cascade` only applies to the `ItemCollection` join rows, so items themselves are preserved by design.
+<!-- Implementation details, constraints, decisions, and references. -->
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
@@ -59,3 +49,4 @@ In Progress
 - **Collection Create** — Top bar "New Collection" opens shadcn `Dialog` with name + description; Zod-validated `createCollection` action + user-scoped lib query, toast + close + `router.refresh()` on success.
 - **Item Collection Assignment** — `CollectionSelect` popover multi-select in New Item dialog and drawer edit, fed by `useCollectionOptions` hook + `GET /api/collections`; `collectionIds` validated in Zod shape, user-scoped via `filterOwnedCollectionIds`, synced on create and update (`deleteMany` + `create` reconcile).
 - **Collections Pages** — `/collections` index and `/collections/[id]` detail; detail page splits items into an `ItemCard` grid plus separate Images and Files sections; proxy protects `/collections/*`.
+- **Collection Edit/Delete/Favorite** — update/toggle-favorite/delete actions + queries (items preserved on delete); shared edit + delete dialogs, `DropdownMenu` on index cards, action buttons on detail page.
