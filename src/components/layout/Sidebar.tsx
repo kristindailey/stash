@@ -100,19 +100,33 @@ export function Sidebar({
 							/>
 						}
 					>
-						{favoritesOpen &&
-							favoriteCollections.map((collection) => (
-								<SidebarLink
-									key={collection.id}
-									href={`/collections/${collection.id}`}
-									icon={Star}
-									iconColor="#f59e0b"
-									iconFill
-									label={collection.name}
-									count={collection.itemCount}
-									active={pathname === `/collections/${collection.id}`}
-								/>
-							))}
+						{favoritesOpen && (
+							<>
+								{favoriteCollections.map((collection) => (
+									<SidebarLink
+										key={collection.id}
+										href={`/collections/${collection.id}`}
+										icon={Star}
+										iconColor="#f59e0b"
+										iconFill
+										label={collection.name}
+										count={collection.itemCount}
+										active={pathname === `/collections/${collection.id}`}
+									/>
+								))}
+								<Link
+									href="/favorites"
+									className={cn(
+										"flex h-8 items-center gap-2.5 rounded-md px-2 text-sm transition-colors",
+										pathname === "/favorites"
+											? "bg-sidebar-accent text-sidebar-accent-foreground"
+											: "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+									)}
+								>
+									<span className="flex-1 truncate">View all favorites</span>
+								</Link>
+							</>
+						)}
 					</Section>
 
 					<Section

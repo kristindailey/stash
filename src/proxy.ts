@@ -11,6 +11,7 @@ export const proxy = auth((req) => {
 		pathname.startsWith("/dashboard") ||
 		pathname.startsWith("/profile") ||
 		pathname.startsWith("/settings") ||
+		pathname.startsWith("/favorites") ||
 		pathname.startsWith("/items") ||
 		pathname.startsWith("/collections");
 
