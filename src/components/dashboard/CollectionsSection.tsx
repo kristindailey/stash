@@ -1,9 +1,13 @@
 import Link from "next/link";
 import { CollectionCard } from "@/components/collections/CollectionCard";
+import { DASHBOARD_COLLECTIONS_LIMIT } from "@/lib/constants/pagination";
 import { getRecentCollections } from "@/lib/db/collections";
 
 export async function CollectionsSection({ userId }: { userId: string }) {
-	const collections = await getRecentCollections(userId, 6);
+	const collections = await getRecentCollections(
+		userId,
+		DASHBOARD_COLLECTIONS_LIMIT,
+	);
 
 	return (
 		<section>

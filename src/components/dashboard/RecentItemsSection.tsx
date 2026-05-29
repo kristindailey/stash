@@ -1,8 +1,9 @@
+import { DASHBOARD_RECENT_ITEMS_LIMIT } from "@/lib/constants/pagination";
 import { getRecentItems } from "@/lib/db/dashboard";
 import { RecentItemRow } from "./RecentItemRow";
 
 export async function RecentItemsSection({ userId }: { userId: string }) {
-	const recent = await getRecentItems(userId, 10);
+	const recent = await getRecentItems(userId, DASHBOARD_RECENT_ITEMS_LIMIT);
 
 	return (
 		<section>

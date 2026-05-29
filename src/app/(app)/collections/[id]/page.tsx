@@ -5,22 +5,28 @@ import { CollectionDetailActions } from "@/components/collections/CollectionDeta
 import { FileRow } from "@/components/items/FileRow";
 import { ImageCard } from "@/components/items/ImageCard";
 import { ItemCard } from "@/components/items/ItemCard";
+import { Pagination } from "@/components/shared/Pagination";
+import { ITEMS_PER_PAGE } from "@/lib/constants/pagination";
 import { getCollectionWithItems } from "@/lib/db/dashboard";
+import { parsePage } from "@/lib/pagination";
 
 export const dynamic = "force-dynamic";
 
 export default async function CollectionDetailPage({
 	params,
+	searchParams,
 }: PageProps<"/collections/[id]">) {
 	const { id } = await params;
 
 	const session = await auth();
 	if (!session?.user?.id) redirect("/login");
 
-	const collection = await getCollectionWithItems(session.user.id, id);
+	const page = parsePage((await searchParams).page);
+	const collection = await getCollectionWithItems(session.user.id, id, page);
 	if (!collection) notFound();
 
-	const { items } = collection;
+	const { items, totalItems } = collection;
+	const totalPages = Math.max(1, Math.ceil(totalItems / ITEMS_PER_PAGE));
 	const Icon = collection.isFavorite ? Star : FolderOpen;
 
 	const images = items.filter((item) => item.type === "image");
@@ -40,7 +46,7 @@ export default async function CollectionDetailPage({
 					/>
 					<h1 className="text-2xl font-semibold">{collection.name}</h1>
 					<span className="text-sm text-muted-foreground">
-						{items.length} {items.length === 1 ? "item" : "items"}
+						{totalItems} {totalItems === 1 ? "item" : "items"}
 					</span>
 					<div className="ml-auto">
 						<CollectionDetailActions collection={collection} />
@@ -53,7 +59,7 @@ export default async function CollectionDetailPage({
 				)}
 			</header>
 
-			{items.length === 0 ? (
+			{totalItems === 0 ? (
 				<p className="text-sm text-muted-foreground">
 					This collection is empty.
 				</p>
@@ -90,6 +96,12 @@ export default async function CollectionDetailPage({
 					)}
 				</>
 			)}
+
+			<Pagination
+				basePath={`/collections/${id}`}
+				currentPage={page}
+				totalPages={totalPages}
+			/>
 		</div>
 	);
 }
