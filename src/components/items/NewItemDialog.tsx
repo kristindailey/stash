@@ -125,9 +125,9 @@ export function NewItemDialog() {
 	return (
 		<Dialog open={open} onOpenChange={handleOpenChange}>
 			<DialogTrigger asChild>
-				<Button size="lg">
+				<Button size="lg" aria-label="New Item">
 					<Plus />
-					New Item
+					<span className="hidden md:inline">New Item</span>
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="max-w-xl">
