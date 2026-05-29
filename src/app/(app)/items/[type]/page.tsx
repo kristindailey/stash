@@ -11,9 +11,40 @@ import {
 	ITEM_TYPE_LABELS,
 } from "@/lib/constants/item-types";
 import { ITEMS_PER_PAGE } from "@/lib/constants/pagination";
-import { getItemsByType } from "@/lib/db/dashboard";
+import { getItemsByType, getPinnedItemsByType } from "@/lib/db/dashboard";
+import type { DashboardItem } from "@/lib/db/items";
 import { parsePage } from "@/lib/pagination";
 import { capitalize } from "@/lib/utils";
+
+function ItemsGrid({
+	items,
+	singular,
+}: {
+	items: DashboardItem[];
+	singular: string;
+}) {
+	if (singular === "file") {
+		return (
+			<div className="flex flex-col gap-2">
+				{items.map((item) => (
+					<FileRow key={item.id} item={item} />
+				))}
+			</div>
+		);
+	}
+
+	return (
+		<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+			{items.map((item) =>
+				singular === "image" ? (
+					<ImageCard key={item.id} item={item} />
+				) : (
+					<ItemCard key={item.id} item={item} />
+				),
+			)}
+		</div>
+	);
+}
 
 export const dynamic = "force-dynamic";
 
@@ -29,11 +60,15 @@ export default async function ItemsByTypePage({
 
 	const page = parsePage((await searchParams).page);
 	const singular = type.slice(0, -1);
-	const result = await getItemsByType(session.user.id, singular, page);
-	if (result === null) notFound();
+	const [result, pinnedItems] = await Promise.all([
+		getItemsByType(session.user.id, singular, page),
+		getPinnedItemsByType(session.user.id, singular),
+	]);
+	if (result === null || pinnedItems === null) notFound();
 
 	const { items, totalCount } = result;
 	const totalPages = Math.max(1, Math.ceil(totalCount / ITEMS_PER_PAGE));
+	const typeTotal = totalCount + pinnedItems.length;
 
 	const Icon = ITEM_TYPE_ICONS[singular] ?? FolderOpen;
 	const color = ITEM_TYPE_COLORS[singular] ?? "#6b7280";
@@ -46,37 +81,37 @@ export default async function ItemsByTypePage({
 				<Icon className="size-6 shrink-0" style={{ color }} />
 				<h1 className="text-2xl font-semibold">{pluralLabel}</h1>
 				<span className="text-sm text-muted-foreground">
-					{totalCount} {totalCount === 1 ? "item" : "items"}
+					{typeTotal} {typeTotal === 1 ? "item" : "items"}
 				</span>
 			</header>
 
-			{totalCount === 0 ? (
-				<p className="text-sm text-muted-foreground">
-					No {pluralLabel.toLowerCase()} yet.
-				</p>
-			) : singular === "file" ? (
-				<div className="flex flex-col gap-2">
-					{items.map((item) => (
-						<FileRow key={item.id} item={item} />
-					))}
-				</div>
-			) : (
-				<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-					{items.map((item) =>
-						singular === "image" ? (
-							<ImageCard key={item.id} item={item} />
-						) : (
-							<ItemCard key={item.id} item={item} />
-						),
-					)}
-				</div>
-			)}
+			<section className="flex flex-col gap-3">
+				<h2 className="text-lg font-semibold">Pinned</h2>
+				{pinnedItems.length === 0 ? (
+					<p className="text-sm text-muted-foreground">
+						No pinned {pluralLabel.toLowerCase()} yet.
+					</p>
+				) : (
+					<ItemsGrid items={pinnedItems} singular={singular} />
+				)}
+			</section>
 
-			<Pagination
-				basePath={`/items/${type}`}
-				currentPage={page}
-				totalPages={totalPages}
-			/>
+			<section className="flex flex-col gap-3">
+				<h2 className="text-lg font-semibold">All {pluralLabel.toLowerCase()}</h2>
+				{totalCount === 0 ? (
+					<p className="text-sm text-muted-foreground">
+						No {pluralLabel.toLowerCase()} yet.
+					</p>
+				) : (
+					<ItemsGrid items={items} singular={singular} />
+				)}
+
+				<Pagination
+					basePath={`/items/${type}`}
+					currentPage={page}
+					totalPages={totalPages}
+				/>
+			</section>
 		</div>
 	);
 }

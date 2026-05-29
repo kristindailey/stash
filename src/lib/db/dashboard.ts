@@ -39,7 +39,7 @@ export async function getItemsByType(
 	});
 	if (!itemType) return null;
 
-	const where = { userId, itemTypeId: itemType.id };
+	const where = { userId, itemTypeId: itemType.id, isPinned: false };
 	const [items, totalCount] = await Promise.all([
 		prisma.item.findMany({
 			where,
@@ -52,6 +52,25 @@ export async function getItemsByType(
 	]);
 
 	return { items: items.map(toDashboardItem), totalCount };
+}
+
+export async function getPinnedItemsByType(
+	userId: string,
+	typeName: string,
+): Promise<DashboardItem[] | null> {
+	const itemType = await prisma.itemType.findFirst({
+		where: { name: typeName, OR: [{ isSystem: true }, { userId }] },
+		select: { id: true },
+	});
+	if (!itemType) return null;
+
+	const items = await prisma.item.findMany({
+		where: { userId, itemTypeId: itemType.id, isPinned: true },
+		orderBy: { updatedAt: "desc" },
+		include: itemInclude,
+	});
+
+	return items.map(toDashboardItem);
 }
 
 export type CollectionWithItems = {
