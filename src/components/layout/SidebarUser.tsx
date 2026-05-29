@@ -84,8 +84,8 @@ export function SidebarUser({ user }: { user: SidebarUser | null }) {
 			</div>
 
 			<Link
-				href="/profile"
-				aria-label="Profile"
+				href="/settings"
+				aria-label="Settings"
 				className="rounded p-1 text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground"
 			>
 				<Settings className="size-4" />

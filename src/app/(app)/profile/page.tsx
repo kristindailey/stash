@@ -7,8 +7,6 @@ import {
 	ITEM_TYPE_LABELS,
 } from "@/lib/constants/item-types";
 import { getProfile } from "@/lib/db/profile";
-import { ChangePasswordSection } from "./change-password-section";
-import { DeleteAccountSection } from "./delete-account-section";
 
 export const dynamic = "force-dynamic";
 
@@ -77,14 +75,6 @@ export default async function ProfilePage() {
 							);
 						})}
 					</ul>
-				</div>
-			</section>
-
-			<section>
-				<h2 className="mb-3 text-lg font-semibold">Account</h2>
-				<div className="flex flex-col gap-4">
-					{user.hasPassword && <ChangePasswordSection />}
-					<DeleteAccountSection email={user.email} />
 				</div>
 			</section>
 		</div>
