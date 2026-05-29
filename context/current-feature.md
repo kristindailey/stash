@@ -1,14 +1,24 @@
-# Current Feature
-<!-- Title above as "# Current Feature: <name>", followed by a one- or two-sentence description of the feature/fix. -->
+# Current Feature: Favorites Page
+A `/favorites` page displaying all favorited items and collections in a compact, dev-focused list.
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- What this feature needs to accomplish. List concrete, checkable goals. -->
+- Add a "View all favorites" link to the sidebar under the Favorites section (like Collections) linking to `/favorites`
+- Create the `/favorites` route with proxy protection
+- Fetch all of the user's favorited items and collections
+- List view using `/items/files`-style rows (border + `bg-card`, responsive)
+- Each row shows: type-colored icon, title, type/count label, date
+- Separate sections for items and collections with counts
+- Click an item opens `ItemDrawer`; click a collection navigates to `/collections/[id]`
+- Empty state when there are no favorites
+- Sort by most recently favorited (`updatedAt`)
 
 ## Notes
-<!-- Implementation details, constraints, decisions, and references. -->
+- UI style: rows mirror `/items/files` (`FileRow`) — `rounded-lg border bg-card` rows, type-colored icon, right-aligned label + relative date, `sm:flex-row` responsive.
+- Section headers ("Items" / "Collections") use the `/collections/[id]` `text-lg font-semibold` heading style.
+- Sort uses `updatedAt` per spec; note there is no `favoritedAt` column and `toggleItemFavorite` preserves `updatedAt`, so order reflects last edit, not favorite time.
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
