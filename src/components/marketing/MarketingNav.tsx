@@ -27,12 +27,18 @@ export function MarketingNav() {
 			<div className="mx-auto flex max-w-[1180px] items-center justify-between gap-6 px-6 py-3.5">
 				<Brand href="/" />
 				<div className="ml-auto hidden gap-6 text-sm text-muted-foreground sm:flex">
-					<a href="#features" className="transition-colors hover:text-foreground">
+					<Link
+						href="/#features"
+						className="transition-colors hover:text-foreground"
+					>
 						Features
-					</a>
-					<a href="#pricing" className="transition-colors hover:text-foreground">
+					</Link>
+					<Link
+						href="/#pricing"
+						className="transition-colors hover:text-foreground"
+					>
 						Pricing
-					</a>
+					</Link>
 				</div>
 				<div className="flex items-center gap-2">
 					<Button asChild variant="ghost" size="lg" className="px-4">
