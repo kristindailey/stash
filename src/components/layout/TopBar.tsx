@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { Code, PanelLeft, Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { NewItemDialog } from "@/components/items/NewItemDialog";
 import { NewCollectionDialog } from "@/components/collections/NewCollectionDialog";
+import { useCommandPalette } from "@/components/search/command-palette-context";
 import { useSidebar } from "./sidebar-context";
 
 export function TopBar() {
 	const { toggle } = useSidebar();
+	const { openPalette } = useCommandPalette();
 	return (
 		<header className="flex h-16 shrink-0 items-center border-b">
 			<div className="flex h-full shrink-0 items-center gap-2.5 border-r px-5 md:w-64">
@@ -33,17 +34,18 @@ export function TopBar() {
 			</div>
 
 			<div className="flex flex-1 justify-center px-6">
-				<div className="relative w-full max-w-xl">
-					<Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-					<Input
-						placeholder="Search items, collections, tags…"
-						aria-label="Search"
-						className="h-9 pr-16 pl-9"
-					/>
-					<kbd className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 rounded border bg-muted px-1.5 py-0.5 font-sans text-[11px] font-medium text-muted-foreground">
+				<button
+					type="button"
+					onClick={openPalette}
+					aria-label="Search"
+					className="relative flex h-9 w-full max-w-xl items-center rounded-md border bg-transparent pr-16 pl-9 text-left text-sm text-muted-foreground outline-none hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-ring"
+				>
+					<Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+					<span>Search items, collections, tags…</span>
+					<kbd className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 rounded border bg-muted px-1.5 py-0.5 font-sans text-[11px] font-medium">
 						⌘ K
 					</kbd>
-				</div>
+				</button>
 			</div>
 
 			<div className="flex shrink-0 items-center gap-2 px-5">
