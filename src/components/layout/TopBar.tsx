@@ -12,7 +12,7 @@ export function TopBar() {
 	const { openPalette } = useCommandPalette();
 	return (
 		<header className="flex h-16 shrink-0 items-center border-b">
-			<div className="flex h-full shrink-0 items-center gap-2.5 border-r px-5 md:w-64">
+			<div className="flex h-full shrink-0 items-center gap-2.5 border-r px-4 md:w-64 md:px-5">
 				<Link
 					href="/dashboard"
 					aria-label="Go to dashboard"
@@ -21,7 +21,9 @@ export function TopBar() {
 					<div className="flex size-8 items-center justify-center rounded-lg bg-foreground text-background">
 						<Code className="size-4" />
 					</div>
-					<span className="text-lg font-semibold tracking-tight">DevStash</span>
+					<span className="hidden text-lg font-semibold tracking-tight sm:inline">
+						DevStash
+					</span>
 				</Link>
 				<button
 					type="button"
@@ -33,12 +35,12 @@ export function TopBar() {
 				</button>
 			</div>
 
-			<div className="flex flex-1 justify-center px-6">
+			<div className="flex flex-1 justify-center px-3 md:px-6">
 				<button
 					type="button"
 					onClick={openPalette}
 					aria-label="Search"
-					className="relative flex h-9 w-full max-w-xl items-center rounded-md border bg-transparent pr-16 pl-9 text-left text-sm text-muted-foreground outline-none hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-ring"
+					className="relative hidden h-9 w-full max-w-xl items-center rounded-md border bg-transparent pr-16 pl-9 text-left text-sm text-muted-foreground outline-none hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-ring md:flex"
 				>
 					<Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
 					<span>Search items, collections, tags…</span>
@@ -46,9 +48,17 @@ export function TopBar() {
 						⌘ K
 					</kbd>
 				</button>
+				<button
+					type="button"
+					onClick={openPalette}
+					aria-label="Search"
+					className="ml-auto flex size-9 items-center justify-center rounded-md border bg-transparent text-muted-foreground outline-none hover:bg-accent/40 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring md:hidden"
+				>
+					<Search className="size-4" />
+				</button>
 			</div>
 
-			<div className="flex shrink-0 items-center gap-2 px-5">
+			<div className="flex shrink-0 items-center gap-2 px-3 md:px-5">
 				<NewCollectionDialog />
 				<NewItemDialog />
 			</div>
