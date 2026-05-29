@@ -129,6 +129,36 @@
 	}
 }
 
+.marketing {
+	--background: #0a0c10;
+	--card: #141821;
+	--border: #232a36;
+	--foreground: #e6e9ef;
+	--muted-foreground: #9aa4b2;
+}
+
+@keyframes arrow-pulse {
+	0% {
+		box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.45);
+	}
+	70% {
+		box-shadow: 0 0 0 16px rgba(59, 130, 246, 0);
+	}
+	100% {
+		box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+	}
+}
+
+.animate-arrow-pulse {
+	animation: arrow-pulse 2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.animate-arrow-pulse {
+		animation: none;
+	}
+}
+
 .markdown-preview {
 	line-height: 1.6;
 }
