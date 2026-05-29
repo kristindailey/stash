@@ -1,3 +1,5 @@
+import { Trash2Icon } from "lucide-react";
+
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -6,6 +8,7 @@ import {
 	AlertDialogDescription,
 	AlertDialogFooter,
 	AlertDialogHeader,
+	AlertDialogMedia,
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
@@ -24,23 +27,26 @@ export function DeleteItemDialog({
 }) {
 	return (
 		<AlertDialog open={open} onOpenChange={onOpenChange}>
-			<AlertDialogContent>
+			<AlertDialogContent size="sm">
 				<AlertDialogHeader>
+					<AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20">
+						<Trash2Icon />
+					</AlertDialogMedia>
 					<AlertDialogTitle>Delete this item?</AlertDialogTitle>
 					<AlertDialogDescription>
-						&ldquo;{title}&rdquo; will be permanently deleted. This cannot be
-						undone.
+						<span className="font-medium text-foreground">{title}</span> will be
+						permanently deleted. This cannot be undone.
 					</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>
 					<AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
 					<AlertDialogAction
+						variant="destructive"
 						onClick={(e) => {
 							e.preventDefault();
 							onConfirm();
 						}}
 						disabled={deleting}
-						className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
 					>
 						{deleting ? "Deleting…" : "Delete"}
 					</AlertDialogAction>

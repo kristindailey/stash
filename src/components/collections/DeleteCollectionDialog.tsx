@@ -1,3 +1,5 @@
+import { Trash2Icon } from "lucide-react";
+
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -6,6 +8,7 @@ import {
 	AlertDialogDescription,
 	AlertDialogFooter,
 	AlertDialogHeader,
+	AlertDialogMedia,
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
@@ -24,22 +27,28 @@ export function DeleteCollectionDialog({
 }) {
 	return (
 		<AlertDialog open={open} onOpenChange={onOpenChange}>
-			<AlertDialogContent>
+			<AlertDialogContent size="sm">
 				<AlertDialogHeader>
+					<AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20">
+						<Trash2Icon />
+					</AlertDialogMedia>
 					<AlertDialogTitle>Delete this collection?</AlertDialogTitle>
 					<AlertDialogDescription>
-						&ldquo;{name}&rdquo; will be permanently deleted. This cannot be undone. Note: Items in this collection will not be deleted.
+						<span className="font-medium text-foreground">{name}</span> will be permanently deleted. This cannot be undone.
+						<span className="mt-2 block">
+							Items in this collection will not be deleted.
+						</span>
 					</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>
 					<AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
 					<AlertDialogAction
+						variant="destructive"
 						onClick={(e) => {
 							e.preventDefault();
 							onConfirm();
 						}}
 						disabled={deleting}
-						className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
 					>
 						{deleting ? "Deleting…" : "Delete"}
 					</AlertDialogAction>
