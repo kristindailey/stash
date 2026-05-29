@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getProfile } from "@/lib/db/profile";
 import { ChangePasswordSection } from "./change-password-section";
 import { DeleteAccountSection } from "./delete-account-section";
+import { EditorPreferencesSection } from "./editor-preferences-section";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +20,8 @@ export default async function SettingsPage() {
 					Manage your account and security.
 				</p>
 			</header>
+
+			<EditorPreferencesSection />
 
 			<section>
 				<h2 className="mb-3 text-lg font-semibold">Account</h2>

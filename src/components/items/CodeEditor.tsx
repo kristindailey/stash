@@ -5,6 +5,8 @@ import Editor, { type OnMount } from "@monaco-editor/react";
 import type { editor } from "monaco-editor";
 import { Check, Copy } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useEditorPreferences } from "@/components/editor/editor-preferences-context";
+import type { EditorTheme } from "@/lib/constants/editor-preferences";
 
 interface CodeEditorProps {
 	value: string;
@@ -18,7 +20,82 @@ interface CodeEditorProps {
 
 const DEFAULT_MIN_HEIGHT = 140;
 const DEFAULT_MAX_HEIGHT = 400;
-const THEME_NAME = "devstash-dark";
+
+const MONACO_THEME_NAMES: Record<EditorTheme, string> = {
+	"vs-dark": "devstash-vs-dark",
+	monokai: "devstash-monokai",
+	"github-dark": "devstash-github-dark",
+};
+
+const THEME_DEFINITIONS: Record<EditorTheme, editor.IStandaloneThemeData> = {
+	"vs-dark": {
+		base: "vs-dark",
+		inherit: true,
+		rules: [],
+		colors: {
+			"editor.background": "#1a1a1a",
+			"editor.foreground": "#e4e4e7",
+			"editorLineNumber.foreground": "#52525b",
+			"editorLineNumber.activeForeground": "#a1a1aa",
+			"editor.lineHighlightBackground": "#27272a55",
+			"editor.selectionBackground": "#3f3f4670",
+			"editorCursor.foreground": "#e4e4e7",
+			"scrollbarSlider.background": "#52525b66",
+			"scrollbarSlider.hoverBackground": "#71717a99",
+			"scrollbarSlider.activeBackground": "#a1a1aacc",
+			"editorWidget.background": "#1a1a1a",
+			"editorWidget.border": "#27272a",
+		},
+	},
+	monokai: {
+		base: "vs-dark",
+		inherit: true,
+		rules: [
+			{ token: "comment", foreground: "75715e" },
+			{ token: "string", foreground: "e6db74" },
+			{ token: "number", foreground: "ae81ff" },
+			{ token: "keyword", foreground: "f92672" },
+			{ token: "type", foreground: "66d9ef", fontStyle: "italic" },
+			{ token: "function", foreground: "a6e22e" },
+			{ token: "variable", foreground: "f8f8f2" },
+		],
+		colors: {
+			"editor.background": "#272822",
+			"editor.foreground": "#f8f8f2",
+			"editorLineNumber.foreground": "#90908a",
+			"editorLineNumber.activeForeground": "#f8f8f2",
+			"editor.lineHighlightBackground": "#3e3d32",
+			"editor.selectionBackground": "#49483e",
+			"editorCursor.foreground": "#f8f8f0",
+			"editorWidget.background": "#272822",
+			"editorWidget.border": "#3e3d32",
+		},
+	},
+	"github-dark": {
+		base: "vs-dark",
+		inherit: true,
+		rules: [
+			{ token: "comment", foreground: "8b949e" },
+			{ token: "string", foreground: "a5d6ff" },
+			{ token: "number", foreground: "79c0ff" },
+			{ token: "keyword", foreground: "ff7b72" },
+			{ token: "type", foreground: "ffa657" },
+			{ token: "function", foreground: "d2a8ff" },
+			{ token: "variable", foreground: "c9d1d9" },
+		],
+		colors: {
+			"editor.background": "#0d1117",
+			"editor.foreground": "#c9d1d9",
+			"editorLineNumber.foreground": "#484f58",
+			"editorLineNumber.activeForeground": "#c9d1d9",
+			"editor.lineHighlightBackground": "#161b22",
+			"editor.selectionBackground": "#264f78",
+			"editorCursor.foreground": "#c9d1d9",
+			"editorWidget.background": "#0d1117",
+			"editorWidget.border": "#161b22",
+		},
+	},
+};
 
 export function CodeEditor({
 	value,
@@ -29,12 +106,14 @@ export function CodeEditor({
 	maxHeight = DEFAULT_MAX_HEIGHT,
 	className,
 }: CodeEditorProps) {
+	const { preferences } = useEditorPreferences();
 	const editorRef = React.useRef<editor.IStandaloneCodeEditor | null>(null);
 	const [height, setHeight] = React.useState(minHeight);
 	const [copied, setCopied] = React.useState(false);
 	const [ready, setReady] = React.useState(false);
 
 	const lang = normalizeLanguage(language);
+	const themeName = MONACO_THEME_NAMES[preferences.theme];
 
 	const updateHeight = React.useCallback(() => {
 		const ed = editorRef.current;
@@ -48,31 +127,21 @@ export function CodeEditor({
 	const handleMount: OnMount = (ed, monaco) => {
 		editorRef.current = ed;
 
-		monaco.editor.defineTheme(THEME_NAME, {
-			base: "vs-dark",
-			inherit: true,
-			rules: [],
-			colors: {
-				"editor.background": "#1a1a1a",
-				"editor.foreground": "#e4e4e7",
-				"editorLineNumber.foreground": "#52525b",
-				"editorLineNumber.activeForeground": "#a1a1aa",
-				"editor.lineHighlightBackground": "#27272a55",
-				"editor.selectionBackground": "#3f3f4670",
-				"editorCursor.foreground": "#e4e4e7",
-				"scrollbarSlider.background": "#52525b66",
-				"scrollbarSlider.hoverBackground": "#71717a99",
-				"scrollbarSlider.activeBackground": "#a1a1aacc",
-				"editorWidget.background": "#1a1a1a",
-				"editorWidget.border": "#27272a",
-			},
-		});
-		monaco.editor.setTheme(THEME_NAME);
+		for (const [theme, definition] of Object.entries(THEME_DEFINITIONS)) {
+			monaco.editor.defineTheme(MONACO_THEME_NAMES[theme as EditorTheme], definition);
+		}
+		monaco.editor.setTheme(themeName);
+
+		ed.getModel()?.updateOptions({ tabSize: preferences.tabSize });
 
 		ed.onDidContentSizeChange(updateHeight);
 		updateHeight();
 		setReady(true);
 	};
+
+	React.useEffect(() => {
+		editorRef.current?.getModel()?.updateOptions({ tabSize: preferences.tabSize });
+	}, [preferences.tabSize]);
 
 	const handleCopy = React.useCallback(async () => {
 		if (!value) return;
@@ -122,7 +191,7 @@ export function CodeEditor({
 					height="100%"
 					value={value}
 					language={lang}
-					theme={ready ? THEME_NAME : "vs-dark"}
+					theme={ready ? themeName : "vs-dark"}
 					onChange={(next) => onChange?.(next ?? "")}
 					onMount={handleMount}
 					loading={
@@ -133,14 +202,14 @@ export function CodeEditor({
 					options={{
 						readOnly,
 						domReadOnly: readOnly,
-						fontSize: 12,
-						lineHeight: 18,
+						fontSize: preferences.fontSize,
+						lineHeight: 0,
 						fontFamily:
 							"var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace",
-						minimap: { enabled: false },
+						minimap: { enabled: preferences.minimap },
 						scrollBeyondLastLine: false,
 						automaticLayout: true,
-						wordWrap: "on",
+						wordWrap: preferences.wordWrap ? "on" : "off",
 						lineNumbers: "on",
 						lineNumbersMinChars: 3,
 						glyphMargin: false,

@@ -1,14 +1,29 @@
-# Current Feature
-<!-- Title above as "# Current Feature: <name>", followed by a one- or two-sentence description of the feature/fix. -->
+# Current Feature: Editor Preferences Settings
+Add an editor preferences section to the settings page that auto-saves Monaco editor options to the database and applies them to all code editors.
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- What this feature needs to accomplish. List concrete, checkable goals. -->
+- Add editor preferences section to the settings page
+- Font size dropdown
+- Tab size dropdown
+- Word wrap toggle (default: on)
+- Minimap toggle (default: off)
+- Theme dropdown: vs-dark, monokai, github-dark (default: vs-dark)
+- Store preferences in a JSON column `editorPreferences` on the User model
+- Create and run a Prisma migration (never `db push`)
+- Server action to update preferences
+- Apply settings to the Monaco editor component
+- Auto-save on change (no save button)
+- Show success toast on save
+- Create `EditorPreferencesContext` for client components
 
 ## Notes
-<!-- Implementation details, constraints, decisions, and references. -->
+- Spec: `context/features/editor-settings-spec.md`
+- Migrations: use `npx prisma migrate dev` against the `development` Neon branch; never `db push`.
+- Auto-save means each control change fires the server action; debounce where appropriate to avoid excessive writes.
+- Monaco editor lives in the existing `CodeEditor` component (used in drawer view/edit and new-item dialog).
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
