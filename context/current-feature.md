@@ -1,14 +1,21 @@
-# Current Feature
-<!-- Title above as "# Current Feature: <name>", followed by a one- or two-sentence description of the feature/fix. -->
+# Current Feature: Settings Page
+Add a dedicated `/settings` page wired to the sidebar gear icon, and relocate the Account actions (change password + delete account) from the profile page to it.
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- What this feature needs to accomplish. List concrete, checkable goals. -->
+- Create a protected `/settings` route under the `(app)` route group.
+- Point the sidebar gear icon (`SidebarUser`) at `/settings` instead of `/profile`.
+- Move the change-password and delete-account sections out of the profile page and into the settings page.
+- Keep the profile page focused on identity + stats once the Account section is removed.
 
 ## Notes
-<!-- Implementation details, constraints, decisions, and references. -->
+- Gear icon lives in `src/components/layout/SidebarUser.tsx` (currently `href="/profile"`).
+- Account section currently in `src/app/(app)/profile/page.tsx`: `ChangePasswordSection` and `DeleteAccountSection` (both in `src/app/(app)/profile/`). The "forgot password" referenced in the spec maps to the existing `ChangePasswordSection`.
+- Route protection: `/profile` and other `(app)`/dashboard routes are protected via the auth proxy/matcher — add `/settings` to that protection.
+- `ChangePasswordSection` is gated on `user.hasPassword`; `DeleteAccountSection` needs `email`. Both come from `getProfile()` in `src/lib/db/profile.ts`.
+- Move the section components into a settings folder (or shared location) and update imports; confirm no other page references them.
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
