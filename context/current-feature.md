@@ -1,24 +1,14 @@
-# Current Feature: Favorites Page
-A `/favorites` page displaying all favorited items and collections in a compact, dev-focused list.
+# Current Feature
+<!-- Title above as "# Current Feature: <name>", followed by a one- or two-sentence description of the feature/fix. -->
 
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- Add a "View all favorites" link to the sidebar under the Favorites section (like Collections) linking to `/favorites`
-- Create the `/favorites` route with proxy protection
-- Fetch all of the user's favorited items and collections
-- List view using `/items/files`-style rows (border + `bg-card`, responsive)
-- Each row shows: type-colored icon, title, type/count label, date
-- Separate sections for items and collections with counts
-- Click an item opens `ItemDrawer`; click a collection navigates to `/collections/[id]`
-- Empty state when there are no favorites
-- Sort by most recently favorited (`updatedAt`)
+<!-- What this feature needs to accomplish. List concrete, checkable goals. -->
 
 ## Notes
-- UI style: rows mirror `/items/files` (`FileRow`) — `rounded-lg border bg-card` rows, type-colored icon, right-aligned label + relative date, `sm:flex-row` responsive.
-- Section headers ("Items" / "Collections") use the `/collections/[id]` `text-lg font-semibold` heading style.
-- Sort uses `updatedAt` per spec; note there is no `favoritedAt` column and `toggleItemFavorite` preserves `updatedAt`, so order reflects last edit, not favorite time.
+<!-- Implementation details, constraints, decisions, and references. -->
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
@@ -64,3 +54,4 @@ In Progress
 - **Pagination** — DB-level `skip`/`take` + count on item/collection listings; `Pagination` component + `parsePage`/`getPageRange` utils (fixed 7-slot range), page sizes in `lib/constants/pagination.ts`.
 - **Settings Page** — Protected `/settings` route; sidebar gear icon retargeted from `/profile`; change-password + delete-account sections moved out of profile into settings.
 - **Editor Preferences** — `editorPreferences` JSON column + migration; auto-saving font/tab/theme/word-wrap/minimap settings via `EditorPreferencesProvider` applied to `CodeEditor`.
+- **Favorites Page** — Protected `/favorites` route; `getFavorites` fetcher, `FavoritesList` with `/items/files`-style rows and sidebar "View all favorites" link.
