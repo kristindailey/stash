@@ -26,7 +26,7 @@ export function PricingSection() {
 						type="button"
 						onClick={() => setYearly(false)}
 						className={cn(
-							"rounded-full px-4.5 py-1.5 text-sm font-semibold text-muted-foreground transition-colors outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
+							"rounded-full px-4.5 py-1.5 text-sm font-semibold text-muted-foreground transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring",
 							!yearly && "bg-blue-500 text-white"
 						)}
 					>
@@ -36,7 +36,7 @@ export function PricingSection() {
 						type="button"
 						onClick={() => setYearly(true)}
 						className={cn(
-							"inline-flex items-center gap-1.5 rounded-full px-4.5 py-1.5 text-sm font-semibold text-muted-foreground transition-colors outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
+							"inline-flex items-center gap-1.5 rounded-full px-4.5 py-1.5 text-sm font-semibold text-muted-foreground transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring",
 							yearly && "bg-blue-500 text-white"
 						)}
 					>
