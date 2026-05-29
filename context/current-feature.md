@@ -1,29 +1,14 @@
-# Current Feature: Editor Preferences Settings
-Add an editor preferences section to the settings page that auto-saves Monaco editor options to the database and applies them to all code editors.
+# Current Feature
+<!-- Title above as "# Current Feature: <name>", followed by a one- or two-sentence description of the feature/fix. -->
 
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- Add editor preferences section to the settings page
-- Font size dropdown
-- Tab size dropdown
-- Word wrap toggle (default: on)
-- Minimap toggle (default: off)
-- Theme dropdown: vs-dark, monokai, github-dark (default: vs-dark)
-- Store preferences in a JSON column `editorPreferences` on the User model
-- Create and run a Prisma migration (never `db push`)
-- Server action to update preferences
-- Apply settings to the Monaco editor component
-- Auto-save on change (no save button)
-- Show success toast on save
-- Create `EditorPreferencesContext` for client components
+<!-- What this feature needs to accomplish. List concrete, checkable goals. -->
 
 ## Notes
-- Spec: `context/features/editor-settings-spec.md`
-- Migrations: use `npx prisma migrate dev` against the `development` Neon branch; never `db push`.
-- Auto-save means each control change fires the server action; debounce where appropriate to avoid excessive writes.
-- Monaco editor lives in the existing `CodeEditor` component (used in drawer view/edit and new-item dialog).
+<!-- Implementation details, constraints, decisions, and references. -->
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
@@ -68,3 +53,4 @@ In Progress
 - **Global Search / Command Palette** — `cmdk` palette opened via Cmd/Ctrl+K or TopBar button; client-side fuzzy search over pre-fetched `getSearchData`, grouped Items/Collections, selects open item drawer or collection page.
 - **Pagination** — DB-level `skip`/`take` + count on item/collection listings; `Pagination` component + `parsePage`/`getPageRange` utils (fixed 7-slot range), page sizes in `lib/constants/pagination.ts`.
 - **Settings Page** — Protected `/settings` route; sidebar gear icon retargeted from `/profile`; change-password + delete-account sections moved out of profile into settings.
+- **Editor Preferences** — `editorPreferences` JSON column + migration; auto-saving font/tab/theme/word-wrap/minimap settings via `EditorPreferencesProvider` applied to `CodeEditor`.
