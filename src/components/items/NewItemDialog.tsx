@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Plus } from "lucide-react";
 import {
 	Dialog,
+	DialogBody,
 	DialogClose,
 	DialogContent,
 	DialogDescription,
@@ -138,7 +139,7 @@ export function NewItemDialog() {
 					</DialogDescription>
 				</DialogHeader>
 
-				<div className="flex flex-col gap-4">
+				<DialogBody className="flex flex-col gap-4">
 					<Field label="Type">
 						<div className="flex flex-wrap gap-2">
 							{CREATABLE_TYPES.map((t) => {
@@ -244,7 +245,7 @@ export function NewItemDialog() {
 							loading={collectionsLoading}
 						/>
 					</Field>
-				</div>
+				</DialogBody>
 
 				<DialogFooter>
 					<DialogClose asChild>
