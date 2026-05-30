@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Code, PanelLeft, Search } from "lucide-react";
+import { Code, PanelLeft, Search, Sparkles } from "lucide-react";
 import { NewItemDialog } from "@/components/items/NewItemDialog";
 import { NewCollectionDialog } from "@/components/collections/NewCollectionDialog";
 import { useCommandPalette } from "@/components/search/command-palette-context";
+import { Button } from "@/components/ui/button";
 import { useSidebar } from "./sidebar-context";
 
 export function TopBar({ isPro }: { isPro: boolean }) {
@@ -59,6 +60,14 @@ export function TopBar({ isPro }: { isPro: boolean }) {
 			</div>
 
 			<div className="flex shrink-0 items-center gap-2 px-3 md:px-5">
+				{!isPro && (
+					<Button asChild variant="ghost" size="sm">
+						<Link href="/upgrade">
+							<Sparkles className="size-4" />
+							<span className="hidden sm:inline">Upgrade</span>
+						</Link>
+					</Button>
+				)}
 				<NewCollectionDialog />
 				<NewItemDialog isPro={isPro} />
 			</div>

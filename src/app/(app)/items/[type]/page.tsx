@@ -4,7 +4,6 @@ import { auth } from "@/auth";
 import { FileRow } from "@/components/items/FileRow";
 import { ImageCard } from "@/components/items/ImageCard";
 import { ItemCard } from "@/components/items/ItemCard";
-import { ProTypeUpgrade } from "@/components/items/ProTypeUpgrade";
 import { Pagination } from "@/components/shared/Pagination";
 import {
 	ITEM_TYPE_COLORS,
@@ -64,10 +63,7 @@ export default async function ItemsByTypePage({
 	const singular = type.slice(0, -1);
 
 	if (PRO_ONLY_TYPES.has(singular) && !session.user.isPro) {
-		const Icon = ITEM_TYPE_ICONS[singular] ?? FolderOpen;
-		const color = ITEM_TYPE_COLORS[singular] ?? "#6b7280";
-		const label = `${ITEM_TYPE_LABELS[singular] ?? capitalize(singular)}s`;
-		return <ProTypeUpgrade label={label} Icon={Icon} color={color} />;
+		redirect("/upgrade");
 	}
 
 	const [result, pinnedItems] = await Promise.all([

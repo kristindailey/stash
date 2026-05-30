@@ -15,6 +15,16 @@ export async function getUserPlan(userId: string): Promise<UserPlan> {
 	return { isPro: user?.isPro ?? false };
 }
 
+export type UserUsage = { itemCount: number; collectionCount: number };
+
+export async function getUserUsage(userId: string): Promise<UserUsage> {
+	const [itemCount, collectionCount] = await Promise.all([
+		prisma.item.count({ where: { userId } }),
+		prisma.collection.count({ where: { userId } }),
+	]);
+	return { itemCount, collectionCount };
+}
+
 export async function checkItemQuota(userId: string): Promise<string | null> {
 	const { isPro } = await getUserPlan(userId);
 	if (isPro) return null;

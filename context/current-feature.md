@@ -1,14 +1,20 @@
-# Current Feature
-<!-- Title above as "# Current Feature: <name>", followed by a one- or two-sentence description of the feature/fix. -->
+# Current Feature: Upgrade Page
+A dedicated `/upgrade` page that presents Pro features and plan selection before sending free users to Stripe checkout, reached via a subtle ghost "Upgrade" button in the top bar.
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- What this feature needs to accomplish. List concrete, checkable goals. -->
+- [ ] Free users see an "Upgrade" ghost button in the TopBar (hidden for Pro users)
+- [ ] `/upgrade` page lists Pro features like the homepage pricing section
+- [ ] User can pick $8 monthly or $72 yearly
+- [ ] Upgrade button on the page starts Stripe checkout via `createCheckoutSession`
+- [ ] Pro users visiting `/upgrade` are redirected to `/settings`
 
 ## Notes
-<!-- Implementation details, constraints, decisions, and references. -->
+- Lives in the `(app)` route group so it inherits auth, sidebar, and TopBar.
+- Reuses `PRICING_PLANS` (Pro entry) from `lib/constants/marketing.ts` for feature list and prices.
+- Ghost button uses the existing `button.tsx` `ghost` variant, more subtle than New Item/New Collection.
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
