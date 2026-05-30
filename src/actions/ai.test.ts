@@ -21,7 +21,7 @@ import { auth } from "@/auth";
 import { requireProForAI } from "@/lib/billing";
 import { checkAiRateLimit } from "@/lib/rate-limit";
 import { openai } from "@/lib/openai";
-import { generateAutoTags, generateDescription } from "./ai";
+import { explainCode, generateAutoTags, generateDescription } from "./ai";
 
 const authMock = vi.mocked(auth);
 const requireProMock = vi.mocked(requireProForAI);
@@ -245,6 +245,92 @@ describe("generateDescription", () => {
 		expect(result).toEqual({
 			success: false,
 			error: "Could not generate a description. Please try again.",
+		});
+	});
+});
+
+describe("explainCode", () => {
+	it("rejects when not authenticated", async () => {
+		authMock.mockResolvedValue(null as never);
+		const result = await explainCode({ content: "const x = 1;" });
+		expect(result).toEqual({ success: false, error: "Not authenticated" });
+		expect(createMock).not.toHaveBeenCalled();
+	});
+
+	it("rejects free users with the Pro upgrade message", async () => {
+		requireProMock.mockResolvedValue(
+			"AI features are a Pro feature. Upgrade to Pro to use them.",
+		);
+		const result = await explainCode({ content: "const x = 1;" });
+		expect(result).toEqual({
+			success: false,
+			error: "AI features are a Pro feature. Upgrade to Pro to use them.",
+		});
+		expect(createMock).not.toHaveBeenCalled();
+	});
+
+	it("rejects when rate limited", async () => {
+		rateLimitMock.mockResolvedValue({ success: false } as never);
+		const result = await explainCode({ content: "const x = 1;" });
+		expect(result).toEqual({
+			success: false,
+			error: "Too many AI requests. Please try again shortly.",
+		});
+		expect(createMock).not.toHaveBeenCalled();
+	});
+
+	it("rejects when there is no code", async () => {
+		const result = await explainCode({ content: "   " });
+		expect(result).toEqual({ success: false, error: "Add code to explain." });
+		expect(createMock).not.toHaveBeenCalled();
+	});
+
+	it("returns the markdown explanation from the model", async () => {
+		aiReturns("## What it does\n\nDeclares a constant.");
+		const result = await explainCode({ content: "const x = 1;" });
+		expect(result).toEqual({
+			success: true,
+			data: { explanation: "## What it does\n\nDeclares a constant." },
+		});
+	});
+
+	it("builds the source from type, language, and code", async () => {
+		aiReturns("explanation");
+		await explainCode({
+			type: "command",
+			language: "shell",
+			content: "git reset --hard",
+		});
+		const callArg = createMock.mock.calls[0]![0] as { input: string };
+		expect(callArg.input).toContain("Type: command");
+		expect(callArg.input).toContain("Language: shell");
+		expect(callArg.input).toContain("Code:\ngit reset --hard");
+	});
+
+	it("truncates the source to 2000 chars before calling the API", async () => {
+		aiReturns("explanation");
+		await explainCode({ content: "a".repeat(5000) });
+		const callArg = createMock.mock.calls[0]![0] as { input: string };
+		const prefix = "Explain the following code for a developer:\n\n";
+		expect(callArg.input.startsWith(prefix)).toBe(true);
+		expect(callArg.input.slice(prefix.length).length).toBe(2000);
+	});
+
+	it("returns an error when the model returns an empty explanation", async () => {
+		aiReturns("   ");
+		const result = await explainCode({ content: "const x = 1;" });
+		expect(result).toEqual({
+			success: false,
+			error: "Could not generate an explanation. Please try again.",
+		});
+	});
+
+	it("returns a generic error when the API call throws", async () => {
+		createMock.mockRejectedValue(new Error("boom"));
+		const result = await explainCode({ content: "const x = 1;" });
+		expect(result).toEqual({
+			success: false,
+			error: "Could not generate an explanation. Please try again.",
 		});
 	});
 });

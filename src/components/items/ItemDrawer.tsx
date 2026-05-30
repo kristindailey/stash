@@ -101,6 +101,7 @@ export function ItemDrawer({ isPro }: { isPro: boolean }) {
 				) : (
 					<DrawerBody
 						item={item}
+						isPro={isPro}
 						onEdit={() => setMode("edit")}
 						onDelete={handleDelete}
 						deleting={deleting}

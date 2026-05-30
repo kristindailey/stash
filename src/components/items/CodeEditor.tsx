@@ -3,10 +3,14 @@
 import * as React from "react";
 import Editor, { type OnMount } from "@monaco-editor/react";
 import type { editor } from "monaco-editor";
-import { Check, Copy } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { Check, Copy, Crown, Loader2, Sparkles } from "lucide-react";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useEditorPreferences } from "@/components/editor/editor-preferences-context";
 import type { EditorTheme } from "@/lib/constants/editor-preferences";
+import { explainCode } from "@/actions/ai";
 
 interface CodeEditorProps {
 	value: string;
@@ -16,6 +20,7 @@ interface CodeEditorProps {
 	minHeight?: number;
 	maxHeight?: number;
 	className?: string;
+	explain?: { itemType: string; isPro: boolean };
 }
 
 const DEFAULT_MIN_HEIGHT = 140;
@@ -105,12 +110,16 @@ export function CodeEditor({
 	minHeight = DEFAULT_MIN_HEIGHT,
 	maxHeight = DEFAULT_MAX_HEIGHT,
 	className,
+	explain,
 }: CodeEditorProps) {
 	const { preferences } = useEditorPreferences();
 	const editorRef = React.useRef<editor.IStandaloneCodeEditor | null>(null);
 	const [height, setHeight] = React.useState(minHeight);
 	const [copied, setCopied] = React.useState(false);
 	const [ready, setReady] = React.useState(false);
+	const [explanation, setExplanation] = React.useState<string | null>(null);
+	const [explaining, setExplaining] = React.useState(false);
+	const [view, setView] = React.useState<"code" | "explain">("code");
 
 	const lang = normalizeLanguage(language);
 	const themeName = MONACO_THEME_NAMES[preferences.theme];
@@ -144,15 +153,48 @@ export function CodeEditor({
 	}, [preferences.tabSize]);
 
 	const handleCopy = React.useCallback(async () => {
-		if (!value) return;
+		const text = view === "explain" && explanation !== null ? explanation : value;
+		if (!text) return;
 		try {
-			await navigator.clipboard.writeText(value);
+			await navigator.clipboard.writeText(text);
 			setCopied(true);
 			window.setTimeout(() => setCopied(false), 1500);
 		} catch {
 			// ignore
 		}
-	}, [value]);
+	}, [value, view, explanation]);
+
+	const handleExplain = React.useCallback(async () => {
+		if (!explain || explaining) return;
+		setExplaining(true);
+		const result = await explainCode({
+			type: explain.itemType,
+			language: lang,
+			content: value,
+		});
+		setExplaining(false);
+
+		if (!result.success) {
+			if (result.error.includes("Upgrade to Pro")) {
+				toast.error(result.error, {
+					action: {
+						label: "Upgrade",
+						onClick: () => {
+							window.location.href = "/upgrade";
+						},
+					},
+				});
+			} else {
+				toast.error(result.error);
+			}
+			return;
+		}
+
+		setExplanation(result.data.explanation);
+		setView("explain");
+	}, [explain, explaining, lang, value]);
+
+	const showExplanation = view === "explain" && explanation !== null;
 
 	return (
 		<div
@@ -163,13 +205,52 @@ export function CodeEditor({
 		>
 			<div className="flex items-center justify-between border-b border-white/10 bg-[#252525] px-3 py-2">
 				<div className="flex items-center gap-1.5">
-					<span className="size-3 rounded-full bg-[#ff5f57]" />
-					<span className="size-3 rounded-full bg-[#febc2e]" />
-					<span className="size-3 rounded-full bg-[#28c840]" />
+					{explain && explanation !== null ? (
+						<>
+							<ViewTab
+								active={view === "code"}
+								onClick={() => setView("code")}
+							>
+								Code
+							</ViewTab>
+							<ViewTab
+								active={view === "explain"}
+								onClick={() => setView("explain")}
+							>
+								Explain
+							</ViewTab>
+						</>
+					) : (
+						<>
+							<span className="size-3 rounded-full bg-[#ff5f57]" />
+							<span className="size-3 rounded-full bg-[#febc2e]" />
+							<span className="size-3 rounded-full bg-[#28c840]" />
+						</>
+					)}
 				</div>
 				<div className="flex items-center gap-2 text-xs text-white/60">
-					{lang && lang !== "plaintext" ? (
-						<span className="font-mono uppercase tracking-wide">{lang}</span>
+					{explain && explanation === null ? (
+						<button
+							type="button"
+							onClick={handleExplain}
+							disabled={explaining || value.trim().length === 0}
+							title={
+								explain.isPro
+									? undefined
+									: "AI features require Pro subscription"
+							}
+							aria-label="Explain code"
+							className="flex items-center gap-1 rounded px-1.5 py-1 text-white/60 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+						>
+							{explaining ? (
+								<Loader2 className="size-3.5 animate-spin" />
+							) : explain.isPro ? (
+								<Sparkles className="size-3.5" />
+							) : (
+								<Crown className="size-3.5" />
+							)}
+							<span>{explaining ? "Explaining…" : "Explain"}</span>
+						</button>
 					) : null}
 					<button
 						type="button"
@@ -183,52 +264,91 @@ export function CodeEditor({
 							<Copy className="size-3.5" />
 						)}
 					</button>
+					{lang && lang !== "plaintext" ? (
+						<span className="font-mono uppercase tracking-wide">{lang}</span>
+					) : null}
 				</div>
 			</div>
 
-			<div style={{ height }}>
-				<Editor
-					height="100%"
-					value={value}
-					language={lang}
-					theme={ready ? themeName : "vs-dark"}
-					onChange={(next) => onChange?.(next ?? "")}
-					onMount={handleMount}
-					loading={
-						<div className="flex h-full items-center justify-center text-xs text-white/40">
-							Loading editor…
-						</div>
-					}
-					options={{
-						readOnly,
-						domReadOnly: readOnly,
-						fontSize: preferences.fontSize,
-						lineHeight: 0,
-						fontFamily:
-							"var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace",
-						minimap: { enabled: preferences.minimap },
-						scrollBeyondLastLine: false,
-						automaticLayout: true,
-						wordWrap: preferences.wordWrap ? "on" : "off",
-						lineNumbers: "on",
-						lineNumbersMinChars: 3,
-						glyphMargin: false,
-						folding: false,
-						renderLineHighlight: readOnly ? "none" : "line",
-						overviewRulerLanes: 0,
-						overviewRulerBorder: false,
-						hideCursorInOverviewRuler: true,
-						padding: { top: 10, bottom: 10 },
-						scrollbar: {
-							verticalScrollbarSize: 8,
-							horizontalScrollbarSize: 8,
-							alwaysConsumeMouseWheel: false,
-						},
-						guides: { indentation: false },
-					}}
-				/>
-			</div>
+			{showExplanation ? (
+				<div
+					className="markdown-preview overflow-y-auto px-4 py-3 text-sm text-zinc-100"
+					style={{ minHeight, maxHeight }}
+				>
+					<ReactMarkdown remarkPlugins={[remarkGfm]}>
+						{explanation}
+					</ReactMarkdown>
+				</div>
+			) : (
+				<div style={{ height }}>
+					<Editor
+						height="100%"
+						value={value}
+						language={lang}
+						theme={ready ? themeName : "vs-dark"}
+						onChange={(next) => onChange?.(next ?? "")}
+						onMount={handleMount}
+						loading={
+							<div className="flex h-full items-center justify-center text-xs text-white/40">
+								Loading editor…
+							</div>
+						}
+						options={{
+							readOnly,
+							domReadOnly: readOnly,
+							fontSize: preferences.fontSize,
+							lineHeight: 0,
+							fontFamily:
+								"var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace",
+							minimap: { enabled: preferences.minimap },
+							scrollBeyondLastLine: false,
+							automaticLayout: true,
+							wordWrap: preferences.wordWrap ? "on" : "off",
+							lineNumbers: "on",
+							lineNumbersMinChars: 3,
+							glyphMargin: false,
+							folding: false,
+							renderLineHighlight: readOnly ? "none" : "line",
+							overviewRulerLanes: 0,
+							overviewRulerBorder: false,
+							hideCursorInOverviewRuler: true,
+							padding: { top: 10, bottom: 10 },
+							scrollbar: {
+								verticalScrollbarSize: 8,
+								horizontalScrollbarSize: 8,
+								alwaysConsumeMouseWheel: false,
+							},
+							guides: { indentation: false },
+						}}
+					/>
+				</div>
+			)}
 		</div>
+	);
+}
+
+function ViewTab({
+	active,
+	onClick,
+	children,
+}: {
+	active: boolean;
+	onClick: () => void;
+	children: React.ReactNode;
+}) {
+	return (
+		<button
+			type="button"
+			onClick={onClick}
+			className={cn(
+				"rounded px-2 py-0.5 text-xs font-medium transition-colors",
+				active
+					? "bg-white/10 text-white"
+					: "text-white/50 hover:bg-white/5 hover:text-white/80",
+			)}
+		>
+			{children}
+		</button>
 	);
 }
 
