@@ -62,3 +62,10 @@ export async function checkProType(
 
 	return `${type === "image" ? "Images" : "Files"} are a Pro feature. Upgrade to Pro to use them.`;
 }
+
+export async function requireProForAI(userId: string): Promise<string | null> {
+	const { isPro } = await getUserPlan(userId);
+	if (isPro) return null;
+
+	return "AI features are a Pro feature. Upgrade to Pro to use them.";
+}

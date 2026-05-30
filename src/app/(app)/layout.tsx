@@ -59,7 +59,7 @@ export default async function DashboardLayout({
 								</main>
 							</div>
 						</div>
-						<ItemDrawer />
+						<ItemDrawer isPro={isPro} />
 						<CommandPalette data={searchData} />
 					</EditorPreferencesProvider>
 				</CommandPaletteProvider>

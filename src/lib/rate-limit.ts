@@ -40,6 +40,7 @@ const limiters = {
 	forgotPassword: buildLimiter(3, "1 h", "forgot-password"),
 	resetPassword: buildLimiter(5, "15 m", "reset-password"),
 	resendVerification: buildLimiter(3, "15 m", "resend-verification"),
+	aiRequest: buildLimiter(20, "1 h", "ai-request"),
 } as const;
 
 export type RateLimitName = keyof typeof limiters;
@@ -86,6 +87,10 @@ export async function checkRateLimit(name: RateLimitName, key: string): Promise<
 		console.error(`[rate-limit] ${name} check failed, failing open`, err);
 		return { success: true, limit: 0, remaining: 0, reset: 0, retryAfterSeconds: 0, windowSeconds };
 	}
+}
+
+export async function checkAiRateLimit(userId: string): Promise<RateLimitResult> {
+	return checkRateLimit("aiRequest", `user:${userId}`);
 }
 
 export function rateLimitResponse(result: RateLimitResult): Response {

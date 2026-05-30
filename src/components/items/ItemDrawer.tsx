@@ -11,7 +11,7 @@ import { useItemDetail, normalizeItemDates } from "@/hooks/useItemDetail";
 import { deleteItem, toggleFavorite, togglePin } from "@/actions/items";
 import { useItemDrawer } from "./item-drawer-context";
 
-export function ItemDrawer() {
+export function ItemDrawer({ isPro }: { isPro: boolean }) {
 	const router = useRouter();
 	const { openItemId, close } = useItemDrawer();
 	const { item, setItem, loading, error } = useItemDetail(openItemId);
@@ -91,6 +91,7 @@ export function ItemDrawer() {
 				) : mode === "edit" ? (
 					<DrawerEdit
 						item={item}
+						isPro={isPro}
 						onCancel={() => setMode("view")}
 						onSaved={(updated) => {
 							setItem(updated);

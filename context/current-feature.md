@@ -63,3 +63,4 @@
 - **Stripe Phase 2 — Checkout, Webhook & Billing UI** — Checkout + portal actions, signature-verified webhook syncing `isPro`, `session.user.isPro` threading, settings `BillingSection`, and cosmetic Pro gating.
 - **Upgrade Page** — Ghost TopBar "Upgrade" button + `/upgrade` page (Free/Pro cards, monthly/yearly toggle, usage summary); `/items/files`/`images` redirect free users here; `getUserUsage` helper.
 - **Language Dropdown** — `LanguageSelect` (shadcn `Select` + `LANGUAGE_OPTIONS`) replaces free-text language Input and moves above the content editor in New Item dialog and drawer edit; live `CodeEditor` highlighting, falls back to an option for unknown stored values.
+- **AI Auto-Tagging** — First AI feature: `openai.ts` singleton + `gpt-5-nano` Responses API; Pro-gated `generateAutoTags` action (rate-limited, JSON-parsed); `SuggestTags` accept/reject chips in New Item dialog + drawer edit.
