@@ -1,20 +1,14 @@
-# Current Feature: Upgrade Page
-A dedicated `/upgrade` page that presents Pro features and plan selection before sending free users to Stripe checkout, reached via a subtle ghost "Upgrade" button in the top bar.
+# Current Feature
+<!-- Title above as "# Current Feature: <name>", followed by a one- or two-sentence description of the feature/fix. -->
 
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- [ ] Free users see an "Upgrade" ghost button in the TopBar (hidden for Pro users)
-- [ ] `/upgrade` page lists Pro features like the homepage pricing section
-- [ ] User can pick $8 monthly or $72 yearly
-- [ ] Upgrade button on the page starts Stripe checkout via `createCheckoutSession`
-- [ ] Pro users visiting `/upgrade` are redirected to `/settings`
+<!-- What this feature needs to accomplish. List concrete, checkable goals. -->
 
 ## Notes
-- Lives in the `(app)` route group so it inherits auth, sidebar, and TopBar.
-- Reuses `PRICING_PLANS` (Pro entry) from `lib/constants/marketing.ts` for feature list and prices.
-- Ghost button uses the existing `button.tsx` `ghost` variant, more subtle than New Item/New Collection.
+<!-- Implementation details, constraints, decisions, and references. -->
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
@@ -67,3 +61,4 @@ In Progress
 - **Auth Pages Top Nav** — Reused `MarketingNav` on `/login` + `/register`; Features/Pricing anchors switched to absolute `/#features`/`/#pricing` `<Link>`s so they route to homepage sections from any page.
 - **Stripe Phase 1 — Core Infrastructure** — Guarded `stripe` SDK singleton, `limits.ts` constants, server-only `billing.ts` gate helpers, and quota/Pro-type enforcement in `createItem`/`createCollection`/`/api/upload`; off by default via `PRO_GATING_ENABLED`.
 - **Stripe Phase 2 — Checkout, Webhook & Billing UI** — Checkout + portal actions, signature-verified webhook syncing `isPro`, `session.user.isPro` threading, settings `BillingSection`, and cosmetic Pro gating.
+- **Upgrade Page** — Ghost TopBar "Upgrade" button + `/upgrade` page (Free/Pro cards, monthly/yearly toggle, usage summary); `/items/files`/`images` redirect free users here; `getUserUsage` helper.
