@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { getUserUsage } from "@/lib/billing";
 import { getProfile } from "@/lib/db/profile";
 import { BillingSection } from "./billing-section";
 import { ChangePasswordSection } from "./change-password-section";
@@ -12,6 +13,9 @@ export default async function SettingsPage() {
 	if (!profile) redirect("/login?callbackUrl=/settings");
 
 	const { user } = profile;
+	const usage = user.isPro
+		? { itemCount: 0, collectionCount: 0 }
+		: await getUserUsage(user.id);
 
 	return (
 		<div className="mx-auto flex max-w-3xl flex-col gap-8">
@@ -24,7 +28,11 @@ export default async function SettingsPage() {
 
 			<section>
 				<h2 className="mb-3 text-lg font-semibold">Billing</h2>
-				<BillingSection isPro={user.isPro} />
+				<BillingSection
+					isPro={user.isPro}
+					itemCount={usage.itemCount}
+					collectionCount={usage.collectionCount}
+				/>
 			</section>
 
 			<EditorPreferencesSection />

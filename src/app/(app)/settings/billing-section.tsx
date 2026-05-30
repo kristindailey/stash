@@ -11,10 +11,22 @@ import {
 	createBillingPortalSession,
 	createCheckoutSession,
 } from "@/actions/billing";
+import {
+	FREE_COLLECTION_LIMIT,
+	FREE_ITEM_LIMIT,
+} from "@/lib/constants/limits";
 
 type Plan = "monthly" | "yearly";
 
-export function BillingSection({ isPro }: { isPro: boolean }) {
+export function BillingSection({
+	isPro,
+	itemCount,
+	collectionCount,
+}: {
+	isPro: boolean;
+	itemCount: number;
+	collectionCount: number;
+}) {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const [plan, setPlan] = React.useState<Plan>("yearly");
@@ -65,7 +77,7 @@ export function BillingSection({ isPro }: { isPro: boolean }) {
 				<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 					<div className="min-w-0 space-y-1.5">
 						<div className="flex items-center gap-2 pb-3">
-							<span className="text-xs font-medium text-muted-foreground">
+							<span className="text-sm font-medium text-muted-foreground">
 								Current plan:
 							</span>
 							<Badge className="border-transparent bg-violet-500 text-white">
@@ -97,18 +109,22 @@ export function BillingSection({ isPro }: { isPro: boolean }) {
 		<div className="rounded-lg border bg-card p-6">
 			<div className="flex flex-col gap-6">
 				<div className="min-w-0 space-y-1.5">
-					<div className="flex items-center gap-2 pb-3">
-						<span className="text-xs font-medium text-muted-foreground">
+					<div className="flex items-center gap-2 pb-1">
+						<span className="text-sm font-medium text-muted-foreground">
 							Current plan:
 						</span>
 						<Badge className="border-transparent bg-blue-500 text-white">
 							Free
 						</Badge>
 					</div>
-					<h3 className="text-base font-semibold">Upgrade to Pro</h3>
+					<p className="text-sm text-muted-foreground pb-3">
+						You&apos;re currently using {itemCount}/{FREE_ITEM_LIMIT}{" "}
+						items and {collectionCount}/{FREE_COLLECTION_LIMIT}{" "}
+						collections.
+					</p>
+					<h3 className="text-base font-semibold pb-1">Upgrade to Pro</h3>
 					<p className="text-sm text-muted-foreground">
-						Unlimited items, collections, file and image uploads, and
-						more.
+						Unlock unlimited items, file uploads, AI features, and more.
 					</p>
 				</div>
 
