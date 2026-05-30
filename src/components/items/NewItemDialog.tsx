@@ -198,6 +198,7 @@ export function NewItemDialog({
 							<UpgradePrompt
 								className="mt-2"
 								message="Files & images are a Pro feature."
+								onUpgradeClick={() => setOpen(false)}
 							/>
 						)}
 					</Field>

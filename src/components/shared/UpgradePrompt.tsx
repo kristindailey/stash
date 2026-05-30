@@ -6,9 +6,11 @@ import { cn } from "@/lib/utils";
 export function UpgradePrompt({
 	message = "This is a Pro feature.",
 	className,
+	onUpgradeClick,
 }: {
 	message?: string;
 	className?: string;
+	onUpgradeClick?: () => void;
 }) {
 	return (
 		<div
@@ -20,7 +22,9 @@ export function UpgradePrompt({
 			<Sparkles className="size-4 shrink-0 text-violet-500" />
 			<p className="flex-1 text-sm text-muted-foreground">{message}</p>
 			<Button asChild size="sm">
-				<Link href="/settings">Upgrade to Pro</Link>
+				<Link href="/settings" onClick={onUpgradeClick}>
+					Upgrade to Pro
+				</Link>
 			</Button>
 		</div>
 	);
