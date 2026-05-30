@@ -1,24 +1,14 @@
-# Current Feature: Stripe Integration — Phase 1: Core Infrastructure
-
-Server-side foundation for DevStash Pro: Stripe SDK singleton, free-tier limit constants, server-only gating helpers, and quota enforcement at mutation points. Gating ships off by default (`PRO_GATING_ENABLED`) so dev work isn't blocked. No webhooks, UI, or payment flow yet.
+# Current Feature
+<!-- Title above as "# Current Feature: <name>", followed by a one- or two-sentence description of the feature/fix. -->
 
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- Install `stripe` SDK; add guarded singleton in `src/lib/stripe.ts` (`getStripe()` throws when key unset, `isStripeEnabled()` reports presence; pin `apiVersion` to the installed SDK's value, not the doc's)
-- Define free-tier limits + flag in `src/lib/constants/limits.ts` (`FREE_ITEM_LIMIT = 50`, `FREE_COLLECTION_LIMIT = 3`, `PRO_ONLY_TYPES = {file, image}`, `isProGatingEnabled()`)
-- Central server-only gate helpers in `src/lib/billing.ts` (`getUserPlan`, `checkItemQuota`, `checkCollectionQuota`, `checkProType`) — each returns an error string if blocked or `null` if allowed; all short-circuit to `null` when gating is off
-- Enforce quotas at every server mutation point: `createItem` (item quota + Pro type), `createCollection` (collection quota), `/api/upload` (Pro type, guards independently)
-- Unit-test gating logic thoroughly (Vitest), extend items/collections action tests
+<!-- What this feature needs to accomplish. List concrete, checkable goals. -->
 
 ## Notes
-- Reference: `docs/stripe-integration-plan.md` (§4.0–4.2, §4.5); full spec at `context/features/stripe-phase-1-spec.md`
-- `User` model already has `isPro`, `stripeCustomerId`, `stripeSubscriptionId` — no migration needed
-- Env vars introduced: `STRIPE_SECRET_KEY` (`sk_test_…`), `PRO_GATING_ENABLED` (`"true"` to enforce). Flag mirrors the `EMAIL_VERIFICATION_ENABLED` pattern. Remaining Stripe vars arrive in Phase 2.
-- Non-goals (Phase 2): webhooks, checkout/billing-portal actions, session/`isPro` threading + `auth.ts` changes, UI/upgrade prompts, schema changes, Stripe Dashboard setup
-- Modify points: `createItem` (~items.ts:116, after parse before `createItemQuery`); `createCollection` (~collections.ts:34, before `createCollectionQuery`); `/api/upload/route.ts` (after auth check, return 403 on block). Edits/toggles untouched.
-- Tests: `billing.test.ts` (primary), extend `items.test.ts` + `collections.test.ts`; mock prisma + gating flag with `vi.mock`. Gates: `npm run test` + `npm run build` pass.
+<!-- Implementation details, constraints, decisions, and references. -->
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
@@ -69,3 +59,4 @@ In Progress
 - **Items Pinned Section** — `/items/[type]` shows a Pinned section above the main list; `getPinnedItemsByType` fetcher, `getItemsByType` filters out pinned, shared `ItemsGrid` helper, placeholder when none.
 - **Marketing Homepage** — Prototype built as real `/`: server `page.tsx` composing nav/hero/features/AI/pricing/CTA/footer in `src/components/marketing/`, data in `marketing.ts`; client only for nav scroll, `ChaosVisual` rAF, pricing toggle, `Reveal`; prototype palette scoped via `.marketing` wrapper, prototype accent colors + icons.
 - **Auth Pages Top Nav** — Reused `MarketingNav` on `/login` + `/register`; Features/Pricing anchors switched to absolute `/#features`/`/#pricing` `<Link>`s so they route to homepage sections from any page.
+- **Stripe Phase 1 — Core Infrastructure** — Guarded `stripe` SDK singleton, `limits.ts` constants, server-only `billing.ts` gate helpers, and quota/Pro-type enforcement in `createItem`/`createCollection`/`/api/upload`; off by default via `PRO_GATING_ENABLED`.
