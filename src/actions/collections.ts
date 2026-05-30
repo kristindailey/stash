@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { auth } from "@/auth";
+import { checkCollectionQuota } from "@/lib/billing";
 import {
 	createCollection as createCollectionQuery,
 	deleteCollection as deleteCollectionQuery,
@@ -46,6 +47,11 @@ export async function createCollection(
 			success: false,
 			error: firstIssue?.message ?? "Invalid input",
 		};
+	}
+
+	const quotaError = await checkCollectionQuota(session.user.id);
+	if (quotaError) {
+		return { success: false, error: quotaError };
 	}
 
 	const created = await createCollectionQuery(session.user.id, parsed.data);

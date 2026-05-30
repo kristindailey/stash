@@ -11,7 +11,12 @@ vi.mock("@/lib/db/collections", () => ({
 	deleteCollection: vi.fn(),
 }));
 
+vi.mock("@/lib/billing", () => ({
+	checkCollectionQuota: vi.fn(),
+}));
+
 import { auth } from "@/auth";
+import { checkCollectionQuota } from "@/lib/billing";
 import {
 	createCollection as createCollectionQuery,
 	deleteCollection as deleteCollectionQuery,
@@ -26,6 +31,7 @@ import {
 } from "./collections";
 
 const authMock = vi.mocked(auth);
+const checkCollectionQuotaMock = vi.mocked(checkCollectionQuota);
 const createCollectionQueryMock = vi.mocked(createCollectionQuery);
 const updateCollectionQueryMock = vi.mocked(updateCollectionQuery);
 const toggleCollectionFavoriteQueryMock = vi.mocked(
@@ -43,7 +49,20 @@ describe("createCollection action", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		authMock.mockResolvedValue({ user: { id: "user_1" } } as never);
+		checkCollectionQuotaMock.mockResolvedValue(null);
 		createCollectionQueryMock.mockResolvedValue(fakeCollection);
+	});
+
+	it("returns the quota error when the collection limit is reached", async () => {
+		checkCollectionQuotaMock.mockResolvedValue(
+			"Free plan is limited to 3 collections.",
+		);
+		const result = await createCollection({ name: "React" });
+		expect(result).toEqual({
+			success: false,
+			error: "Free plan is limited to 3 collections.",
+		});
+		expect(createCollectionQueryMock).not.toHaveBeenCalled();
 	});
 
 	it("rejects when not authenticated", async () => {

@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { auth } from "@/auth";
+import { checkItemQuota, checkProType } from "@/lib/billing";
 import { CREATABLE_TYPES } from "@/lib/constants/item-types";
 import {
 	createItem as createItemQuery,
@@ -128,6 +129,16 @@ export async function createItem(
 			success: false,
 			error: firstIssue?.message ?? "Invalid input",
 		};
+	}
+
+	const quotaError = await checkItemQuota(session.user.id);
+	if (quotaError) {
+		return { success: false, error: quotaError };
+	}
+
+	const typeError = await checkProType(session.user.id, parsed.data.type);
+	if (typeError) {
+		return { success: false, error: typeError };
 	}
 
 	const { type, ...rest } = parsed.data;
