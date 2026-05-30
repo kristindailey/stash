@@ -34,11 +34,23 @@ import {
 import { cn, parseTags } from "@/lib/utils";
 import { useCurrentItemType } from "@/hooks/useCurrentItemType";
 import { useCollectionOptions } from "@/hooks/useCollectionOptions";
+import { UpgradePrompt } from "@/components/shared/UpgradePrompt";
 import { createItem } from "@/actions/items";
 
-export function NewItemDialog() {
+const PRO_ONLY_TYPES = new Set<CreatableType>(["file", "image"]);
+
+export function NewItemDialog({
+	isPro,
+	gatingEnabled,
+}: {
+	isPro: boolean;
+	gatingEnabled: boolean;
+}) {
 	const router = useRouter();
-	const defaultType = useCurrentItemType();
+	const rawDefaultType = useCurrentItemType();
+	const proLocked = gatingEnabled && !isPro;
+	const defaultType =
+		proLocked && PRO_ONLY_TYPES.has(rawDefaultType) ? "snippet" : rawDefaultType;
 	const [open, setOpen] = React.useState(false);
 	const [type, setType] = React.useState<CreatableType>(defaultType);
 	const [title, setTitle] = React.useState("");
@@ -113,7 +125,16 @@ export function NewItemDialog() {
 		setSaving(false);
 
 		if (!result.success) {
-			toast.error(result.error);
+			if (result.error.includes("Upgrade to Pro")) {
+				toast.error(result.error, {
+					action: {
+						label: "Upgrade",
+						onClick: () => router.push("/settings"),
+					},
+				});
+			} else {
+				toast.error(result.error);
+			}
 			return;
 		}
 
@@ -146,24 +167,39 @@ export function NewItemDialog() {
 								const Icon = ITEM_TYPE_ICONS[t];
 								const color = ITEM_TYPE_COLORS[t] ?? "#6b7280";
 								const active = type === t;
+								const locked = proLocked && PRO_ONLY_TYPES.has(t);
 								return (
 									<button
 										key={t}
 										type="button"
 										onClick={() => setType(t)}
+										disabled={locked}
+										title={locked ? "Pro feature" : undefined}
 										className={cn(
 											"flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors",
 											active
 												? "border-foreground bg-muted text-foreground"
 												: "border-border text-muted-foreground hover:text-foreground",
+											locked && "cursor-not-allowed opacity-50 hover:text-muted-foreground",
 										)}
 									>
 										{Icon ? <Icon className="size-3.5" style={{ color }} /> : null}
 										{ITEM_TYPE_LABELS[t] ?? t}
+										{locked && (
+											<span className="text-[9px] font-semibold tracking-wide text-violet-500">
+												PRO
+											</span>
+										)}
 									</button>
 								);
 							})}
 						</div>
+						{proLocked && (
+							<UpgradePrompt
+								className="mt-2"
+								message="Files & images are a Pro feature."
+							/>
+						)}
 					</Field>
 
 					<Field label="Title">

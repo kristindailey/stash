@@ -9,6 +9,7 @@ export type ProfileUser = {
 	image: string | null;
 	createdAt: Date;
 	hasPassword: boolean;
+	isPro: boolean;
 };
 
 export type ProfileTypeBreakdown = {
@@ -53,6 +54,7 @@ export async function getProfile(): Promise<ProfileData | null> {
 					image: true,
 					createdAt: true,
 					password: true,
+					isPro: true,
 				},
 			}),
 			prisma.item.count({ where: { userId } }),
@@ -85,6 +87,7 @@ export async function getProfile(): Promise<ProfileData | null> {
 			image: user.image,
 			createdAt: user.createdAt,
 			hasPassword: !!user.password,
+			isPro: user.isPro,
 		},
 		stats: {
 			totalItems,

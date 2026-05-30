@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getProfile } from "@/lib/db/profile";
+import { BillingSection } from "./billing-section";
 import { ChangePasswordSection } from "./change-password-section";
 import { DeleteAccountSection } from "./delete-account-section";
 import { EditorPreferencesSection } from "./editor-preferences-section";
@@ -20,6 +21,11 @@ export default async function SettingsPage() {
 					Manage your account and security.
 				</p>
 			</header>
+
+			<section>
+				<h2 className="mb-3 text-lg font-semibold">Billing</h2>
+				<BillingSection isPro={user.isPro} />
+			</section>
 
 			<EditorPreferencesSection />
 
