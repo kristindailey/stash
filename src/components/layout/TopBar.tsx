@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Code, PanelLeft, Search, Sparkles } from "lucide-react";
+import { Code, Crown, PanelLeft, Search } from "lucide-react";
 import { NewItemDialog } from "@/components/items/NewItemDialog";
 import { NewCollectionDialog } from "@/components/collections/NewCollectionDialog";
 import { useCommandPalette } from "@/components/search/command-palette-context";
@@ -61,9 +61,9 @@ export function TopBar({ isPro }: { isPro: boolean }) {
 
 			<div className="flex shrink-0 items-center gap-2 px-3 md:px-5">
 				{!isPro && (
-					<Button asChild variant="ghost" size="sm">
+					<Button asChild variant="outline" size="lg" aria-label="Upgrade">
 						<Link href="/upgrade">
-							<Sparkles className="size-4" />
+							<Crown className="size-4" />
 							<span className="hidden sm:inline">Upgrade</span>
 						</Link>
 					</Button>

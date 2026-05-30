@@ -3,10 +3,11 @@
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { Sparkles } from "lucide-react";
+import { Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { CTA_PRIMARY_CLASS } from "@/lib/constants/marketing";
 import {
 	createBillingPortalSession,
 	createCheckoutSession,
@@ -85,7 +86,7 @@ export function BillingSection({
 							</Badge>
 						</div>
 						<h3 className="flex items-center gap-2 text-base font-semibold">
-							<Sparkles className="size-4 text-violet-500" />
+							<Crown className="size-4 text-violet-500" />
 							DevStash Pro
 						</h3>
 						<p className="text-sm text-muted-foreground">
@@ -128,7 +129,7 @@ export function BillingSection({
 					</p>
 				</div>
 
-				<div className="inline-flex w-fit rounded-md border p-1">
+				<div className="inline-flex w-fit gap-1 rounded-full border border-border bg-card/40 p-1">
 					<PlanOption
 						active={plan === "monthly"}
 						onClick={() => setPlan("monthly")}
@@ -144,9 +145,10 @@ export function BillingSection({
 
 				<Button
 					type="button"
+					size="lg"
 					onClick={onUpgrade}
 					disabled={pending}
-					className="w-fit px-6 bg-blue-500 text-white hover:bg-blue-600"
+					className={cn("w-fit px-6", CTA_PRIMARY_CLASS)}
 				>
 					{pending ? "Redirecting…" : "Upgrade to Pro"}
 				</Button>
@@ -171,18 +173,18 @@ function PlanOption({
 			type="button"
 			onClick={onClick}
 			className={cn(
-				"flex items-center gap-1.5 rounded px-3 py-1.5 text-sm font-medium transition-colors",
-				active
-					? "bg-blue-500 text-white"
-					: "text-muted-foreground hover:text-foreground",
+				"inline-flex items-center gap-1.5 rounded-full px-4.5 py-1.5 text-sm font-semibold text-muted-foreground transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring",
+				active && "bg-blue-500 text-white",
 			)}
 		>
 			{label}
 			{hint && (
 				<span
 					className={cn(
-						"text-[10px] font-semibold",
-						active ? "text-white/80" : "text-emerald-500",
+						"rounded-full px-1.5 py-0.5 text-[0.7rem] font-bold",
+						active
+							? "bg-white/20 text-white"
+							: "bg-emerald-500/20 text-emerald-400",
 					)}
 				>
 					{hint}

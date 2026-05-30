@@ -34,7 +34,6 @@ import {
 import { cn, parseTags } from "@/lib/utils";
 import { useCurrentItemType } from "@/hooks/useCurrentItemType";
 import { useCollectionOptions } from "@/hooks/useCollectionOptions";
-import { UpgradePrompt } from "@/components/shared/UpgradePrompt";
 import { createItem } from "@/actions/items";
 
 const PRO_ONLY_TYPES = new Set<CreatableType>(["file", "image"]);
@@ -180,7 +179,7 @@ export function NewItemDialog({ isPro }: { isPro: boolean }) {
 										{Icon ? <Icon className="size-3.5" style={{ color }} /> : null}
 										{ITEM_TYPE_LABELS[t] ?? t}
 										{locked && (
-											<span className="text-[9px] font-semibold tracking-wide text-violet-500">
+											<span className="text-[9px] font-semibold tracking-wide text-sidebar-foreground/70">
 												PRO
 											</span>
 										)}
@@ -188,13 +187,6 @@ export function NewItemDialog({ isPro }: { isPro: boolean }) {
 								);
 							})}
 						</div>
-						{proLocked && (
-							<UpgradePrompt
-								className="mt-2"
-								message="Files & images are a Pro feature."
-								onUpgradeClick={() => setOpen(false)}
-							/>
-						)}
 					</Field>
 
 					<Field label="Title">
