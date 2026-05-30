@@ -35,6 +35,7 @@ export function DrawerBody({
 	item,
 	isPro,
 	onEdit,
+	onOptimizeUse,
 	onDelete,
 	deleting,
 	onToggleFavorite,
@@ -45,6 +46,7 @@ export function DrawerBody({
 	item: ItemDetail;
 	isPro: boolean;
 	onEdit: () => void;
+	onOptimizeUse: (optimized: string) => void;
 	onDelete: () => void;
 	deleting: boolean;
 	onToggleFavorite: () => void;
@@ -127,7 +129,19 @@ export function DrawerBody({
 								explain={{ itemType: item.type, isPro }}
 							/>
 						) : MARKDOWN_TYPES.has(item.type) ? (
-							<MarkdownEditor value={item.content} readOnly />
+							<MarkdownEditor
+								value={item.content}
+								readOnly
+								optimize={
+									item.type === "prompt"
+										? {
+												isPro,
+												title: item.title,
+												onUse: onOptimizeUse,
+											}
+										: undefined
+								}
+							/>
 						) : (
 							<pre className="overflow-x-auto rounded-md bg-muted p-3 text-xs">
 								<code>{item.content}</code>

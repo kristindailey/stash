@@ -1,14 +1,23 @@
-# Current Feature
-<!-- Title above as "# Current Feature: <name>", followed by a one- or two-sentence description of the feature/fix. -->
+# Current Feature: AI Prompt Optimizer
+
+Add an AI-powered "Optimize" button for prompt-type items that reviews the current prompt, refines it if needed, and lets the user choose whether to replace the original with the optimized version. The button lives in the editor header, mirroring the existing "Explain" button on snippets/commands.
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- What this feature needs to accomplish. List concrete, checkable goals. -->
+- New Pro-gated `optimizePrompt` server action in `src/actions/ai.ts` that takes the current prompt content and returns a refined version (rate-limited, auth + `requireProForAI`, same patterns as `explainCode`).
+- The action should refine only when helpful and otherwise leave the prompt essentially unchanged.
+- Add an "Optimize" button to the `MarkdownEditor` header (read view) for prompt items, styled like the `CodeEditor` "Explain" button (Sparkles for Pro, Crown for non-Pro, Loader2 while running).
+- After optimizing, present the optimized prompt and ask the user whether to use it (Original / Optimized comparison) before applying.
+- Choosing "Use optimized" saves the refined prompt immediately (via `updateItem`), shows a success toast, closes the drawer, and refreshes; keeping the original discards it.
 
 ## Notes
-<!-- Implementation details, constraints, decisions, and references. -->
+- Prompts render via `MARKDOWN_TYPES` → `MarkdownEditor` in `DrawerBody.tsx` (`src/components/items/DrawerBody.tsx:129`). The Optimize affordance belongs in `MarkdownEditor`, gated to prompt type via an opt-in `optimize` prop (mirror `CodeEditor`'s `explain={{ itemType, isPro }}` prop at `DrawerBody.tsx:127`).
+- Mirror `explainCode` in `src/actions/ai.ts` (auth → `requireProForAI` → `checkAiRateLimit` → Zod parse → `openai.responses.create` with `AI_MODEL`, `reasoning.effort: "minimal"`). Output is plain prompt text (not markdown explanation); cap input with `MAX_CONTENT_CHARS`.
+- The drawer read view is the target surface (like Explain). On "Use optimized", `ItemDrawer` calls `updateItem` with the full existing item fields plus the optimized content (omitting fields would null them out), then toasts, closes the drawer, and `router.refresh()`s.
+- Keep server-action test coverage in `src/actions/ai.test.ts` (auth gate, Pro gate, empty-content guard), consistent with existing AI action tests.
+- Pro feature: "Prompt optimizer" is listed as a Pro AI feature in the project spec.
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.

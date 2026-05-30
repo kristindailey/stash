@@ -8,7 +8,12 @@ import { DrawerBody } from "./DrawerBody";
 import { DrawerEdit } from "./DrawerEdit";
 import { DrawerSkeleton } from "./DrawerSkeleton";
 import { useItemDetail, normalizeItemDates } from "@/hooks/useItemDetail";
-import { deleteItem, toggleFavorite, togglePin } from "@/actions/items";
+import {
+	deleteItem,
+	toggleFavorite,
+	togglePin,
+	updateItem,
+} from "@/actions/items";
 import { useItemDrawer } from "./item-drawer-context";
 
 export function ItemDrawer({ isPro }: { isPro: boolean }) {
@@ -62,6 +67,28 @@ export function ItemDrawer({ isPro }: { isPro: boolean }) {
 		router.refresh();
 	};
 
+	const handleUseOptimized = async (optimized: string) => {
+		if (!item) return;
+		const result = await updateItem(item.id, {
+			title: item.title,
+			description: item.description,
+			content: optimized,
+			url: item.url,
+			language: item.language,
+			tags: item.tags,
+			collectionIds: item.collections.map((c) => c.id),
+		});
+
+		if (!result.success) {
+			toast.error(result.error);
+			return;
+		}
+
+		toast.success("Prompt optimized");
+		close();
+		router.refresh();
+	};
+
 	const handleDelete = async () => {
 		if (!item) return;
 		setDeleting(true);
@@ -103,6 +130,7 @@ export function ItemDrawer({ isPro }: { isPro: boolean }) {
 						item={item}
 						isPro={isPro}
 						onEdit={() => setMode("edit")}
+						onOptimizeUse={handleUseOptimized}
 						onDelete={handleDelete}
 						deleting={deleting}
 						onToggleFavorite={handleToggleFavorite}

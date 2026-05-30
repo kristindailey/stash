@@ -21,7 +21,12 @@ import { auth } from "@/auth";
 import { requireProForAI } from "@/lib/billing";
 import { checkAiRateLimit } from "@/lib/rate-limit";
 import { openai } from "@/lib/openai";
-import { explainCode, generateAutoTags, generateDescription } from "./ai";
+import {
+	explainCode,
+	generateAutoTags,
+	generateDescription,
+	optimizePrompt,
+} from "./ai";
 
 const authMock = vi.mocked(auth);
 const requireProMock = vi.mocked(requireProForAI);
@@ -331,6 +336,90 @@ describe("explainCode", () => {
 		expect(result).toEqual({
 			success: false,
 			error: "Could not generate an explanation. Please try again.",
+		});
+	});
+});
+
+describe("optimizePrompt", () => {
+	it("rejects when not authenticated", async () => {
+		authMock.mockResolvedValue(null as never);
+		const result = await optimizePrompt({ content: "Write a poem" });
+		expect(result).toEqual({ success: false, error: "Not authenticated" });
+		expect(createMock).not.toHaveBeenCalled();
+	});
+
+	it("rejects free users with the Pro upgrade message", async () => {
+		requireProMock.mockResolvedValue(
+			"AI features are a Pro feature. Upgrade to Pro to use them.",
+		);
+		const result = await optimizePrompt({ content: "Write a poem" });
+		expect(result).toEqual({
+			success: false,
+			error: "AI features are a Pro feature. Upgrade to Pro to use them.",
+		});
+		expect(createMock).not.toHaveBeenCalled();
+	});
+
+	it("rejects when rate limited", async () => {
+		rateLimitMock.mockResolvedValue({ success: false } as never);
+		const result = await optimizePrompt({ content: "Write a poem" });
+		expect(result).toEqual({
+			success: false,
+			error: "Too many AI requests. Please try again shortly.",
+		});
+		expect(createMock).not.toHaveBeenCalled();
+	});
+
+	it("rejects when there is no prompt content", async () => {
+		const result = await optimizePrompt({ content: "   " });
+		expect(result).toEqual({
+			success: false,
+			error: "Add prompt content to optimize.",
+		});
+		expect(createMock).not.toHaveBeenCalled();
+	});
+
+	it("returns the optimized prompt from the model", async () => {
+		aiReturns("Write a vivid four-line poem about the sea.");
+		const result = await optimizePrompt({ content: "Write a poem" });
+		expect(result).toEqual({
+			success: true,
+			data: { optimized: "Write a vivid four-line poem about the sea." },
+		});
+	});
+
+	it("builds the source from title and content", async () => {
+		aiReturns("optimized");
+		await optimizePrompt({ title: "Poem prompt", content: "Write a poem" });
+		const callArg = createMock.mock.calls[0]![0] as { input: string };
+		expect(callArg.input).toContain("Title: Poem prompt");
+		expect(callArg.input).toContain("Prompt:\nWrite a poem");
+	});
+
+	it("truncates the source to 2000 chars before calling the API", async () => {
+		aiReturns("optimized");
+		await optimizePrompt({ content: "a".repeat(5000) });
+		const callArg = createMock.mock.calls[0]![0] as { input: string };
+		const prefix = "Refine the following AI prompt:\n\n";
+		expect(callArg.input.startsWith(prefix)).toBe(true);
+		expect(callArg.input.slice(prefix.length).length).toBe(2000);
+	});
+
+	it("returns an error when the model returns an empty result", async () => {
+		aiReturns("   ");
+		const result = await optimizePrompt({ content: "Write a poem" });
+		expect(result).toEqual({
+			success: false,
+			error: "Could not optimize the prompt. Please try again.",
+		});
+	});
+
+	it("returns a generic error when the API call throws", async () => {
+		createMock.mockRejectedValue(new Error("boom"));
+		const result = await optimizePrompt({ content: "Write a poem" });
+		expect(result).toEqual({
+			success: false,
+			error: "Could not optimize the prompt. Please try again.",
 		});
 	});
 });

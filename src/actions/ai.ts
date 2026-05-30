@@ -346,3 +346,94 @@ export async function explainCode(
 		};
 	}
 }
+
+const optimizeSchema = z.object({
+	title: z
+		.string()
+		.transform((value) => value.trim())
+		.optional()
+		.default(""),
+	content: z
+		.string()
+		.transform((value) => value.trim())
+		.optional()
+		.default(""),
+});
+
+export type OptimizePromptInput = z.input<typeof optimizeSchema>;
+
+const OPTIMIZE_INSTRUCTIONS =
+	"You are a prompt engineering assistant that refines AI prompts to be clearer, more specific, and more effective while preserving the user's original intent. " +
+	"Improve structure, remove ambiguity, and add helpful constraints or context only when it clearly helps. " +
+	"If the prompt is already well-written, make only minimal changes and otherwise return it essentially unchanged. " +
+	"Return ONLY the refined prompt text with no preamble, explanation, quotes, or code fences.";
+
+export async function optimizePrompt(
+	input: OptimizePromptInput,
+): Promise<ActionResult<{ optimized: string }>> {
+	const session = await auth();
+	if (!session?.user?.id) {
+		return { success: false, error: "Not authenticated" };
+	}
+
+	const proError = await requireProForAI(session.user.id);
+	if (proError) {
+		return { success: false, error: proError };
+	}
+
+	const rateLimit = await checkAiRateLimit(session.user.id);
+	if (!rateLimit.success) {
+		return {
+			success: false,
+			error: "Too many AI requests. Please try again shortly.",
+		};
+	}
+
+	const parsed = optimizeSchema.safeParse(input);
+	if (!parsed.success) {
+		const firstIssue = parsed.error.issues[0];
+		return { success: false, error: firstIssue?.message ?? "Invalid input" };
+	}
+
+	const { title, content } = parsed.data;
+	if (content.length === 0) {
+		return { success: false, error: "Add prompt content to optimize." };
+	}
+
+	const source = [title && `Title: ${title}`, `Prompt:\n${content}`]
+		.filter(Boolean)
+		.join("\n")
+		.slice(0, MAX_CONTENT_CHARS);
+
+	if (!openai) {
+		return { success: false, error: "AI is not configured." };
+	}
+
+	const prompt = `Refine the following AI prompt:\n\n${source}`;
+
+	try {
+		const response = await openai.responses.create({
+			model: AI_MODEL,
+			instructions: OPTIMIZE_INSTRUCTIONS,
+			input: prompt,
+			reasoning: { effort: "minimal" },
+			text: { verbosity: "medium" },
+		});
+
+		const optimized = response.output_text.trim();
+		if (optimized.length === 0) {
+			return {
+				success: false,
+				error: "Could not optimize the prompt. Please try again.",
+			};
+		}
+
+		return { success: true, data: { optimized } };
+	} catch (err) {
+		console.error("[ai] optimizePrompt failed", err);
+		return {
+			success: false,
+			error: "Could not optimize the prompt. Please try again.",
+		};
+	}
+}
