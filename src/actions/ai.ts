@@ -119,3 +119,130 @@ export async function generateAutoTags(
 		return { success: false, error: "Could not generate tags. Please try again." };
 	}
 }
+
+const describeSchema = z.object({
+	type: z
+		.string()
+		.transform((value) => value.trim())
+		.optional()
+		.default(""),
+	title: z
+		.string()
+		.transform((value) => value.trim())
+		.optional()
+		.default(""),
+	content: z
+		.string()
+		.transform((value) => value.trim())
+		.optional()
+		.default(""),
+	url: z
+		.string()
+		.transform((value) => value.trim())
+		.optional()
+		.default(""),
+});
+
+export type GenerateDescriptionInput = z.input<typeof describeSchema>;
+
+const DESCRIBE_INSTRUCTIONS =
+	"You are a developer tool assistant that writes concise descriptions for saved developer items (snippets, prompts, commands, notes, links, files, images). " +
+	'Return ONLY a JSON object of the form {"description": "..."} where the description is 1-2 plain sentences summarizing what the item is or does. ' +
+	"Do not use markdown, code blocks, or surrounding quotes. Keep it short and useful.";
+
+function parseDescriptionFromOutput(raw: string): string {
+	const trimmed = raw.trim();
+	if (trimmed.length === 0) return "";
+
+	let parsed: unknown;
+	try {
+		parsed = JSON.parse(trimmed);
+	} catch {
+		return "";
+	}
+
+	if (typeof parsed === "object" && parsed !== null && "description" in parsed) {
+		const value = (parsed as { description: unknown }).description;
+		if (typeof value === "string") return value.trim();
+	}
+
+	return "";
+}
+
+export async function generateDescription(
+	input: GenerateDescriptionInput,
+): Promise<ActionResult<{ description: string }>> {
+	const session = await auth();
+	if (!session?.user?.id) {
+		return { success: false, error: "Not authenticated" };
+	}
+
+	const proError = await requireProForAI(session.user.id);
+	if (proError) {
+		return { success: false, error: proError };
+	}
+
+	const rateLimit = await checkAiRateLimit(session.user.id);
+	if (!rateLimit.success) {
+		return {
+			success: false,
+			error: "Too many AI requests. Please try again shortly.",
+		};
+	}
+
+	const parsed = describeSchema.safeParse(input);
+	if (!parsed.success) {
+		const firstIssue = parsed.error.issues[0];
+		return { success: false, error: firstIssue?.message ?? "Invalid input" };
+	}
+
+	const { type, title, content, url } = parsed.data;
+	const source = [
+		type && `Type: ${type}`,
+		title && `Title: ${title}`,
+		url && `URL: ${url}`,
+		content && `Content: ${content}`,
+	]
+		.filter(Boolean)
+		.join("\n")
+		.slice(0, MAX_CONTENT_CHARS);
+
+	if (source.trim().length === 0) {
+		return {
+			success: false,
+			error: "Add a title or content to generate a description.",
+		};
+	}
+
+	if (!openai) {
+		return { success: false, error: "AI is not configured." };
+	}
+
+	const prompt = `Write a concise description as JSON for this developer item:\n\n${source}`;
+
+	try {
+		const response = await openai.responses.create({
+			model: AI_MODEL,
+			instructions: DESCRIBE_INSTRUCTIONS,
+			input: prompt,
+			reasoning: { effort: "minimal" },
+			text: { format: { type: "json_object" }, verbosity: "low" },
+		});
+
+		const description = parseDescriptionFromOutput(response.output_text);
+		if (description.length === 0) {
+			return {
+				success: false,
+				error: "Could not generate a description. Please try again.",
+			};
+		}
+
+		return { success: true, data: { description } };
+	} catch (err) {
+		console.error("[ai] generateDescription failed", err);
+		return {
+			success: false,
+			error: "Could not generate a description. Please try again.",
+		};
+	}
+}

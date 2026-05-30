@@ -21,7 +21,7 @@ import { auth } from "@/auth";
 import { requireProForAI } from "@/lib/billing";
 import { checkAiRateLimit } from "@/lib/rate-limit";
 import { openai } from "@/lib/openai";
-import { generateAutoTags } from "./ai";
+import { generateAutoTags, generateDescription } from "./ai";
 
 const authMock = vi.mocked(auth);
 const requireProMock = vi.mocked(requireProForAI);
@@ -147,6 +147,104 @@ describe("generateAutoTags", () => {
 		expect(result).toEqual({
 			success: false,
 			error: "Could not generate tags. Please try again.",
+		});
+	});
+});
+
+describe("generateDescription", () => {
+	it("rejects when not authenticated", async () => {
+		authMock.mockResolvedValue(null as never);
+		const result = await generateDescription({ title: "x", content: "y" });
+		expect(result).toEqual({ success: false, error: "Not authenticated" });
+		expect(createMock).not.toHaveBeenCalled();
+	});
+
+	it("rejects free users with the Pro upgrade message", async () => {
+		requireProMock.mockResolvedValue(
+			"AI features are a Pro feature. Upgrade to Pro to use them.",
+		);
+		const result = await generateDescription({ title: "x", content: "y" });
+		expect(result).toEqual({
+			success: false,
+			error: "AI features are a Pro feature. Upgrade to Pro to use them.",
+		});
+		expect(createMock).not.toHaveBeenCalled();
+	});
+
+	it("rejects when rate limited", async () => {
+		rateLimitMock.mockResolvedValue({ success: false } as never);
+		const result = await generateDescription({ title: "x", content: "y" });
+		expect(result).toEqual({
+			success: false,
+			error: "Too many AI requests. Please try again shortly.",
+		});
+		expect(createMock).not.toHaveBeenCalled();
+	});
+
+	it("rejects when there is no usable context", async () => {
+		const result = await generateDescription({ title: "  ", content: "" });
+		expect(result).toEqual({
+			success: false,
+			error: "Add a title or content to generate a description.",
+		});
+		expect(createMock).not.toHaveBeenCalled();
+	});
+
+	it("parses the {\"description\": \"...\"} object shape", async () => {
+		aiReturns('{"description": "A React hook that reads the auth session."}');
+		const result = await generateDescription({ title: "useAuth", content: "x" });
+		expect(result).toEqual({
+			success: true,
+			data: { description: "A React hook that reads the auth session." },
+		});
+	});
+
+	it("builds the source from whatever fields are available", async () => {
+		aiReturns('{"description": "A link to the docs."}');
+		await generateDescription({ type: "link", title: "Docs", url: "https://x.dev" });
+		const callArg = createMock.mock.calls[0]![0] as { input: string };
+		expect(callArg.input).toContain("Type: link");
+		expect(callArg.input).toContain("Title: Docs");
+		expect(callArg.input).toContain("URL: https://x.dev");
+	});
+
+	it("truncates the item source to 2000 chars before calling the API", async () => {
+		aiReturns('{"description": "ok"}');
+		await generateDescription({ title: "", content: "a".repeat(5000) });
+		const callArg = createMock.mock.calls[0]![0] as { input: string };
+		const prefix = "Write a concise description as JSON for this developer item:\n\n";
+		expect(callArg.input.startsWith(prefix)).toBe(true);
+		expect(callArg.input.slice(prefix.length).length).toBe(2000);
+	});
+
+	it("includes the word 'json' in the input (required by json_object format)", async () => {
+		aiReturns('{"description": "ok"}');
+		await generateDescription({ title: "t", content: "x" });
+		const callArg = createMock.mock.calls[0]![0] as { input: string };
+		expect(callArg.input.toLowerCase()).toContain("json");
+	});
+
+	it("returns an error when the model returns an empty description", async () => {
+		aiReturns('{"description": ""}');
+		const result = await generateDescription({ title: "t", content: "x" });
+		expect(result).toEqual({
+			success: false,
+			error: "Could not generate a description. Please try again.",
+		});
+	});
+
+	it("returns an error when the model output is not valid JSON", async () => {
+		aiReturns("not json");
+		const result = await generateDescription({ title: "t", content: "x" });
+		expect(result.success).toBe(false);
+	});
+
+	it("returns a generic error when the API call throws", async () => {
+		createMock.mockRejectedValue(new Error("boom"));
+		const result = await generateDescription({ title: "t", content: "x" });
+		expect(result).toEqual({
+			success: false,
+			error: "Could not generate a description. Please try again.",
 		});
 	});
 });

@@ -23,6 +23,7 @@ import { LanguageSelect } from "./LanguageSelect";
 import { CollectionSelect } from "./CollectionSelect";
 import { FileUpload, type UploadedFile } from "./FileUpload";
 import { SuggestTags } from "./SuggestTags";
+import { SuggestDescription } from "./SuggestDescription";
 import {
 	CONTENT_TYPES,
 	CREATABLE_TYPES,
@@ -208,6 +209,15 @@ export function NewItemDialog({ isPro }: { isPro: boolean }) {
 							placeholder="Optional description"
 							rows={2}
 						/>
+						{isPro && (
+							<SuggestDescription
+								type={type}
+								title={title}
+								content={content}
+								url={url}
+								onGenerate={setDescription}
+							/>
+						)}
 					</Field>
 
 					{showLanguage && (
