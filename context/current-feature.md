@@ -1,20 +1,14 @@
-# Current Feature: Language Dropdown
-Replace the free-text language input with a searchable dropdown placed above the content editor, so selecting a language gives live syntax highlighting while typing. Applies to the New Item modal and the drawer edit view (snippet/command types).
+# Current Feature
+<!-- Title above as "# Current Feature: <name>", followed by a one- or two-sentence description of the feature/fix. -->
 
 ## Status
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
-- [x] Curated language option list shared by both surfaces
-- [x] `LanguageSelect` dropdown built on the shadcn `Select`
-- [x] In `NewItemDialog`, move language above content and swap Input → dropdown
-- [x] In `DrawerEdit`, move language above content and swap Input → dropdown
-- [x] Selecting a language updates `CodeEditor` highlighting live as you type
-- [x] Gracefully display existing/free-text language values not in the list
+<!-- What this feature needs to accomplish. List concrete, checkable goals. -->
 
 ## Notes
-- Language only applies to `LANGUAGE_TYPES` (snippet, command); `CodeEditor` already highlights from its `language` prop, so the work is UI/placement plus the dropdown.
-- Option values use canonical Monaco language IDs so `normalizeLanguage` keeps working.
+<!-- Implementation details, constraints, decisions, and references. -->
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
@@ -68,3 +62,4 @@ In Progress
 - **Stripe Phase 1 — Core Infrastructure** — Guarded `stripe` SDK singleton, `limits.ts` constants, server-only `billing.ts` gate helpers, and quota/Pro-type enforcement in `createItem`/`createCollection`/`/api/upload`; off by default via `PRO_GATING_ENABLED`.
 - **Stripe Phase 2 — Checkout, Webhook & Billing UI** — Checkout + portal actions, signature-verified webhook syncing `isPro`, `session.user.isPro` threading, settings `BillingSection`, and cosmetic Pro gating.
 - **Upgrade Page** — Ghost TopBar "Upgrade" button + `/upgrade` page (Free/Pro cards, monthly/yearly toggle, usage summary); `/items/files`/`images` redirect free users here; `getUserUsage` helper.
+- **Language Dropdown** — `LanguageSelect` (shadcn `Select` + `LANGUAGE_OPTIONS`) replaces free-text language Input and moves above the content editor in New Item dialog and drawer edit; live `CodeEditor` highlighting, falls back to an option for unknown stored values.
