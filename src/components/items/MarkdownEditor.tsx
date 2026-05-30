@@ -3,8 +3,10 @@
 import * as React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, Crown, Loader2, Sparkles } from "lucide-react";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { optimizePrompt } from "@/actions/ai";
 
 interface MarkdownEditorProps {
 	value: string;
@@ -14,6 +16,11 @@ interface MarkdownEditorProps {
 	maxHeight?: number;
 	placeholder?: string;
 	className?: string;
+	optimize?: {
+		isPro: boolean;
+		title?: string;
+		onUse: (optimized: string) => void;
+	};
 }
 
 const DEFAULT_MIN_HEIGHT = 140;
@@ -27,23 +34,56 @@ export function MarkdownEditor({
 	maxHeight = DEFAULT_MAX_HEIGHT,
 	placeholder,
 	className,
+	optimize,
 }: MarkdownEditorProps) {
 	const [tab, setTab] = React.useState<"write" | "preview">(
 		readOnly ? "preview" : "write",
 	);
 	const [copied, setCopied] = React.useState(false);
+	const [optimized, setOptimized] = React.useState<string | null>(null);
+	const [optimizing, setOptimizing] = React.useState(false);
+	const [view, setView] = React.useState<"original" | "optimized">("original");
 	const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
 
+	const showOptimized = optimized !== null && view === "optimized";
+	const displayValue = showOptimized ? optimized : value;
+
 	const handleCopy = React.useCallback(async () => {
-		if (!value) return;
+		if (!displayValue) return;
 		try {
-			await navigator.clipboard.writeText(value);
+			await navigator.clipboard.writeText(displayValue);
 			setCopied(true);
 			window.setTimeout(() => setCopied(false), 1500);
 		} catch {
 			// ignore
 		}
-	}, [value]);
+	}, [displayValue]);
+
+	const handleOptimize = React.useCallback(async () => {
+		if (!optimize || optimizing) return;
+		setOptimizing(true);
+		const result = await optimizePrompt({ title: optimize.title, content: value });
+		setOptimizing(false);
+
+		if (!result.success) {
+			if (result.error.includes("Upgrade to Pro")) {
+				toast.error(result.error, {
+					action: {
+						label: "Upgrade",
+						onClick: () => {
+							window.location.href = "/upgrade";
+						},
+					},
+				});
+			} else {
+				toast.error(result.error);
+			}
+			return;
+		}
+
+		setOptimized(result.data.optimized);
+		setView("optimized");
+	}, [optimize, optimizing, value]);
 
 	const autoSize = React.useCallback(() => {
 		const el = textareaRef.current;
@@ -66,36 +106,103 @@ export function MarkdownEditor({
 		>
 			<div className="flex items-center justify-between border-b border-white/10 bg-[#252525] px-3 py-2">
 				<div className="flex items-center gap-1">
-					{!readOnly && (
-						<TabButton
-							active={tab === "write"}
-							onClick={() => setTab("write")}
-						>
-							Write
-						</TabButton>
-					)}
-					<TabButton
-						active={tab === "preview"}
-						onClick={() => setTab("preview")}
-					>
-						Preview
-					</TabButton>
-				</div>
-				<button
-					type="button"
-					onClick={handleCopy}
-					aria-label={copied ? "Copied" : "Copy markdown"}
-					className="flex items-center gap-1 rounded p-1 text-white/60 transition-colors hover:bg-white/10 hover:text-white"
-				>
-					{copied ? (
-						<Check className="size-3.5" />
+					{optimized !== null ? (
+						<>
+							<TabButton
+								active={view === "original"}
+								onClick={() => setView("original")}
+							>
+								Original
+							</TabButton>
+							<TabButton
+								active={view === "optimized"}
+								onClick={() => setView("optimized")}
+							>
+								Optimized
+							</TabButton>
+						</>
 					) : (
-						<Copy className="size-3.5" />
+						<>
+							{!readOnly && (
+								<TabButton
+									active={tab === "write"}
+									onClick={() => setTab("write")}
+								>
+									Write
+								</TabButton>
+							)}
+							<TabButton
+								active={tab === "preview"}
+								onClick={() => setTab("preview")}
+							>
+								Preview
+							</TabButton>
+						</>
 					)}
-				</button>
+				</div>
+				<div className="flex items-center gap-2 text-xs text-white/60">
+					{optimize && optimized === null ? (
+						<button
+							type="button"
+							onClick={handleOptimize}
+							disabled={optimizing || value.trim().length === 0}
+							title={
+								optimize.isPro
+									? undefined
+									: "AI features require Pro subscription"
+							}
+							aria-label="Optimize prompt"
+							className="flex items-center gap-1 rounded px-1.5 py-1 text-white/60 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+						>
+							{optimizing ? (
+								<Loader2 className="size-3.5 animate-spin" />
+							) : optimize.isPro ? (
+								<Sparkles className="size-3.5" />
+							) : (
+								<Crown className="size-3.5" />
+							)}
+							<span>{optimizing ? "Optimizing…" : "Optimize"}</span>
+						</button>
+					) : null}
+					{optimize && optimized !== null ? (
+						<button
+							type="button"
+							onClick={() => optimize.onUse(optimized)}
+							className="flex items-center gap-1 rounded px-1.5 py-1 font-medium text-emerald-400 transition-colors hover:bg-white/10 hover:text-emerald-300"
+						>
+							<Check className="size-3.5" />
+							<span>Use optimized</span>
+						</button>
+					) : null}
+					<button
+						type="button"
+						onClick={handleCopy}
+						aria-label={copied ? "Copied" : "Copy markdown"}
+						className="flex items-center gap-1 rounded p-1 text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+					>
+						{copied ? (
+							<Check className="size-3.5" />
+						) : (
+							<Copy className="size-3.5" />
+						)}
+					</button>
+				</div>
 			</div>
 
-			{tab === "write" ? (
+			{optimized !== null || tab === "preview" ? (
+				<div
+					className="markdown-preview overflow-y-auto px-4 py-3 text-sm text-zinc-100"
+					style={{ minHeight, maxHeight }}
+				>
+					{displayValue.trim() ? (
+						<ReactMarkdown remarkPlugins={[remarkGfm]}>
+							{displayValue}
+						</ReactMarkdown>
+					) : (
+						<p className="text-white/30">Nothing to preview yet.</p>
+					)}
+				</div>
+			) : (
 				<textarea
 					ref={textareaRef}
 					value={value}
@@ -105,17 +212,6 @@ export function MarkdownEditor({
 					className="block w-full resize-none border-0 bg-[#1a1a1a] px-3 py-2.5 text-sm text-zinc-100 outline-none placeholder:text-white/30"
 					style={{ minHeight, maxHeight }}
 				/>
-			) : (
-				<div
-					className="markdown-preview overflow-y-auto px-4 py-3 text-sm text-zinc-100"
-					style={{ minHeight, maxHeight }}
-				>
-					{value.trim() ? (
-						<ReactMarkdown remarkPlugins={[remarkGfm]}>{value}</ReactMarkdown>
-					) : (
-						<p className="text-white/30">Nothing to preview yet.</p>
-					)}
-				</div>
 			)}
 		</div>
 	);
