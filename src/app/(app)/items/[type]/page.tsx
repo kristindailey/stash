@@ -91,19 +91,17 @@ export default async function ItemsByTypePage({
 				</span>
 			</header>
 
-			<section className="flex flex-col gap-3">
-				<h2 className="text-lg font-semibold">Pinned</h2>
-				{pinnedItems.length === 0 ? (
-					<p className="text-sm text-muted-foreground">
-						No pinned {pluralLabel.toLowerCase()} yet.
-					</p>
-				) : (
+			{pinnedItems.length > 0 && (
+				<section className="flex flex-col gap-3">
+					<h2 className="text-lg font-semibold">Pinned</h2>
 					<ItemsGrid items={pinnedItems} singular={singular} />
-				)}
-			</section>
+				</section>
+			)}
 
 			<section className="flex flex-col gap-3">
-				<h2 className="text-lg font-semibold">All {pluralLabel.toLowerCase()}</h2>
+				{pinnedItems.length > 0 && (
+					<h2 className="text-lg font-semibold">All {pluralLabel.toLowerCase()}</h2>
+				)}
 				{totalCount === 0 ? (
 					<p className="text-sm text-muted-foreground">
 						No {pluralLabel.toLowerCase()} yet.
