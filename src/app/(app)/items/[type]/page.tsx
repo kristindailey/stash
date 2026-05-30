@@ -4,12 +4,14 @@ import { auth } from "@/auth";
 import { FileRow } from "@/components/items/FileRow";
 import { ImageCard } from "@/components/items/ImageCard";
 import { ItemCard } from "@/components/items/ItemCard";
+import { ProTypeUpgrade } from "@/components/items/ProTypeUpgrade";
 import { Pagination } from "@/components/shared/Pagination";
 import {
 	ITEM_TYPE_COLORS,
 	ITEM_TYPE_ICONS,
 	ITEM_TYPE_LABELS,
 } from "@/lib/constants/item-types";
+import { PRO_ONLY_TYPES, isProGatingEnabled } from "@/lib/constants/limits";
 import { ITEMS_PER_PAGE } from "@/lib/constants/pagination";
 import { getItemsByType, getPinnedItemsByType } from "@/lib/db/dashboard";
 import type { DashboardItem } from "@/lib/db/items";
@@ -60,6 +62,18 @@ export default async function ItemsByTypePage({
 
 	const page = parsePage((await searchParams).page);
 	const singular = type.slice(0, -1);
+
+	if (
+		isProGatingEnabled() &&
+		PRO_ONLY_TYPES.has(singular) &&
+		!session.user.isPro
+	) {
+		const Icon = ITEM_TYPE_ICONS[singular] ?? FolderOpen;
+		const color = ITEM_TYPE_COLORS[singular] ?? "#6b7280";
+		const label = `${ITEM_TYPE_LABELS[singular] ?? capitalize(singular)}s`;
+		return <ProTypeUpgrade label={label} Icon={Icon} color={color} />;
+	}
+
 	const [result, pinnedItems] = await Promise.all([
 		getItemsByType(session.user.id, singular, page),
 		getPinnedItemsByType(session.user.id, singular),
