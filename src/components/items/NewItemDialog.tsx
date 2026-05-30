@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ItemContentField } from "./ItemContentField";
+import { LanguageSelect } from "./LanguageSelect";
 import { CollectionSelect } from "./CollectionSelect";
 import { FileUpload, type UploadedFile } from "./FileUpload";
 import {
@@ -208,6 +209,12 @@ export function NewItemDialog({ isPro }: { isPro: boolean }) {
 						/>
 					</Field>
 
+					{showLanguage && (
+						<Field label="Language">
+							<LanguageSelect value={language} onChange={setLanguage} />
+						</Field>
+					)}
+
 					{showContent && (
 						<Field label="Content">
 							<ItemContentField
@@ -226,16 +233,6 @@ export function NewItemDialog({ isPro }: { isPro: boolean }) {
 								kind={type === "image" ? "image" : "file"}
 								value={uploaded}
 								onChange={setUploaded}
-							/>
-						</Field>
-					)}
-
-					{showLanguage && (
-						<Field label="Language">
-							<Input
-								value={language}
-								onChange={(e) => setLanguage(e.target.value)}
-								placeholder="e.g. typescript"
 							/>
 						</Field>
 					)}

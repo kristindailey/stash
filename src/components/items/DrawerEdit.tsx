@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ItemContentField } from "./ItemContentField";
+import { LanguageSelect } from "./LanguageSelect";
 import { CollectionSelect } from "./CollectionSelect";
 import { DrawerSection } from "./DrawerSection";
 import {
@@ -137,6 +138,12 @@ export function DrawerEdit({
 					/>
 				</DrawerSection>
 
+				{showLanguage && (
+					<DrawerSection title="Language">
+						<LanguageSelect value={language} onChange={setLanguage} />
+					</DrawerSection>
+				)}
+
 				{showContent && (
 					<DrawerSection title="Content">
 						<ItemContentField
@@ -145,16 +152,6 @@ export function DrawerEdit({
 							onChange={setContent}
 							language={language}
 							rows={8}
-						/>
-					</DrawerSection>
-				)}
-
-				{showLanguage && (
-					<DrawerSection title="Language">
-						<Input
-							value={language}
-							onChange={(e) => setLanguage(e.target.value)}
-							placeholder="e.g. typescript"
 						/>
 					</DrawerSection>
 				)}
