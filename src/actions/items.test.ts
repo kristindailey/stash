@@ -12,7 +12,13 @@ vi.mock("@/lib/db/items", () => ({
 	toggleItemPinned: vi.fn(),
 }));
 
+vi.mock("@/lib/billing", () => ({
+	checkItemQuota: vi.fn(),
+	checkProType: vi.fn(),
+}));
+
 import { auth } from "@/auth";
+import { checkItemQuota, checkProType } from "@/lib/billing";
 import {
 	createItem as createItemQuery,
 	deleteItem as deleteItemQuery,
@@ -29,6 +35,8 @@ import {
 } from "./items";
 
 const authMock = vi.mocked(auth);
+const checkItemQuotaMock = vi.mocked(checkItemQuota);
+const checkProTypeMock = vi.mocked(checkProType);
 const createItemQueryMock = vi.mocked(createItemQuery);
 const updateItemQueryMock = vi.mocked(updateItemQuery);
 const deleteItemQueryMock = vi.mocked(deleteItemQuery);
@@ -59,7 +67,41 @@ describe("createItem action", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		authMock.mockResolvedValue({ user: { id: "user_1" } } as never);
+		checkItemQuotaMock.mockResolvedValue(null);
+		checkProTypeMock.mockResolvedValue(null);
 		createItemQueryMock.mockResolvedValue(fakeItem);
+	});
+
+	it("returns the quota error when the item limit is reached", async () => {
+		checkItemQuotaMock.mockResolvedValue("Free plan is limited to 50 items.");
+		const result = await createItem({ type: "snippet", title: "Hi" });
+		expect(result).toEqual({
+			success: false,
+			error: "Free plan is limited to 50 items.",
+		});
+		expect(createItemQueryMock).not.toHaveBeenCalled();
+	});
+
+	it("returns the Pro-type error when a free user creates a file", async () => {
+		checkProTypeMock.mockResolvedValue("Files are a Pro feature.");
+		const result = await createItem({
+			type: "file",
+			title: "Doc",
+			fileUrl: "https://cdn.example.com/key.pdf",
+			fileName: "notes.pdf",
+			fileSize: 1234,
+		});
+		expect(result).toEqual({
+			success: false,
+			error: "Files are a Pro feature.",
+		});
+		expect(createItemQueryMock).not.toHaveBeenCalled();
+	});
+
+	it("creates the item when quota checks pass (gating off / Pro)", async () => {
+		const result = await createItem({ type: "snippet", title: "Hi" });
+		expect(result.success).toBe(true);
+		expect(createItemQueryMock).toHaveBeenCalled();
 	});
 
 	it("rejects when not authenticated", async () => {

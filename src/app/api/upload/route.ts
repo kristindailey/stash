@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
+import { checkProType } from "@/lib/billing";
 import { buildObjectKey, publicUrlFor, uploadToR2 } from "@/lib/r2";
 import { validateUpload, type UploadKind } from "@/lib/constants/file-upload";
 
@@ -29,6 +30,12 @@ export async function POST(request: Request) {
 	}
 
 	const kind = kindRaw as UploadKind;
+
+	const typeError = await checkProType(session.user.id, kind);
+	if (typeError) {
+		return NextResponse.json({ error: typeError }, { status: 403 });
+	}
+
 	const validationError = validateUpload(kind, {
 		name: file.name,
 		size: file.size,
