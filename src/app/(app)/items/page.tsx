@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { FolderOpen } from "lucide-react";
 import { auth } from "@/auth";
 import { ItemCard } from "@/components/items/ItemCard";
+import { EmptyState } from "@/components/shared/EmptyState";
 import { Pagination } from "@/components/shared/Pagination";
 import { ITEMS_PER_PAGE } from "@/lib/constants/pagination";
 import { getPaginatedItems } from "@/lib/db/dashboard";
@@ -30,7 +31,7 @@ export default async function AllItemsPage({
 			</header>
 
 			{totalCount === 0 ? (
-				<p className="text-sm text-muted-foreground">No items yet.</p>
+				<EmptyState message="No items yet. Create your first one!" />
 			) : (
 				<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
 					{items.map((item) => (

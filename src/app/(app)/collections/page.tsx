@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { FolderOpen } from "lucide-react";
 import { auth } from "@/auth";
 import { CollectionCard } from "@/components/collections/CollectionCard";
+import { EmptyState } from "@/components/shared/EmptyState";
 import { Pagination } from "@/components/shared/Pagination";
 import { COLLECTIONS_PER_PAGE } from "@/lib/constants/pagination";
 import { getPaginatedCollections } from "@/lib/db/collections";
@@ -33,7 +34,7 @@ export default async function CollectionsPage({
 			</header>
 
 			{totalCount === 0 ? (
-				<p className="text-sm text-muted-foreground">No collections yet.</p>
+				<EmptyState message="No collections yet. Create your first one!" />
 			) : (
 				<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 					{collections.map((collection) => (

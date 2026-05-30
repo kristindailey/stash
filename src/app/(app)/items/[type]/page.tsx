@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { FileRow } from "@/components/items/FileRow";
 import { ImageCard } from "@/components/items/ImageCard";
 import { ItemCard } from "@/components/items/ItemCard";
+import { EmptyState } from "@/components/shared/EmptyState";
 import { Pagination } from "@/components/shared/Pagination";
 import {
 	ITEM_TYPE_COLORS,
@@ -103,9 +104,9 @@ export default async function ItemsByTypePage({
 					<h2 className="text-lg font-semibold">All {pluralLabel.toLowerCase()}</h2>
 				)}
 				{totalCount === 0 ? (
-					<p className="text-sm text-muted-foreground">
-						No {pluralLabel.toLowerCase()} yet.
-					</p>
+					<EmptyState
+						message={`No ${pluralLabel.toLowerCase()} yet. Create your first one!`}
+					/>
 				) : (
 					<ItemsGrid items={items} singular={singular} />
 				)}

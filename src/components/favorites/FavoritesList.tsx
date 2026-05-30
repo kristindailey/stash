@@ -21,6 +21,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { useItemDrawer } from "@/components/items/item-drawer-context";
+import { EmptyState } from "@/components/shared/EmptyState";
 
 type SortKey = "date" | "name" | "type";
 
@@ -165,9 +166,7 @@ export function FavoritesList({
 			</header>
 
 			{totalCount === 0 && (
-				<p className="text-sm text-muted-foreground">
-					No favorites yet. Star an item or collection to see it here.
-				</p>
+				<EmptyState message="No favorites yet. Star an item or collection to see it here." />
 			)}
 
 			{sortedItems.length > 0 && (
