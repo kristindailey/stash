@@ -2,8 +2,10 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
+import { signInWithGitHub } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { GithubIcon } from "@/components/shared/GithubIcon";
 import { EMAIL_REGEX } from "@/lib/constants/auth";
 
 export function RegisterForm() {
@@ -66,78 +68,104 @@ export function RegisterForm() {
 	}
 
 	return (
-		<form onSubmit={onSubmit} className="space-y-3">
-			<div className="space-y-1.5">
-				<label htmlFor="name" className="text-sm font-medium">
-					Name
-				</label>
-				<Input
-					id="name"
-					type="text"
-					autoComplete="name"
-					value={name}
-					onChange={(e) => setName(e.target.value)}
-					required
+		<div className="space-y-4">
+			<form action={signInWithGitHub}>
+				<Button
+					type="submit"
+					variant="outline"
+					size="lg"
+					className="w-full"
 					disabled={pending}
-				/>
-			</div>
-			<div className="space-y-1.5">
-				<label htmlFor="email" className="text-sm font-medium">
-					Email
-				</label>
-				<Input
-					id="email"
-					type="email"
-					autoComplete="email"
-					value={email}
-					onChange={(e) => setEmail(e.target.value)}
-					required
-					disabled={pending}
-				/>
-			</div>
-			<div className="space-y-1.5">
-				<label htmlFor="password" className="text-sm font-medium">
-					Password
-				</label>
-				<Input
-					id="password"
-					type="password"
-					autoComplete="new-password"
-					value={password}
-					onChange={(e) => setPassword(e.target.value)}
-					required
-					minLength={8}
-					disabled={pending}
-				/>
-			</div>
-			<div className="space-y-1.5">
-				<label htmlFor="confirmPassword" className="text-sm font-medium">
-					Confirm password
-				</label>
-				<Input
-					id="confirmPassword"
-					type="password"
-					autoComplete="new-password"
-					value={confirmPassword}
-					onChange={(e) => setConfirmPassword(e.target.value)}
-					required
-					minLength={8}
-					disabled={pending}
-				/>
-			</div>
-
-			{error && (
-				<p
-					role="alert"
-					className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
 				>
-					{error}
-				</p>
-			)}
+					<GithubIcon />
+					Sign up with GitHub
+				</Button>
+			</form>
 
-			<Button type="submit" size="lg" className="w-full" disabled={pending}>
-				{pending ? "Creating account…" : "Create account"}
-			</Button>
-		</form>
+			<div className="relative">
+				<div className="absolute inset-0 flex items-center">
+					<span className="w-full border-t" />
+				</div>
+				<div className="relative flex justify-center text-xs uppercase">
+					<span className="bg-background px-2 text-muted-foreground">
+						Or continue with
+					</span>
+				</div>
+			</div>
+
+			<form onSubmit={onSubmit} className="space-y-3">
+				<div className="space-y-1.5">
+					<label htmlFor="name" className="text-sm font-medium">
+						Name
+					</label>
+					<Input
+						id="name"
+						type="text"
+						autoComplete="name"
+						value={name}
+						onChange={(e) => setName(e.target.value)}
+						required
+						disabled={pending}
+					/>
+				</div>
+				<div className="space-y-1.5">
+					<label htmlFor="email" className="text-sm font-medium">
+						Email
+					</label>
+					<Input
+						id="email"
+						type="email"
+						autoComplete="email"
+						value={email}
+						onChange={(e) => setEmail(e.target.value)}
+						required
+						disabled={pending}
+					/>
+				</div>
+				<div className="space-y-1.5">
+					<label htmlFor="password" className="text-sm font-medium">
+						Password
+					</label>
+					<Input
+						id="password"
+						type="password"
+						autoComplete="new-password"
+						value={password}
+						onChange={(e) => setPassword(e.target.value)}
+						required
+						minLength={8}
+						disabled={pending}
+					/>
+				</div>
+				<div className="space-y-1.5">
+					<label htmlFor="confirmPassword" className="text-sm font-medium">
+						Confirm password
+					</label>
+					<Input
+						id="confirmPassword"
+						type="password"
+						autoComplete="new-password"
+						value={confirmPassword}
+						onChange={(e) => setConfirmPassword(e.target.value)}
+						required
+						minLength={8}
+						disabled={pending}
+					/>
+				</div>
+
+				{error && (
+					<p
+						role="alert"
+						className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+					>
+						{error}
+					</p>
+				)}
+
+				<Button type="submit" size="lg" className="w-full" disabled={pending}>
+					{pending ? "Creating account…" : "Create account"}
+				</Button>
+			</form>
+		</div>
 	);
 }
