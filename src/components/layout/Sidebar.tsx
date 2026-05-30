@@ -28,6 +28,7 @@ type SidebarProps = {
 		email: string | null;
 		image: string | null;
 	} | null;
+	isPro: boolean;
 };
 
 export function Sidebar({
@@ -35,6 +36,7 @@ export function Sidebar({
 	totalItemCount,
 	collections,
 	user,
+	isPro,
 }: SidebarProps) {
 	const { open, setOpen } = useSidebar();
 	const pathname = usePathname();
@@ -83,7 +85,7 @@ export function Sidebar({
 									iconColor={type.color}
 									label={type.label}
 									count={type.count}
-									pro={PRO_TYPE_NAMES.has(type.name)}
+									pro={!isPro && PRO_TYPE_NAMES.has(type.name)}
 									active={pathname === type.route}
 								/>
 							);
@@ -242,35 +244,59 @@ function SidebarLink({
 	active?: boolean;
 	pro?: boolean;
 }) {
-	return (
-		<Link
-			href={href}
-			className={cn(
-				"flex h-8 items-center gap-2.5 rounded-md px-2 text-sm transition-colors",
-				active
-					? "bg-sidebar-accent text-sidebar-accent-foreground"
-					: "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-			)}
-		>
-			<Icon
-				className="size-4 shrink-0"
-				style={iconColor ? { color: iconColor } : undefined}
-				fill={iconFill ? "currentColor" : "none"}
-			/>
-			<span className="flex-1 truncate">{label}</span>
-			{pro && (
-				<Badge
-					variant="secondary"
-					className="h-4 px-1.5 text-[10px] font-semibold tracking-wide text-sidebar-foreground/70"
+	const rowClass = cn(
+		"flex h-8 items-center gap-2.5 rounded-md px-2 text-sm transition-colors",
+		active
+			? "bg-sidebar-accent text-sidebar-accent-foreground"
+			: "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+	);
+
+	const icon = (
+		<Icon
+			className="size-4 shrink-0"
+			style={iconColor ? { color: iconColor } : undefined}
+			fill={iconFill ? "currentColor" : "none"}
+		/>
+	);
+	const countEl =
+		typeof count === "number" ? (
+			<span className="w-5 text-right text-xs text-sidebar-foreground/50">
+				{count}
+			</span>
+		) : null;
+
+	if (pro) {
+		return (
+			<div className={cn(rowClass, "relative")}>
+				<Link
+					href={href}
+					className="absolute inset-0 rounded-md"
+					aria-label={label}
+				/>
+				<span className="pointer-events-none">{icon}</span>
+				<span className="pointer-events-none flex-1 truncate">{label}</span>
+				<Link
+					href="/settings"
+					aria-label="Upgrade to Pro"
+					className="relative z-10 rounded outline-none focus-visible:ring-2 focus-visible:ring-ring"
 				>
-					PRO
-				</Badge>
-			)}
-			{typeof count === "number" && (
-				<span className="w-5 text-right text-xs text-sidebar-foreground/50">
-					{count}
-				</span>
-			)}
+					<Badge
+						variant="secondary"
+						className="h-4 px-1.5 text-[10px] font-semibold tracking-wide text-sidebar-foreground/70"
+					>
+						PRO
+					</Badge>
+				</Link>
+				{countEl && <span className="pointer-events-none">{countEl}</span>}
+			</div>
+		);
+	}
+
+	return (
+		<Link href={href} className={rowClass}>
+			{icon}
+			<span className="flex-1 truncate">{label}</span>
+			{countEl}
 		</Link>
 	);
 }

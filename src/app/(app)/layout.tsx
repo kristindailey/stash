@@ -12,6 +12,7 @@ import { getSidebarCollections } from "@/lib/db/collections";
 import { getSidebarItemTypes } from "@/lib/db/sidebar";
 import { getSearchData } from "@/lib/db/search";
 import { getEditorPreferences } from "@/lib/db/editor-preferences";
+import { isProGatingEnabled } from "@/lib/constants/limits";
 
 export const dynamic = "force-dynamic";
 
@@ -37,19 +38,23 @@ export default async function DashboardLayout({
 		image: session.user.image ?? null,
 	};
 
+	const isPro = session.user.isPro;
+	const gatingEnabled = isProGatingEnabled();
+
 	return (
 		<SidebarProvider>
 			<ItemDrawerProvider>
 				<CommandPaletteProvider>
 					<EditorPreferencesProvider initialPreferences={editorPreferences}>
 						<div className="flex h-screen flex-col">
-							<TopBar />
+							<TopBar isPro={isPro} gatingEnabled={gatingEnabled} />
 							<div className="relative flex flex-1 overflow-hidden">
 								<Sidebar
 									itemTypes={itemTypes.types}
 									totalItemCount={itemTypes.totalCount}
 									collections={collections}
 									user={sessionUser}
+									isPro={isPro}
 								/>
 								<main className="flex-1 overflow-y-auto p-6">
 									{children}

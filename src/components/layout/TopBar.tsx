@@ -7,7 +7,13 @@ import { NewCollectionDialog } from "@/components/collections/NewCollectionDialo
 import { useCommandPalette } from "@/components/search/command-palette-context";
 import { useSidebar } from "./sidebar-context";
 
-export function TopBar() {
+export function TopBar({
+	isPro,
+	gatingEnabled,
+}: {
+	isPro: boolean;
+	gatingEnabled: boolean;
+}) {
 	const { toggle } = useSidebar();
 	const { openPalette } = useCommandPalette();
 	return (
@@ -60,7 +66,7 @@ export function TopBar() {
 
 			<div className="flex shrink-0 items-center gap-2 px-3 md:px-5">
 				<NewCollectionDialog />
-				<NewItemDialog />
+				<NewItemDialog isPro={isPro} gatingEnabled={gatingEnabled} />
 			</div>
 		</header>
 	);
