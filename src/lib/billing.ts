@@ -3,7 +3,6 @@ import {
 	FREE_COLLECTION_LIMIT,
 	FREE_ITEM_LIMIT,
 	PRO_ONLY_TYPES,
-	isProGatingEnabled,
 } from "@/lib/constants/limits";
 
 export type UserPlan = { isPro: boolean };
@@ -17,8 +16,6 @@ export async function getUserPlan(userId: string): Promise<UserPlan> {
 }
 
 export async function checkItemQuota(userId: string): Promise<string | null> {
-	if (!isProGatingEnabled()) return null;
-
 	const { isPro } = await getUserPlan(userId);
 	if (isPro) return null;
 
@@ -33,8 +30,6 @@ export async function checkItemQuota(userId: string): Promise<string | null> {
 export async function checkCollectionQuota(
 	userId: string,
 ): Promise<string | null> {
-	if (!isProGatingEnabled()) return null;
-
 	const { isPro } = await getUserPlan(userId);
 	if (isPro) return null;
 
@@ -50,7 +45,6 @@ export async function checkProType(
 	userId: string,
 	type: string,
 ): Promise<string | null> {
-	if (!isProGatingEnabled()) return null;
 	if (!PRO_ONLY_TYPES.has(type)) return null;
 
 	const { isPro } = await getUserPlan(userId);

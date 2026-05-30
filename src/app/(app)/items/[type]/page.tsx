@@ -11,7 +11,7 @@ import {
 	ITEM_TYPE_ICONS,
 	ITEM_TYPE_LABELS,
 } from "@/lib/constants/item-types";
-import { PRO_ONLY_TYPES, isProGatingEnabled } from "@/lib/constants/limits";
+import { PRO_ONLY_TYPES } from "@/lib/constants/limits";
 import { ITEMS_PER_PAGE } from "@/lib/constants/pagination";
 import { getItemsByType, getPinnedItemsByType } from "@/lib/db/dashboard";
 import type { DashboardItem } from "@/lib/db/items";
@@ -63,11 +63,7 @@ export default async function ItemsByTypePage({
 	const page = parsePage((await searchParams).page);
 	const singular = type.slice(0, -1);
 
-	if (
-		isProGatingEnabled() &&
-		PRO_ONLY_TYPES.has(singular) &&
-		!session.user.isPro
-	) {
+	if (PRO_ONLY_TYPES.has(singular) && !session.user.isPro) {
 		const Icon = ITEM_TYPE_ICONS[singular] ?? FolderOpen;
 		const color = ITEM_TYPE_COLORS[singular] ?? "#6b7280";
 		const label = `${ITEM_TYPE_LABELS[singular] ?? capitalize(singular)}s`;

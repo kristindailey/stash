@@ -39,16 +39,10 @@ import { createItem } from "@/actions/items";
 
 const PRO_ONLY_TYPES = new Set<CreatableType>(["file", "image"]);
 
-export function NewItemDialog({
-	isPro,
-	gatingEnabled,
-}: {
-	isPro: boolean;
-	gatingEnabled: boolean;
-}) {
+export function NewItemDialog({ isPro }: { isPro: boolean }) {
 	const router = useRouter();
 	const rawDefaultType = useCurrentItemType();
-	const proLocked = gatingEnabled && !isPro;
+	const proLocked = !isPro;
 	const defaultType =
 		proLocked && PRO_ONLY_TYPES.has(rawDefaultType) ? "snippet" : rawDefaultType;
 	const [open, setOpen] = React.useState(false);
