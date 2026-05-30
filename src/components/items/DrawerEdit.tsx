@@ -15,6 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ItemContentField } from "./ItemContentField";
 import { LanguageSelect } from "./LanguageSelect";
 import { CollectionSelect } from "./CollectionSelect";
+import { SuggestTags } from "./SuggestTags";
 import { DrawerSection } from "./DrawerSection";
 import {
 	CONTENT_TYPES,
@@ -33,10 +34,12 @@ import { updateItem } from "@/actions/items";
 
 export function DrawerEdit({
 	item,
+	isPro,
 	onCancel,
 	onSaved,
 }: {
 	item: ItemDetail;
+	isPro: boolean;
 	onCancel: () => void;
 	onSaved: (updated: ItemDetail) => void;
 }) {
@@ -173,6 +176,22 @@ export function DrawerEdit({
 						onChange={(e) => setTagsInput(e.target.value)}
 						placeholder="comma, separated, tags"
 					/>
+					{isPro && (
+						<div className="mt-2">
+							<SuggestTags
+								title={title}
+								content={content}
+								existingTags={parseTags(tagsInput)}
+								onAdd={(tag) =>
+									setTagsInput((prev) => {
+										const tags = parseTags(prev);
+										if (tags.includes(tag)) return prev;
+										return [...tags, tag].join(", ");
+									})
+								}
+							/>
+						</div>
+					)}
 				</DrawerSection>
 
 				<DrawerSection title="Collections">

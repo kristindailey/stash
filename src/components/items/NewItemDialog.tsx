@@ -22,6 +22,7 @@ import { ItemContentField } from "./ItemContentField";
 import { LanguageSelect } from "./LanguageSelect";
 import { CollectionSelect } from "./CollectionSelect";
 import { FileUpload, type UploadedFile } from "./FileUpload";
+import { SuggestTags } from "./SuggestTags";
 import {
 	CONTENT_TYPES,
 	CREATABLE_TYPES,
@@ -255,6 +256,20 @@ export function NewItemDialog({ isPro }: { isPro: boolean }) {
 							onChange={(e) => setTagsInput(e.target.value)}
 							placeholder="comma, separated, tags"
 						/>
+						{isPro && (
+							<SuggestTags
+								title={title}
+								content={content}
+								existingTags={parseTags(tagsInput)}
+								onAdd={(tag) =>
+									setTagsInput((prev) => {
+										const tags = parseTags(prev);
+										if (tags.includes(tag)) return prev;
+										return [...tags, tag].join(", ");
+									})
+								}
+							/>
+						)}
 					</Field>
 
 					<Field label="Collections">
