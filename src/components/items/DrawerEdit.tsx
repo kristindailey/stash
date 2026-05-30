@@ -16,6 +16,7 @@ import { ItemContentField } from "./ItemContentField";
 import { LanguageSelect } from "./LanguageSelect";
 import { CollectionSelect } from "./CollectionSelect";
 import { SuggestTags } from "./SuggestTags";
+import { SuggestDescription } from "./SuggestDescription";
 import { DrawerSection } from "./DrawerSection";
 import {
 	CONTENT_TYPES,
@@ -139,6 +140,17 @@ export function DrawerEdit({
 						placeholder="Optional description"
 						rows={3}
 					/>
+					{isPro && (
+						<div className="mt-2">
+							<SuggestDescription
+								type={item.type}
+								title={title}
+								content={content}
+								url={url}
+								onGenerate={setDescription}
+							/>
+						</div>
+					)}
 				</DrawerSection>
 
 				{showLanguage && (
