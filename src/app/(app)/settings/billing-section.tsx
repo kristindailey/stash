@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import {
 	createBillingPortalSession,
@@ -60,14 +61,22 @@ export function BillingSection({ isPro }: { isPro: boolean }) {
 
 	if (isPro) {
 		return (
-			<div className="rounded-lg border bg-card p-4">
-				<div className="flex items-center justify-between gap-4">
-					<div className="min-w-0">
-						<h3 className="flex items-center gap-1.5 text-sm font-medium">
+			<div className="rounded-lg border bg-card p-6">
+				<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+					<div className="min-w-0 space-y-1.5">
+						<div className="flex items-center gap-2 pb-3">
+							<span className="text-xs font-medium text-muted-foreground">
+								Current plan:
+							</span>
+							<Badge className="border-transparent bg-violet-500 text-white">
+								Pro
+							</Badge>
+						</div>
+						<h3 className="flex items-center gap-2 text-base font-semibold">
 							<Sparkles className="size-4 text-violet-500" />
 							DevStash Pro
 						</h3>
-						<p className="text-xs text-muted-foreground">
+						<p className="text-sm text-muted-foreground">
 							You have an active Pro subscription.
 						</p>
 					</div>
@@ -85,17 +94,25 @@ export function BillingSection({ isPro }: { isPro: boolean }) {
 	}
 
 	return (
-		<div className="rounded-lg border bg-card p-4">
-			<div className="flex flex-col gap-4">
-				<div className="min-w-0">
-					<h3 className="text-sm font-medium">Upgrade to Pro</h3>
-					<p className="text-xs text-muted-foreground">
-						Unlimited items and collections, file &amp; image uploads, and
+		<div className="rounded-lg border bg-card p-6">
+			<div className="flex flex-col gap-6">
+				<div className="min-w-0 space-y-1.5">
+					<div className="flex items-center gap-2 pb-3">
+						<span className="text-xs font-medium text-muted-foreground">
+							Current plan:
+						</span>
+						<Badge className="border-transparent bg-blue-500 text-white">
+							Free
+						</Badge>
+					</div>
+					<h3 className="text-base font-semibold">Upgrade to Pro</h3>
+					<p className="text-sm text-muted-foreground">
+						Unlimited items, collections, file and image uploads, and
 						more.
 					</p>
 				</div>
 
-				<div className="inline-flex w-fit rounded-md border p-0.5">
+				<div className="inline-flex w-fit rounded-md border p-1">
 					<PlanOption
 						active={plan === "monthly"}
 						onClick={() => setPlan("monthly")}
@@ -113,7 +130,7 @@ export function BillingSection({ isPro }: { isPro: boolean }) {
 					type="button"
 					onClick={onUpgrade}
 					disabled={pending}
-					className="w-fit"
+					className="w-fit px-6 bg-blue-500 text-white hover:bg-blue-600"
 				>
 					{pending ? "Redirecting…" : "Upgrade to Pro"}
 				</Button>
@@ -140,7 +157,7 @@ function PlanOption({
 			className={cn(
 				"flex items-center gap-1.5 rounded px-3 py-1.5 text-sm font-medium transition-colors",
 				active
-					? "bg-foreground text-background"
+					? "bg-blue-500 text-white"
 					: "text-muted-foreground hover:text-foreground",
 			)}
 		>
@@ -149,7 +166,7 @@ function PlanOption({
 				<span
 					className={cn(
 						"text-[10px] font-semibold",
-						active ? "text-background/70" : "text-emerald-500",
+						active ? "text-white/80" : "text-emerald-500",
 					)}
 				>
 					{hint}
