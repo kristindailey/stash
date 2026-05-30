@@ -1,14 +1,29 @@
-# Current Feature
-<!-- Title above as "# Current Feature: <name>", followed by a one- or two-sentence description of the feature/fix. -->
+# Current Feature: AI Explain Code
+AI-powered code explanation for snippets and commands in the item drawer using `gpt-5-nano`. An "Explain" button in the code editor header generates a plain-English markdown explanation, toggled inline via Code/Explain tabs in the editor. Pro-only, not saved to the DB.
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- What this feature needs to accomplish. List concrete, checkable goals. -->
+- `explainCode` server action: auth → Pro gating → Zod validation → rate limiting → try/catch, returning a markdown explanation string
+- Unit tests for the server action (Vitest, in `src/actions/ai.test.ts`)
+- "Explain" button (Sparkles icon) in the code editor window-controls header, next to Copy
+- Only shown for snippet and command types in the item drawer read view (not create/edit forms)
+- After generating, Code/Explain tabs appear in the editor header to toggle between the code and the explanation
+- Explanation renders as markdown in the same container space as the code editor
+- Concise explanation (~200-300 words) covering what the code does and key concepts
+- Loading state: `Loader2` spinner while generating
+- Free-user gating in UI: `Crown` icon + tooltip "AI features require Pro subscription"
+- Errors surfaced via toast (Pro gating, rate limit, AI service errors)
 
 ## Notes
-<!-- Implementation details, constraints, decisions, and references. -->
+- Third AI feature — mirror AI Auto-Tagging / AI Description Generator architecture in `src/actions/ai.ts`
+- Model: shared `openai` client + `AI_MODEL` (`gpt-5-nano`) from `src/lib/openai.ts`; `requireProForAI` + `checkAiRateLimit` like the existing actions
+- Explanations are NOT saved to the database — regenerated on each click
+- `isPro` must be threaded as a prop into the item drawer / code editor
+- Response is markdown text (not `json_object` like tags/description) — reuse the existing markdown renderer used by notes/prompts
+- AI item components live in `src/components/items/` (e.g. `SuggestTags.tsx`, `SuggestDescription.tsx`), not `src/components/ai/`
+- Full architectural context: `docs/ai-integration-plan.md`; spec: `context/features/ai-explain-spec.md`
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.

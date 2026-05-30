@@ -33,6 +33,7 @@ import type { ItemDetail } from "@/lib/db/items";
 
 export function DrawerBody({
 	item,
+	isPro,
 	onEdit,
 	onDelete,
 	deleting,
@@ -42,6 +43,7 @@ export function DrawerBody({
 	togglingPin,
 }: {
 	item: ItemDetail;
+	isPro: boolean;
 	onEdit: () => void;
 	onDelete: () => void;
 	deleting: boolean;
@@ -122,6 +124,7 @@ export function DrawerBody({
 								value={item.content}
 								language={item.language ?? undefined}
 								readOnly
+								explain={{ itemType: item.type, isPro }}
 							/>
 						) : MARKDOWN_TYPES.has(item.type) ? (
 							<MarkdownEditor value={item.content} readOnly />
