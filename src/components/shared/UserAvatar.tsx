@@ -28,7 +28,7 @@ export function UserAvatar({ name, image, email, className }: UserAvatarProps) {
 		<div
 			aria-label={name ?? "User avatar"}
 			className={cn(
-				"flex size-8 shrink-0 items-center justify-center rounded-full bg-[#8b5cf6] text-sm font-medium text-white",
+				"flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-yellow text-sm font-medium text-black",
 				className
 			)}
 		>
