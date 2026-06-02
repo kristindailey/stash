@@ -6,7 +6,7 @@ import remarkGfm from "remark-gfm";
 import { Check, Copy, Crown, Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { optimizePrompt } from "@/actions/ai";
+import { optimizePrompt, summarizeNote } from "@/actions/ai";
 
 interface MarkdownEditorProps {
 	value: string;
@@ -20,6 +20,10 @@ interface MarkdownEditorProps {
 		isPro: boolean;
 		title?: string;
 		onUse: (optimized: string) => void;
+	};
+	summarize?: {
+		isPro: boolean;
+		title?: string;
 	};
 }
 
@@ -35,6 +39,7 @@ export function MarkdownEditor({
 	placeholder,
 	className,
 	optimize,
+	summarize,
 }: MarkdownEditorProps) {
 	const [tab, setTab] = React.useState<"write" | "preview">(
 		readOnly ? "preview" : "write",
@@ -43,10 +48,20 @@ export function MarkdownEditor({
 	const [optimized, setOptimized] = React.useState<string | null>(null);
 	const [optimizing, setOptimizing] = React.useState(false);
 	const [view, setView] = React.useState<"original" | "optimized">("original");
+	const [summary, setSummary] = React.useState<string | null>(null);
+	const [summarizing, setSummarizing] = React.useState(false);
+	const [summaryView, setSummaryView] = React.useState<"note" | "summary">(
+		"note",
+	);
 	const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
 
 	const showOptimized = optimized !== null && view === "optimized";
-	const displayValue = showOptimized ? optimized : value;
+	const showSummary = summary !== null && summaryView === "summary";
+	const displayValue = showOptimized
+		? optimized
+		: showSummary
+			? summary
+			: value;
 
 	const handleCopy = React.useCallback(async () => {
 		if (!displayValue) return;
@@ -85,6 +100,32 @@ export function MarkdownEditor({
 		setView("optimized");
 	}, [optimize, optimizing, value]);
 
+	const handleSummarize = React.useCallback(async () => {
+		if (!summarize || summarizing) return;
+		setSummarizing(true);
+		const result = await summarizeNote({ title: summarize.title, content: value });
+		setSummarizing(false);
+
+		if (!result.success) {
+			if (result.error.includes("Upgrade to Pro")) {
+				toast.error(result.error, {
+					action: {
+						label: "Upgrade",
+						onClick: () => {
+							window.location.href = "/upgrade";
+						},
+					},
+				});
+			} else {
+				toast.error(result.error);
+			}
+			return;
+		}
+
+		setSummary(result.data.summary);
+		setSummaryView("summary");
+	}, [summarize, summarizing, value]);
+
 	const autoSize = React.useCallback(() => {
 		const el = textareaRef.current;
 		if (!el) return;
@@ -119,6 +160,21 @@ export function MarkdownEditor({
 								onClick={() => setView("optimized")}
 							>
 								Optimized
+							</TabButton>
+						</>
+					) : summary !== null ? (
+						<>
+							<TabButton
+								active={summaryView === "note"}
+								onClick={() => setSummaryView("note")}
+							>
+								Note
+							</TabButton>
+							<TabButton
+								active={summaryView === "summary"}
+								onClick={() => setSummaryView("summary")}
+							>
+								Summary
 							</TabButton>
 						</>
 					) : (
@@ -174,6 +230,29 @@ export function MarkdownEditor({
 							<span>Use optimized</span>
 						</button>
 					) : null}
+					{summarize && summary === null ? (
+						<button
+							type="button"
+							onClick={handleSummarize}
+							disabled={summarizing || value.trim().length === 0}
+							title={
+								summarize.isPro
+									? undefined
+									: "AI features require Pro subscription"
+							}
+							aria-label="Summarize note"
+							className="flex items-center gap-1 rounded px-1.5 py-1 text-white/60 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+						>
+							{summarizing ? (
+								<Loader2 className="size-3.5 animate-spin" />
+							) : summarize.isPro ? (
+								<Sparkles className="size-3.5" />
+							) : (
+								<Crown className="size-3.5" />
+							)}
+							<span>{summarizing ? "Summarizing…" : "Summarize"}</span>
+						</button>
+					) : null}
 					<button
 						type="button"
 						onClick={handleCopy}
@@ -189,7 +268,7 @@ export function MarkdownEditor({
 				</div>
 			</div>
 
-			{optimized !== null || tab === "preview" ? (
+			{optimized !== null || summary !== null || tab === "preview" ? (
 				<div
 					className="markdown-preview overflow-y-auto px-4 py-3 text-sm text-zinc-100"
 					style={{ minHeight, maxHeight }}

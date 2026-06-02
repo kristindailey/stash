@@ -437,3 +437,94 @@ export async function optimizePrompt(
 		};
 	}
 }
+
+const summarizeSchema = z.object({
+	title: z
+		.string()
+		.transform((value) => value.trim())
+		.optional()
+		.default(""),
+	content: z
+		.string()
+		.transform((value) => value.trim())
+		.optional()
+		.default(""),
+});
+
+export type SummarizeNoteInput = z.input<typeof summarizeSchema>;
+
+const SUMMARIZE_INSTRUCTIONS =
+	"You are a developer tool assistant that summarizes notes into their key points. " +
+	"Write a concise summary that captures the main ideas, decisions, and action items. " +
+	"Use clear markdown with short paragraphs and bullet points where helpful. " +
+	"Do not add preamble, a title, or any commentary outside the summary itself.";
+
+export async function summarizeNote(
+	input: SummarizeNoteInput,
+): Promise<ActionResult<{ summary: string }>> {
+	const session = await auth();
+	if (!session?.user?.id) {
+		return { success: false, error: "Not authenticated" };
+	}
+
+	const proError = await requireProForAI(session.user.id);
+	if (proError) {
+		return { success: false, error: proError };
+	}
+
+	const rateLimit = await checkAiRateLimit(session.user.id);
+	if (!rateLimit.success) {
+		return {
+			success: false,
+			error: "Too many AI requests. Please try again shortly.",
+		};
+	}
+
+	const parsed = summarizeSchema.safeParse(input);
+	if (!parsed.success) {
+		const firstIssue = parsed.error.issues[0];
+		return { success: false, error: firstIssue?.message ?? "Invalid input" };
+	}
+
+	const { title, content } = parsed.data;
+	if (content.length === 0) {
+		return { success: false, error: "Add note content to summarize." };
+	}
+
+	const source = [title && `Title: ${title}`, `Note:\n${content}`]
+		.filter(Boolean)
+		.join("\n")
+		.slice(0, MAX_CONTENT_CHARS);
+
+	if (!openai) {
+		return { success: false, error: "AI is not configured." };
+	}
+
+	const prompt = `Summarize the following note:\n\n${source}`;
+
+	try {
+		const response = await openai.responses.create({
+			model: AI_MODEL,
+			instructions: SUMMARIZE_INSTRUCTIONS,
+			input: prompt,
+			reasoning: { effort: "minimal" },
+			text: { verbosity: "medium" },
+		});
+
+		const summary = response.output_text.trim();
+		if (summary.length === 0) {
+			return {
+				success: false,
+				error: "Could not summarize the note. Please try again.",
+			};
+		}
+
+		return { success: true, data: { summary } };
+	} catch (err) {
+		console.error("[ai] summarizeNote failed", err);
+		return {
+			success: false,
+			error: "Could not summarize the note. Please try again.",
+		};
+	}
+}

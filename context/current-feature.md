@@ -1,14 +1,23 @@
-# Current Feature
-<!-- Title above as "# Current Feature: <name>", followed by a one- or two-sentence description of the feature/fix. -->
+# Current Feature: AI Summarize Note
+Add a Pro-gated "Summarize" button to notes that generates a concise AI summary of the note content, mirroring AI Explain Code (snippets) and AI Prompt Optimizer (prompts).
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+Complete
 
 ## Goals
-<!-- What this feature needs to accomplish. List concrete, checkable goals. -->
+- Add a `summarizeNote` server action in `src/actions/ai.ts` following the existing pattern: auth check → `requireProForAI` → `checkAiRateLimit` → Zod-validated input → `openai.responses.create` → `ActionResult<{ summary: string }>`.
+- Action returns a concise markdown summary; instructions tuned for summarizing developer notes (key points, no preamble).
+- Add a `summarize` prop to `MarkdownEditor` that renders a "Summarize" button (Pro lock indicator when not Pro) plus Note/Summary tabs in the read view, matching the Explain/Optimize button + tab treatment.
+- Wire the prop in `DrawerBody.tsx` so it's passed only when `item.type === "note"` (read view).
+- Summary is supplementary/read-only — display it in a tab; do NOT replace the note content (unlike Optimize's "Use optimized").
+- Add unit test(s) for `summarizeNote` in `src/actions/ai.test.ts` covering auth, Pro gate, rate limit, empty content, and success.
 
 ## Notes
-<!-- Implementation details, constraints, decisions, and references. -->
+- Notes are in `MARKDOWN_TYPES`, so they already render via `MarkdownEditor` in `DrawerBody.tsx`.
+- Reuse `AI_MODEL`/`openai` from `@/lib/openai`, `MAX_CONTENT_CHARS` cap (2000), `reasoning: { effort: "minimal" }`.
+- `MarkdownEditor` already has Optimize wiring (`optimizePrompt`) to copy from; keep the summarize UI distinct from optimize (no "Use" action, just view tabs).
+- Output is markdown — render through the existing markdown preview path.
+- Pro gating handled server-side via `requireProForAI` (uses `isPro`); pass `session.user.isPro` into the `summarize` prop for the lock UX, matching existing `explain`/`optimize` props.
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.

@@ -141,6 +141,14 @@ export function DrawerBody({
 											}
 										: undefined
 								}
+								summarize={
+									item.type === "note"
+										? {
+												isPro,
+												title: item.title,
+											}
+										: undefined
+								}
 							/>
 						) : (
 							<pre className="overflow-x-auto rounded-md bg-muted p-3 text-xs">
