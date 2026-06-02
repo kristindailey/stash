@@ -8,9 +8,9 @@ import { MarketingNav } from "@/components/marketing/MarketingNav";
 import { PricingSection } from "@/components/marketing/PricingSection";
 
 export const metadata: Metadata = {
-	title: "DevStash — Stop Losing Your Developer Knowledge",
+	title: "Stash — Stop Losing Your Developer Knowledge",
 	description:
-		"DevStash is one fast, searchable, AI-enhanced hub for your code snippets, AI prompts, commands, notes, files, and links.",
+		"Stash is one fast, searchable, AI-enhanced place for your code snippets, AI prompts, commands, notes, files, and links.",
 };
 
 export default function Home() {

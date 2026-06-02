@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: "DevStash",
+	title: "Stash",
 	description: "Hub for developer knowledge + resources",
 };
 

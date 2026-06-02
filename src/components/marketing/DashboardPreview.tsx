@@ -10,7 +10,7 @@ export function DashboardPreview() {
 	return (
 		<div>
 			<span className="mb-3 block text-left text-xs font-semibold tracking-wide text-muted-foreground/70 uppercase">
-				...with DevStash
+				...with Stash
 			</span>
 			<div className="flex h-[360px] flex-col overflow-hidden rounded-[14px] border border-border bg-card/40 shadow-2xl">
 				<div className="flex items-center gap-2.5 border-b border-border/60 bg-background px-3 py-2">

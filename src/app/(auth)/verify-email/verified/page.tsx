@@ -14,7 +14,7 @@ export default function VerifiedPage() {
 				<div className="space-y-2">
 					<h1 className="text-2xl font-semibold tracking-tight">Email verified</h1>
 					<p className="text-sm text-muted-foreground">
-						Your email address has been verified. You can now sign in to your DevStash account.
+						Your email address has been verified. You can now sign in to your Stash account.
 					</p>
 				</div>
 				<Button asChild size="lg" className="w-full">

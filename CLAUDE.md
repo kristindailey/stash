@@ -1,4 +1,4 @@
-# DevStash
+# Stash
 A developer knowledge hub for snippets, commands, prompts, notes, files, images, links, and custom types.
 
 ## Context Files
@@ -34,7 +34,7 @@ Vitest covers server actions (`src/actions/**`) and utilities (`src/lib/**`) onl
 
 When using the Neon MCP in this project, **always** use:
 
-- **Project:** `devstash` (id: `icy-queen-08131444`)
+- **Project:** `stash` (id: `icy-queen-08131444`)
 - **Branch:** `development` (id: `br-lively-dust-akj9eq2s`)
 
 Rules:

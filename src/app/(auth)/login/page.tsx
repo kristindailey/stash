@@ -20,7 +20,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 				<div className="space-y-2 text-center">
 					<h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
 					<p className="text-sm text-muted-foreground">
-						Sign in to your DevStash account
+						Sign in to your Stash account
 					</p>
 				</div>
 				{reset === "1" && (

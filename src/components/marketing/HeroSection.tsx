@@ -19,7 +19,7 @@ export function HeroSection() {
 				</h1>
 				<p className="mx-auto mt-6 max-w-[640px] text-lg text-muted-foreground">
 					Snippets, prompts, commands, notes, files, and links live scattered
-					across a dozen tools. DevStash brings them into one fast, searchable,
+					across a dozen tools. Stash brings them into one fast, searchable,
 					AI-enhanced hub.
 				</p>
 				<div className="mt-8 flex flex-wrap justify-center gap-3">

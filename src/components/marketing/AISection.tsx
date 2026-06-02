@@ -25,7 +25,7 @@ export function AISection() {
 						Let AI do the busywork
 					</h2>
 					<p className="mt-3 text-lg text-muted-foreground">
-						DevStash understands what you save and enriches it automatically, so
+						Stash understands what you save and enriches it automatically, so
 						your library stays organized without the manual labor.
 					</p>
 					<ul className="my-7 flex flex-col gap-3">

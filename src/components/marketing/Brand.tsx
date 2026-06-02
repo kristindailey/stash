@@ -10,7 +10,7 @@ export function Brand({ href = "/" }: { href?: string }) {
 			<span className="inline-flex size-8 items-center justify-center rounded-[9px] bg-gradient-to-br from-blue-400 to-blue-500 text-white">
 				<Terminal className="size-5" strokeWidth={2} />
 			</span>
-			<span>DevStash</span>
+			<span>Stash</span>
 		</Link>
 	);
 }

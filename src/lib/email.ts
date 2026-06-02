@@ -2,7 +2,7 @@ import { Resend } from "resend";
 
 const resendClient = new Resend(process.env.RESEND_API_KEY);
 
-const EMAIL_FROM = process.env.EMAIL_FROM ?? "DevStash <onboarding@resend.dev>";
+const EMAIL_FROM = process.env.EMAIL_FROM ?? "Stash <onboarding@resend.dev>";
 
 export function isEmailVerificationEnabled() {
 	return process.env.EMAIL_VERIFICATION_ENABLED === "true";
@@ -39,7 +39,7 @@ export async function sendVerificationEmail(params: {
 	const { to, name, verifyUrl } = params;
 	const greeting = buildEmailGreeting(name);
 	const html = buildEmailHtml({
-		title: "Verify your DevStash email",
+		title: "Verify your Stash email",
 		footer: "If you didn't create an account, you can safely ignore this email.",
 		bodyHtml: `
 			<p style="margin: 0 0 12px;">${greeting}</p>
@@ -49,11 +49,11 @@ export async function sendVerificationEmail(params: {
 			<p style="margin: 0; font-size: 13px; word-break: break-all; color: #555;">${verifyUrl}</p>
 		`,
 	});
-	const text = `${greeting}\n\nVerify your DevStash email by opening this link (expires in 24 hours):\n${verifyUrl}\n\nIf you didn't create an account, you can ignore this email.`;
+	const text = `${greeting}\n\nVerify your Stash email by opening this link (expires in 24 hours):\n${verifyUrl}\n\nIf you didn't create an account, you can ignore this email.`;
 	const { error } = await resendClient.emails.send({
 		from: EMAIL_FROM,
 		to,
-		subject: "Verify your DevStash email",
+		subject: "Verify your Stash email",
 		html,
 		text,
 	});
@@ -76,16 +76,16 @@ export async function sendAccountExistsEmail(params: {
 			"If this wasn't you, you can safely ignore this email — no changes have been made to your account.",
 		bodyHtml: `
 			<p style="margin: 0 0 12px;">${greeting}</p>
-			<p style="margin: 0 0 16px;">A DevStash account already exists for this email address. If this was you, sign in instead:</p>
+			<p style="margin: 0 0 16px;">A Stash account already exists for this email address. If this was you, sign in instead:</p>
 			<p style="margin: 0 0 16px;">${emailButton(loginUrl, "Sign in")}</p>
 			<p style="margin: 0 0 16px; font-size: 13px; color: #555;">Forgot your password? <a href="${forgotUrl}" style="color: #111;">Reset it here</a>.</p>
 		`,
 	});
-	const text = `${greeting}\n\nA DevStash account already exists for this email. If this was you, sign in: ${loginUrl}\n\nForgot your password? Reset it: ${forgotUrl}\n\nIf this wasn't you, ignore this email — your account is unchanged.`;
+	const text = `${greeting}\n\nA Stash account already exists for this email. If this was you, sign in: ${loginUrl}\n\nForgot your password? Reset it: ${forgotUrl}\n\nIf this wasn't you, ignore this email — your account is unchanged.`;
 	const { error } = await resendClient.emails.send({
 		from: EMAIL_FROM,
 		to,
-		subject: "Someone tried to sign up with your DevStash email",
+		subject: "Someone tried to sign up with your Stash email",
 		html,
 		text,
 	});
@@ -102,7 +102,7 @@ export async function sendPasswordResetEmail(params: {
 	const { to, name, resetUrl } = params;
 	const greeting = buildEmailGreeting(name);
 	const html = buildEmailHtml({
-		title: "Reset your DevStash password",
+		title: "Reset your Stash password",
 		footer:
 			"If you didn't request a password reset, you can safely ignore this email — your password won't change.",
 		bodyHtml: `
@@ -113,11 +113,11 @@ export async function sendPasswordResetEmail(params: {
 			<p style="margin: 0; font-size: 13px; word-break: break-all; color: #555;">${resetUrl}</p>
 		`,
 	});
-	const text = `${greeting}\n\nReset your DevStash password by opening this link (expires in 1 hour):\n${resetUrl}\n\nIf you didn't request a reset, you can ignore this email.`;
+	const text = `${greeting}\n\nReset your Stash password by opening this link (expires in 1 hour):\n${resetUrl}\n\nIf you didn't request a reset, you can ignore this email.`;
 	const { error } = await resendClient.emails.send({
 		from: EMAIL_FROM,
 		to,
-		subject: "Reset your DevStash password",
+		subject: "Reset your Stash password",
 		html,
 		text,
 	});

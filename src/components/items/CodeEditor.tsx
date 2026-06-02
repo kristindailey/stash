@@ -27,9 +27,9 @@ const DEFAULT_MIN_HEIGHT = 140;
 const DEFAULT_MAX_HEIGHT = 400;
 
 const MONACO_THEME_NAMES: Record<EditorTheme, string> = {
-	"vs-dark": "devstash-vs-dark",
-	monokai: "devstash-monokai",
-	"github-dark": "devstash-github-dark",
+	"vs-dark": "stash-vs-dark",
+	monokai: "stash-monokai",
+	"github-dark": "stash-github-dark",
 };
 
 const THEME_DEFINITIONS: Record<EditorTheme, editor.IStandaloneThemeData> = {

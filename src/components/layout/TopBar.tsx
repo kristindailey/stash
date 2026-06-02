@@ -23,7 +23,7 @@ export function TopBar({ isPro }: { isPro: boolean }) {
 						<Code className="size-4" />
 					</div>
 					<span className="hidden text-lg font-semibold tracking-tight sm:inline">
-						DevStash
+						Stash
 					</span>
 				</Link>
 				<button

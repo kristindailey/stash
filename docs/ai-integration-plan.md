@@ -1,7 +1,7 @@
 # AI Integration Plan — OpenAI `gpt-5-nano`
 
 > Research doc only. No code has been written. This captures best practices and
-> the concrete patterns DevStash should follow when wiring the four Pro AI
+> the concrete patterns Stash should follow when wiring the four Pro AI
 > features: **auto-tagging**, **AI summaries**, **code explanation**, and
 > **prompt optimization**.
 
@@ -11,7 +11,7 @@
 
 `gpt-5-nano` is the fastest, cheapest GPT-5 tier — purpose-built for
 summarization and classification, which is exactly the shape of all four
-DevStash features.
+Stash features.
 
 | Attribute       | Value                                            |
 | --------------- | ------------------------------------------------ |
@@ -207,7 +207,7 @@ Decide per feature — don't stream everything.
 | Prompt optimizer   | Streaming     | Rewrites can be long; show progress.             |
 
 **Recommendation: do NOT add the Vercel `ai` SDK.** It's the popular path for
-chat UIs, but DevStash has no chat surface, already standardizes on plain server
+chat UIs, but Stash has no chat surface, already standardizes on plain server
 actions + `ActionResult`, and adding a second framework layer fights the
 existing patterns. Two viable native approaches:
 

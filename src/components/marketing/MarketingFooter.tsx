@@ -10,7 +10,7 @@ export function MarketingFooter() {
 				<div>
 					<Brand href="/" />
 					<p className="mt-4 max-w-[260px] text-sm text-muted-foreground/70">
-						One hub for all your developer knowledge.
+						One place for all your developer knowledge.
 					</p>
 				</div>
 				<div className="grid grid-cols-2 gap-6 sm:grid-cols-3">
@@ -31,7 +31,7 @@ export function MarketingFooter() {
 				</div>
 			</div>
 			<div className="mx-auto max-w-[1180px] border-t border-border/60 px-6 py-6 text-sm text-muted-foreground/70">
-				<span>&copy; {year} DevStash. All rights reserved.</span>
+				<span>&copy; {year} Stash. All rights reserved.</span>
 			</div>
 		</footer>
 	);

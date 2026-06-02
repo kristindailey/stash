@@ -1,6 +1,6 @@
 # Item Types
 
-DevStash organizes all user-saved content around the `Item` model, where each item is tagged with exactly one `ItemType`. Seven system item types ship out of the box (created in `prisma/seed.ts` with `isSystem: true` and `userId: null`). Per-user custom item types are supported by the schema but not yet exposed.
+Stash organizes all user-saved content around the `Item` model, where each item is tagged with exactly one `ItemType`. Seven system item types ship out of the box (created in `prisma/seed.ts` with `isSystem: true` and `userId: null`). Per-user custom item types are supported by the schema but not yet exposed.
 
 ## Sources
 

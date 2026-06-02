@@ -19,7 +19,7 @@ export default async function UpgradePage() {
 	return (
 		<div className="mx-auto flex max-w-3xl flex-col gap-8">
 			<header className="text-center">
-				<h1 className="text-2xl font-semibold">Upgrade to DevStash Pro</h1>
+				<h1 className="text-2xl font-semibold">Upgrade to Stash Pro</h1>
 				<p className="mt-2 text-sm text-muted-foreground">
 					Unlock unlimited items, file uploads, AI features, and more.
 				</p>

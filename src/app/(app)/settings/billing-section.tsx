@@ -87,7 +87,7 @@ export function BillingSection({
 						</div>
 						<h3 className="flex items-center gap-2 text-base font-semibold">
 							<Crown className="size-4 text-violet-500" />
-							DevStash Pro
+							Stash Pro
 						</h3>
 						<p className="text-sm text-muted-foreground">
 							You have an active Pro subscription.

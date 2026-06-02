@@ -28,7 +28,7 @@ function buildLimiter(limit: number, window: `${number} ${WindowUnit}`, prefix: 
 			redis,
 			limiter: Ratelimit.slidingWindow(limit, window),
 			analytics: false,
-			prefix: `devstash:rl:${prefix}`,
+			prefix: `stash:rl:${prefix}`,
 		}),
 		windowSeconds,
 	};

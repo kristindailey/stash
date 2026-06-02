@@ -1,6 +1,6 @@
-# Stripe Integration Plan — DevStash Pro
+# Stripe Integration Plan — Stash Pro
 
-> Research document. No source code was modified. This is a complete implementation plan for adding Stripe subscriptions (Pro: **$8/mo** or **$72/yr**) to DevStash.
+> Research document. No source code was modified. This is a complete implementation plan for adding Stripe subscriptions (Pro: **$8/mo** or **$72/yr**) to Stash.
 
 ---
 
@@ -503,7 +503,7 @@ declare module "next-auth/jwt" {
 }
 ```
 
-> ⚠️ **Honest trade-off (flagged for the implementer).** This adds **one DB query to every JWT validation** — i.e. effectively every authenticated server request/`auth()` call — which partially defeats the point of the stateless JWT strategy. It's simple and correct, and at DevStash's scale it's fine. Two lighter alternatives worth considering:
+> ⚠️ **Honest trade-off (flagged for the implementer).** This adds **one DB query to every JWT validation** — i.e. effectively every authenticated server request/`auth()` call — which partially defeats the point of the stateless JWT strategy. It's simple and correct, and at Stash's scale it's fine. Two lighter alternatives worth considering:
 > 1. **Don't put `isPro` in the session at all.** Gating already happens server-side via `src/lib/billing.ts` reading the DB directly (the authoritative path). Use the session's `isPro` only for *cosmetic* UI. If you accept "UI may lag by up to one token refresh," you can drop the per-request query and instead set `token.isPro` only at sign-in + on `trigger === "update"`, and call `useSession().update()` after the user returns from checkout. The server gate stays correct regardless.
 > 2. **Throttle the re-read:** store a `proCheckedAt` timestamp in the token and only re-query if it's older than e.g. 60s.
 >
@@ -576,7 +576,7 @@ Add `isPro: true` (and period-end fields if added) to the `prisma.user.findUniqu
 
 ### 4.3 Stripe Dashboard setup steps
 
-1. **Create the Product:** Dashboard → Products → *DevStash Pro*.
+1. **Create the Product:** Dashboard → Products → *Stash Pro*.
 2. **Add two recurring Prices** under that product:
    - `$8.00 USD / month` → copy the price ID → `STRIPE_PRICE_MONTHLY`.
    - `$72.00 USD / year` → copy the price ID → `STRIPE_PRICE_YEARLY`.

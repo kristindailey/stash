@@ -1,14 +1,33 @@
-# Current Feature
-<!-- Title above as "# Current Feature: <name>", followed by a one- or two-sentence description of the feature/fix. -->
+# Current Feature: Rename DevStash → Stash
+Rename the application from "DevStash" to "Stash" across the entire codebase — user-facing brand text, internal identifiers, and docs. Demo seed email stays `demo@devstash.io` (deliberate exception, no DB re-seed).
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- What this feature needs to accomplish. List concrete, checkable goals. -->
+- [x] User-facing brand text "DevStash" → "Stash":
+  - [x] `src/app/page.tsx` metadata + `prototypes/homepage/index.html`
+  - [x] `src/app/layout.tsx` metadata
+  - [x] Marketing: `Brand`, `HeroSection`, `AISection`, `DashboardPreview`, `MarketingFooter`
+  - [x] `src/components/layout/TopBar.tsx`
+  - [x] Auth pages: `login`, `reset-password`, `verify-email/verified`
+  - [x] `src/app/(app)/upgrade/page.tsx`, `src/app/(app)/settings/billing-section.tsx`
+  - [x] `src/lib/email.ts` (subjects, bodies, `EMAIL_FROM` default)
+- [x] Internal identifiers `devstash` → `stash`:
+  - [x] `package.json` name + `package-lock.json` name fields
+  - [x] Monaco theme ids in `CodeEditor.tsx` (`devstash-vs-dark` → `stash-vs-dark`, etc.)
+  - [x] Rate-limit Redis key prefix in `rate-limit.ts` (`devstash:rl:` → `stash:rl:`)
+- [x] Docs/context: `CLAUDE.md`, `context/project-overview.md`, `docs/*.md`, Neon project name reference
+- [x] Prisma schema comment + regenerated client
+- [x] `npm run build` + `npm run test` pass
 
 ## Notes
-<!-- Implementation details, constraints, decisions, and references. -->
+- **Exception:** demo user email stays `demo@devstash.io` in `seed.ts`, `scripts/delete-non-demo-users.ts`, `scripts/test-db.ts`. The existing dev DB demo row is keyed on it; changing would require a re-seed. Leave untouched.
+- Neon project *id* (`icy-queen-08131444`) and branch ids never change — only the human-readable "devstash" project name reference in `CLAUDE.md` docs.
+- Rate-limit prefix change resets in-flight rate-limit windows (harmless in dev).
+- Monaco theme ids are internal map keys; rename keys + the `editor.defineTheme`/`setTheme` references together so they stay consistent.
+- Commit as `chore:` (rename, not a feature) — do **not** add a History entry.
+- Watch for `package-lock.json` "name" fields and any `@/` import paths that incidentally contain the string (none expected; verify with a final grep).
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.

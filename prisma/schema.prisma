@@ -1,4 +1,4 @@
-// Prisma 7 schema for DevStash
+// Prisma 7 schema for Stash
 // Docs: https://www.prisma.io/docs/orm/prisma-schema
 
 generator client {
