@@ -41,7 +41,7 @@ export default async function CollectionDetailPage({
 				<div className="flex items-center gap-3">
 					<Icon
 						className="size-6 shrink-0"
-						style={collection.isFavorite ? { color: "#f59e0b" } : undefined}
+						style={collection.isFavorite ? { color: "#fcd757" } : undefined}
 						fill={collection.isFavorite ? "currentColor" : "none"}
 					/>
 					<h1 className="text-2xl font-semibold">{collection.name}</h1>

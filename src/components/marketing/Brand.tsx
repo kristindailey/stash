@@ -1,5 +1,5 @@
+import Image from "next/image";
 import Link from "next/link";
-import { Terminal } from "lucide-react";
 
 export function Brand({ href = "/" }: { href?: string }) {
 	return (
@@ -7,9 +7,14 @@ export function Brand({ href = "/" }: { href?: string }) {
 			href={href}
 			className="inline-flex items-center gap-2 text-lg font-extrabold"
 		>
-			<span className="inline-flex size-8 items-center justify-center rounded-[9px] bg-gradient-to-br from-blue-400 to-blue-500 text-white">
-				<Terminal className="size-5" strokeWidth={2} />
-			</span>
+			<Image
+				src="/logo.png"
+				alt="Stash"
+				width={32}
+				height={32}
+				className="size-8 rounded-[9px]"
+				priority
+			/>
 			<span>Stash</span>
 		</Link>
 	);

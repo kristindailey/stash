@@ -1,7 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { Code, Crown, PanelLeft, Search } from "lucide-react";
+import { Crown, PanelLeft, Search } from "lucide-react";
 import { NewItemDialog } from "@/components/items/NewItemDialog";
 import { NewCollectionDialog } from "@/components/collections/NewCollectionDialog";
 import { useCommandPalette } from "@/components/search/command-palette-context";
@@ -19,9 +20,14 @@ export function TopBar({ isPro }: { isPro: boolean }) {
 					aria-label="Go to dashboard"
 					className="flex items-center gap-2.5 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring"
 				>
-					<div className="flex size-8 items-center justify-center rounded-lg bg-foreground text-background">
-						<Code className="size-4" />
-					</div>
+					<Image
+						src="/logo.png"
+						alt="Stash"
+						width={32}
+						height={32}
+						className="size-8 rounded-lg"
+						priority
+					/>
 					<span className="hidden text-lg font-semibold tracking-tight sm:inline">
 						Stash
 					</span>

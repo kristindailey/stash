@@ -75,7 +75,7 @@ export function CollectionDetailActions({
 					disabled={favoriting}
 				>
 					<Star
-						style={collection.isFavorite ? { color: "#f59e0b" } : undefined}
+						style={collection.isFavorite ? { color: "#fcd757" } : undefined}
 						fill={collection.isFavorite ? "currentColor" : "none"}
 					/>
 				</Button>

@@ -114,7 +114,7 @@ export function BillingSection({
 						<span className="text-sm font-medium text-muted-foreground">
 							Current plan:
 						</span>
-						<Badge className="border-transparent bg-blue-500 text-white">
+						<Badge className="border-transparent bg-brand-yellow text-neutral-900">
 							Free
 						</Badge>
 					</div>
@@ -174,19 +174,12 @@ function PlanOption({
 			onClick={onClick}
 			className={cn(
 				"inline-flex items-center gap-1.5 rounded-full px-4.5 py-1.5 text-sm font-semibold text-muted-foreground transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring",
-				active && "bg-blue-500 text-white",
+				active && "bg-brand-yellow text-neutral-900",
 			)}
 		>
 			{label}
 			{hint && (
-				<span
-					className={cn(
-						"rounded-full px-1.5 py-0.5 text-[0.7rem] font-bold",
-						active
-							? "bg-white/20 text-white"
-							: "bg-emerald-500/20 text-emerald-400",
-					)}
-				>
+				<span className="rounded-full bg-brand-stone px-1.5 py-0.5 text-[0.7rem] font-bold text-white">
 					{hint}
 				</span>
 			)}

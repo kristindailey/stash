@@ -26,7 +26,7 @@ export const MARKETING_TYPE_COLORS: Record<string, string> = {
 };
 
 export const CTA_PRIMARY_CLASS =
-	"border-transparent bg-gradient-to-r from-blue-400 to-blue-500 text-white shadow-[0_6px_20px_rgba(59,130,246,0.3)] transition-shadow hover:bg-gradient-to-r hover:from-blue-400 hover:to-blue-500 hover:shadow-[0_10px_28px_rgba(59,130,246,0.42)]";
+	"border-transparent bg-brand-yellow text-neutral-900 transition-colors hover:bg-brand-yellow/90";
 
 export interface MarketingFeature {
 	typeKey: string;

@@ -31,7 +31,7 @@ export function AISection() {
 					<ul className="my-7 flex flex-col gap-3">
 						{AI_CHECKLIST.map((item) => (
 							<li key={item} className="flex items-start gap-2 text-muted-foreground">
-								<Check className="mt-1 size-4 shrink-0 text-blue-500" strokeWidth={3} />
+								<Check className="mt-1 size-4 shrink-0 text-brand-yellow" strokeWidth={3} />
 								<span className="text-[0.95rem]">{item}</span>
 							</li>
 						))}
@@ -62,25 +62,25 @@ export function AISection() {
 								<span className="text-purple-400">from</span>{" "}
 								<span className="text-emerald-400">{"'react'"}</span>;{"\n\n"}
 								<span className="text-purple-400">export function</span>{" "}
-								<span className="text-blue-400">useDebounce</span>
+								<span className="text-brand-yellow">useDebounce</span>
 								{"<T>(value: T, delay: "}
 								<span className="text-amber-400">number</span>
 								{") {\n  "}
 								<span className="text-purple-400">const</span>
 								{" [debounced, setDebounced] = "}
-								<span className="text-blue-400">useState</span>
+								<span className="text-brand-yellow">useState</span>
 								{"(value);\n\n  "}
-								<span className="text-blue-400">useEffect</span>
+								<span className="text-brand-yellow">useEffect</span>
 								{"(() => {\n    "}
 								<span className="text-purple-400">const</span>
 								{" id = "}
-								<span className="text-blue-400">setTimeout</span>
+								<span className="text-brand-yellow">setTimeout</span>
 								{"(() => "}
-								<span className="text-blue-400">setDebounced</span>
+								<span className="text-brand-yellow">setDebounced</span>
 								{"(value), delay);\n    "}
 								<span className="text-purple-400">return</span>
 								{" () => "}
-								<span className="text-blue-400">clearTimeout</span>
+								<span className="text-brand-yellow">clearTimeout</span>
 								{"(id);\n  }, [value, delay]);\n\n  "}
 								<span className="text-purple-400">return</span>
 								{" debounced;\n}"}
@@ -96,7 +96,7 @@ export function AISection() {
 									<span
 										key={tag}
 										style={{ animationDelay: `${i * 80}ms` }}
-										className="animate-in fade-in slide-in-from-bottom-1 fill-mode-both rounded-full border border-blue-500/30 bg-blue-500/15 px-2.5 py-1 text-[0.78rem] text-blue-400 duration-500"
+										className="animate-in fade-in slide-in-from-bottom-1 fill-mode-both rounded-full border border-brand-yellow/30 bg-brand-yellow/15 px-2.5 py-1 text-[0.78rem] text-brand-yellow duration-500"
 									>
 										{tag}
 									</span>
