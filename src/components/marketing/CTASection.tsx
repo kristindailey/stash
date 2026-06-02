@@ -13,7 +13,7 @@ export function CTASection() {
 						Ready to Stash Your Knowledge?
 					</h2>
 					<p className="mx-auto mt-4 mb-8 max-w-[480px] text-muted-foreground">
-						Join developers who've stopped digging through chat histories and
+						Join developers who&apos;ve stopped digging through chat histories and
 						random folders.
 					</p>
 					<Button
