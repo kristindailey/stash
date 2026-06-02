@@ -26,6 +26,7 @@ import {
 	generateAutoTags,
 	generateDescription,
 	optimizePrompt,
+	summarizeNote,
 } from "./ai";
 
 const authMock = vi.mocked(auth);
@@ -420,6 +421,90 @@ describe("optimizePrompt", () => {
 		expect(result).toEqual({
 			success: false,
 			error: "Could not optimize the prompt. Please try again.",
+		});
+	});
+});
+
+describe("summarizeNote", () => {
+	it("rejects when not authenticated", async () => {
+		authMock.mockResolvedValue(null as never);
+		const result = await summarizeNote({ content: "A long note" });
+		expect(result).toEqual({ success: false, error: "Not authenticated" });
+		expect(createMock).not.toHaveBeenCalled();
+	});
+
+	it("rejects free users with the Pro upgrade message", async () => {
+		requireProMock.mockResolvedValue(
+			"AI features are a Pro feature. Upgrade to Pro to use them.",
+		);
+		const result = await summarizeNote({ content: "A long note" });
+		expect(result).toEqual({
+			success: false,
+			error: "AI features are a Pro feature. Upgrade to Pro to use them.",
+		});
+		expect(createMock).not.toHaveBeenCalled();
+	});
+
+	it("rejects when rate limited", async () => {
+		rateLimitMock.mockResolvedValue({ success: false } as never);
+		const result = await summarizeNote({ content: "A long note" });
+		expect(result).toEqual({
+			success: false,
+			error: "Too many AI requests. Please try again shortly.",
+		});
+		expect(createMock).not.toHaveBeenCalled();
+	});
+
+	it("rejects when there is no note content", async () => {
+		const result = await summarizeNote({ content: "   " });
+		expect(result).toEqual({
+			success: false,
+			error: "Add note content to summarize.",
+		});
+		expect(createMock).not.toHaveBeenCalled();
+	});
+
+	it("returns the markdown summary from the model", async () => {
+		aiReturns("- First point\n- Second point");
+		const result = await summarizeNote({ content: "A long note" });
+		expect(result).toEqual({
+			success: true,
+			data: { summary: "- First point\n- Second point" },
+		});
+	});
+
+	it("builds the source from title and content", async () => {
+		aiReturns("summary");
+		await summarizeNote({ title: "Standup notes", content: "We shipped X" });
+		const callArg = createMock.mock.calls[0]![0] as { input: string };
+		expect(callArg.input).toContain("Title: Standup notes");
+		expect(callArg.input).toContain("Note:\nWe shipped X");
+	});
+
+	it("truncates the source to 2000 chars before calling the API", async () => {
+		aiReturns("summary");
+		await summarizeNote({ content: "a".repeat(5000) });
+		const callArg = createMock.mock.calls[0]![0] as { input: string };
+		const prefix = "Summarize the following note:\n\n";
+		expect(callArg.input.startsWith(prefix)).toBe(true);
+		expect(callArg.input.slice(prefix.length).length).toBe(2000);
+	});
+
+	it("returns an error when the model returns an empty summary", async () => {
+		aiReturns("   ");
+		const result = await summarizeNote({ content: "A long note" });
+		expect(result).toEqual({
+			success: false,
+			error: "Could not summarize the note. Please try again.",
+		});
+	});
+
+	it("returns a generic error when the API call throws", async () => {
+		createMock.mockRejectedValue(new Error("boom"));
+		const result = await summarizeNote({ content: "A long note" });
+		expect(result).toEqual({
+			success: false,
+			error: "Could not summarize the note. Please try again.",
 		});
 	});
 });
