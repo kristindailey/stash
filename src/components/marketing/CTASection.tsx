@@ -10,10 +10,10 @@ export function CTASection() {
 			<Reveal>
 				<div className="mx-auto rounded-[22px] border border-border bg-[radial-gradient(70%_120%_at_50%_0%,rgba(99,102,241,0.22),transparent_70%)] bg-card px-8 py-16 text-center">
 					<h2 className="text-[clamp(1.8rem,4vw,2.6rem)] font-extrabold tracking-tight">
-						Ready to Organize Your Knowledge?
+						Ready to Stash Your Knowledge?
 					</h2>
 					<p className="mx-auto mt-4 mb-8 max-w-[480px] text-muted-foreground">
-						Join the developers who stopped digging through chat histories and
+						Join developers who've stopped digging through chat histories and
 						random folders.
 					</p>
 					<Button

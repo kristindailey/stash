@@ -18,7 +18,7 @@ export function HeroSection() {
 					</span>
 				</h1>
 				<p className="mx-auto mt-6 max-w-[640px] text-lg text-muted-foreground">
-					Snippets, prompts, commands, notes, files, and links live scattered
+					Snippets, prompts, commands and more live scattered
 					across a dozen tools. Stash brings them into one fast, searchable,
 					AI-enhanced hub.
 				</p>

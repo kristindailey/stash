@@ -16,7 +16,7 @@ export function FeaturesSection() {
 						Everything in one place
 					</h2>
 					<p className="mt-3 text-lg text-muted-foreground">
-						Capture any kind of developer knowledge and find it again in seconds.
+						Capture any type of developer knowledge and find it again in seconds.
 					</p>
 				</Reveal>
 

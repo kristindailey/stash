@@ -19,7 +19,7 @@ export function AISection() {
 						variant="outline"
 						className="mb-4 border-amber-500/30 bg-amber-500/15 text-amber-400 uppercase"
 					>
-						Pro Feature
+						Pro Features
 					</Badge>
 					<h2 className="text-left text-[clamp(1.8rem,4vw,2.5rem)] font-extrabold tracking-tight">
 						Let AI do the busywork

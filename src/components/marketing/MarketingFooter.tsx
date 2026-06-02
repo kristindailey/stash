@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Brand } from "@/components/marketing/Brand";
 import { FOOTER_COLUMNS } from "@/lib/constants/marketing";
 
@@ -10,21 +11,21 @@ export function MarketingFooter() {
 				<div>
 					<Brand href="/" />
 					<p className="mt-4 max-w-[260px] text-sm text-muted-foreground/70">
-						One place for all your developer knowledge.
+						The place to stash all your developer knowledge.
 					</p>
 				</div>
-				<div className="grid grid-cols-2 gap-6 sm:grid-cols-3">
+				<div className="flex gap-12 sm:justify-end">
 					{FOOTER_COLUMNS.map((col) => (
-						<div key={col.heading} className="sm:col-start-3">
+						<div key={col.heading}>
 							<h4 className="mb-4 text-sm font-bold">{col.heading}</h4>
 							{col.links.map((link) => (
-								<a
+								<Link
 									key={link.label}
 									href={link.href}
 									className="block py-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
 								>
 									{link.label}
-								</a>
+								</Link>
 							))}
 						</div>
 					))}

@@ -26,7 +26,7 @@ const FEATURES = [
 	},
 	{
 		key: "prompt",
-		title: "AI Prompts",
+		title: "Prompts",
 		desc: "Stop losing your best prompts in chat histories. Stash them here.",
 		icon: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4.6 5 .4-3.8 3.3 1.2 4.9L12 14.6 7.7 16.2l1.2-4.9L5.1 8l5-.4z"/></svg>',
 	},
