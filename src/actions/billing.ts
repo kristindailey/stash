@@ -1,5 +1,7 @@
 "use server";
 
+import Stripe from "stripe";
+
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { getStripe } from "@/lib/stripe";
@@ -41,6 +43,21 @@ export async function createCheckoutSession(
 	if (user?.isPro) return { success: false, error: "Already subscribed" };
 
 	let customerId = user?.stripeCustomerId ?? undefined;
+	if (customerId) {
+		try {
+			const existing = await stripe.customers.retrieve(customerId);
+			if (existing.deleted) customerId = undefined;
+		} catch (err) {
+			if (
+				err instanceof Stripe.errors.StripeInvalidRequestError &&
+				err.code === "resource_missing"
+			) {
+				customerId = undefined;
+			} else {
+				throw err;
+			}
+		}
+	}
 	if (!customerId) {
 		const customer = await stripe.customers.create({
 			email: session.user.email,
@@ -88,6 +105,21 @@ export async function createBillingPortalSession(): Promise<
 	});
 	if (!user?.stripeCustomerId) {
 		return { success: false, error: "No billing account found" };
+	}
+
+	try {
+		const existing = await stripe.customers.retrieve(user.stripeCustomerId);
+		if (existing.deleted) {
+			return { success: false, error: "No billing account found" };
+		}
+	} catch (err) {
+		if (
+			err instanceof Stripe.errors.StripeInvalidRequestError &&
+			err.code === "resource_missing"
+		) {
+			return { success: false, error: "No billing account found" };
+		}
+		throw err;
 	}
 
 	const portal = await stripe.billingPortal.sessions.create({
