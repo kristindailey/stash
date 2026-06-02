@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CollectionCard } from "@/components/collections/CollectionCard";
+import { EmptyState } from "@/components/shared/EmptyState";
 import { DASHBOARD_COLLECTIONS_LIMIT } from "@/lib/constants/pagination";
 import { getRecentCollections } from "@/lib/db/collections";
 
@@ -21,7 +22,7 @@ export async function CollectionsSection({ userId }: { userId: string }) {
 				</Link>
 			</div>
 			{collections.length === 0 ? (
-				<p className="text-sm text-muted-foreground">No collections yet.</p>
+				<EmptyState message="No collections yet. Create your first one!" />
 			) : (
 				<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 					{collections.map((collection) => (
