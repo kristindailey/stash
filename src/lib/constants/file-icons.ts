@@ -1,5 +1,4 @@
 import {
-	File,
 	FileArchive,
 	FileAudio,
 	FileCode,
@@ -66,7 +65,7 @@ const EXT_ICONS: Record<string, LucideIcon> = {
 };
 
 export function iconForFileName(fileName: string | null): LucideIcon {
-	if (!fileName) return File;
+	if (!fileName) return FileText;
 	const ext = fileName.split(".").pop()?.toLowerCase() ?? "";
-	return EXT_ICONS[ext] ?? File;
+	return EXT_ICONS[ext] ?? FileText;
 }

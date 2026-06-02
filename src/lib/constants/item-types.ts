@@ -1,6 +1,6 @@
 import {
 	Code,
-	File,
+	FileText,
 	Image as ImageIcon,
 	Link as LinkIcon,
 	Sparkles,
@@ -14,7 +14,7 @@ export const ITEM_TYPE_ICONS: Partial<Record<string, LucideIcon>> = {
 	prompt: Sparkles,
 	command: Terminal,
 	note: StickyNote,
-	file: File,
+	file: FileText,
 	image: ImageIcon,
 	link: LinkIcon,
 };

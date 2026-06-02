@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import type { DashboardItem } from "@/lib/db/items";
 import { formatBytes } from "@/lib/constants/file-upload";
 import { iconForFileName } from "@/lib/constants/file-icons";
+import { ITEM_TYPE_COLORS } from "@/lib/constants/item-types";
 import { formatRelativeTime } from "@/lib/format-time";
 import { ItemStatusBadges } from "./ItemStatusBadges";
 import { useItemDrawer } from "./item-drawer-context";
@@ -31,13 +32,14 @@ export function FileRow({ item }: { item: DashboardItem }) {
 		>
 			<div className="flex min-w-0 flex-1 items-center gap-3">
 				{createElement(iconForFileName(item.fileName), {
-					className: "size-6 shrink-0 text-muted-foreground",
+					className: "size-6 shrink-0",
+					style: { color: ITEM_TYPE_COLORS.file },
 				})}
 				<div className="min-w-0 flex-1">
-					<p className="truncate text-sm font-medium">{displayName}</p>
-					{item.title !== displayName && (
+					<p className="truncate text-sm font-medium">{item.title}</p>
+					{item.fileName && item.fileName !== item.title && (
 						<p className="truncate text-xs text-muted-foreground">
-							{item.title}
+							{item.fileName}
 						</p>
 					)}
 				</div>
