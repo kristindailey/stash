@@ -89,7 +89,7 @@ export function UpgradePlans() {
 										className="flex items-start gap-2 text-muted-foreground"
 									>
 										<Check
-											className="mt-1 size-4 shrink-0 text-brand-coral"
+											className="mt-1 size-4 shrink-0 text-brand-yellow"
 											strokeWidth={3}
 										/>
 										<span className="text-[0.95rem]">{f}</span>
