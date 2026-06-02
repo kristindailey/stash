@@ -15,7 +15,7 @@ export function MarketingFooter() {
 				</div>
 				<div className="grid grid-cols-2 gap-6 sm:grid-cols-3">
 					{FOOTER_COLUMNS.map((col) => (
-						<div key={col.heading}>
+						<div key={col.heading} className="sm:col-start-3">
 							<h4 className="mb-4 text-sm font-bold">{col.heading}</h4>
 							{col.links.map((link) => (
 								<a

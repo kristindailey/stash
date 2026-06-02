@@ -195,20 +195,4 @@ export const FOOTER_COLUMNS: FooterColumn[] = [
 			{ label: "AI", href: "#ai" },
 		],
 	},
-	{
-		heading: "Company",
-		links: [
-			{ label: "About", href: "#" },
-			{ label: "Blog", href: "#" },
-			{ label: "Careers", href: "#" },
-		],
-	},
-	{
-		heading: "Legal",
-		links: [
-			{ label: "Privacy", href: "#" },
-			{ label: "Terms", href: "#" },
-			{ label: "Security", href: "#" },
-		],
-	},
 ];
