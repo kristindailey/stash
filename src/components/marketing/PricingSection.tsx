@@ -27,7 +27,7 @@ export function PricingSection() {
 						onClick={() => setYearly(false)}
 						className={cn(
 							"rounded-full px-4.5 py-1.5 text-sm font-semibold text-muted-foreground transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring",
-							!yearly && "bg-blue-500 text-white"
+							!yearly && "bg-brand-yellow text-neutral-900"
 						)}
 					>
 						Monthly
@@ -37,18 +37,11 @@ export function PricingSection() {
 						onClick={() => setYearly(true)}
 						className={cn(
 							"inline-flex items-center gap-1.5 rounded-full px-4.5 py-1.5 text-sm font-semibold text-muted-foreground transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring",
-							yearly && "bg-blue-500 text-white"
+							yearly && "bg-brand-yellow text-neutral-900"
 						)}
 					>
 						Yearly
-						<span
-							className={cn(
-								"rounded-full px-1.5 py-0.5 text-[0.7rem] font-bold",
-								yearly
-									? "bg-white/20 text-white"
-									: "bg-emerald-500/20 text-emerald-400"
-							)}
-						>
+						<span className="rounded-full bg-brand-stone px-1.5 py-0.5 text-[0.7rem] font-bold text-white">
 							Save 25%
 						</span>
 					</button>
@@ -67,12 +60,12 @@ export function PricingSection() {
 								className={cn(
 									"relative flex h-full flex-col rounded-[14px] border bg-card p-8",
 									plan.featured
-										? "border-blue-500 shadow-[0_0_0_1px_var(--color-blue-500),0_18px_44px_rgba(59,130,246,0.22)]"
+										? "border-brand-yellow shadow-[0_0_0_1px_var(--color-brand-yellow),0_18px_44px_rgba(252,215,87,0.22)]"
 										: "border-border/60"
 								)}
 							>
 								{plan.featured && (
-									<Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-blue-400 to-blue-500 text-white uppercase">
+									<Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-brand-yellow to-brand-lime text-neutral-900 uppercase">
 										Most Popular
 									</Badge>
 								)}
@@ -86,7 +79,7 @@ export function PricingSection() {
 								<ul className="mb-7 flex flex-1 flex-col gap-3">
 									{plan.features.map((f) => (
 										<li key={f} className="flex items-start gap-2 text-muted-foreground">
-											<Check className="mt-1 size-4 shrink-0 text-blue-500" strokeWidth={3} />
+											<Check className="mt-1 size-4 shrink-0 text-brand-yellow" strokeWidth={3} />
 											<span className="text-[0.95rem]">{f}</span>
 										</li>
 									))}

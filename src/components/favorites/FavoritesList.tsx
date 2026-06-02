@@ -143,7 +143,7 @@ export function FavoritesList({
 	return (
 		<>
 			<header className="flex items-center gap-3">
-				<Star className="size-6 shrink-0 text-amber-500" fill="currentColor" />
+				<Star className="size-6 shrink-0 text-brand-yellow" fill="currentColor" />
 				<h1 className="text-2xl font-semibold">Favorites</h1>
 				<span className="text-sm text-muted-foreground">{totalCount}</span>
 				{totalCount > 0 && (

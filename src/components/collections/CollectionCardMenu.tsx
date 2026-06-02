@@ -92,7 +92,7 @@ export function CollectionCardMenu({
 						}}
 					>
 						<Star
-							style={collection.isFavorite ? { color: "#f59e0b" } : undefined}
+							style={collection.isFavorite ? { color: "#fcd757" } : undefined}
 							fill={collection.isFavorite ? "currentColor" : "none"}
 						/>
 						{collection.isFavorite ? "Unfavorite" : "Favorite"}

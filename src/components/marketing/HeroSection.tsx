@@ -13,7 +13,7 @@ export function HeroSection() {
 			<Reveal className="text-center">
 				<h1 className="text-[clamp(2.4rem,6vw,4rem)] leading-[1.08] font-extrabold tracking-tight">
 					Stop Losing Your{" "}
-					<span className="block bg-gradient-to-r from-blue-400 to-blue-500 bg-clip-text text-transparent">
+					<span className="block bg-gradient-to-r from-brand-yellow to-brand-lime bg-clip-text text-transparent">
 						Developer Knowledge
 					</span>
 				</h1>
@@ -34,7 +34,7 @@ export function HeroSection() {
 						asChild
 						variant="outline"
 						size="lg"
-						className="h-11 px-6 text-base hover:border-blue-500/60"
+						className="h-11 px-6 text-base hover:border-brand-yellow/60"
 					>
 						<a href="#features">See Features</a>
 					</Button>
@@ -46,7 +46,7 @@ export function HeroSection() {
 					<ChaosVisual />
 					<div
 						aria-hidden="true"
-						className="animate-arrow-pulse flex size-14 rotate-90 items-center justify-center justify-self-center rounded-full bg-gradient-to-br from-blue-400 to-blue-500 text-white md:rotate-0"
+						className="animate-arrow-pulse flex size-14 rotate-90 items-center justify-center justify-self-center rounded-full bg-gradient-to-br from-brand-yellow to-brand-lime text-neutral-900 md:rotate-0"
 					>
 						<ArrowRight className="size-8" strokeWidth={2.5} />
 					</div>

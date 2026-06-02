@@ -79,7 +79,7 @@ export function DrawerBody({
 					active={item.isFavorite}
 					activeLabel="Favorited"
 					inactiveLabel="Favorite"
-					activeColor="#f59e0b"
+					activeColor="#fcd757"
 					onClick={onToggleFavorite}
 					disabled={togglingFavorite}
 				/>

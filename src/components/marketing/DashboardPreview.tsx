@@ -20,12 +20,12 @@ export function DashboardPreview() {
 						<i className="size-2 rounded-full bg-border" />
 					</span>
 					<span className="h-3 flex-1 rounded-md border border-border/60 bg-card" />
-					<span className="size-4 rounded-full bg-gradient-to-br from-blue-400 to-blue-500" />
+					<span className="size-4 rounded-full bg-gradient-to-br from-brand-yellow to-brand-lime" />
 				</div>
 
 				<div className="grid min-h-0 flex-1 grid-cols-[104px_1fr]">
 					<div className="flex flex-col gap-2.5 border-r border-border/60 bg-background px-2.5 py-3.5">
-						<div className="mb-1 h-3.5 w-[70%] rounded bg-gradient-to-r from-blue-400 to-blue-500" />
+						<div className="mb-1 h-3.5 w-[70%] rounded bg-gradient-to-r from-brand-yellow to-brand-lime" />
 						<div className="flex flex-col gap-2">
 							{PREVIEW_TYPES.map((t) => (
 								<span

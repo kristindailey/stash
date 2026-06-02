@@ -31,7 +31,7 @@ export function CollectionCard({
 			<div className="flex items-center gap-2">
 				<Icon
 					className="pointer-events-none size-4 shrink-0"
-					style={collection.isFavorite ? { color: "#f59e0b" } : undefined}
+					style={collection.isFavorite ? { color: "#fcd757" } : undefined}
 					fill={collection.isFavorite ? "currentColor" : "none"}
 				/>
 				<h3 className="pointer-events-none truncate font-semibold">

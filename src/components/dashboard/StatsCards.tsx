@@ -21,14 +21,14 @@ export async function StatsCards({ userId }: { userId: string }) {
 				label="Favorite Items"
 				value={stats.favoriteItems}
 				icon={Star}
-				iconColor="#f59e0b"
+				iconColor="#fcd757"
 				iconFill
 			/>
 			<StatCard
 				label="Favorite Collections"
 				value={stats.favoriteCollections}
 				icon={Star}
-				iconColor="#f59e0b"
+				iconColor="#fcd757"
 				iconFill
 			/>
 		</div>

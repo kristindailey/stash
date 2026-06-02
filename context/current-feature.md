@@ -1,14 +1,25 @@
-# Current Feature
-<!-- Title above as "# Current Feature: <name>", followed by a one- or two-sentence description of the feature/fix. -->
+# Current Feature: Stash Rebrand — Colors & Logo
+Update the app's visual identity to match the new "Stash" name, starting with the color palette and favicon/logo. Keep dark mode as the default.
 
 ## Status
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
-<!-- What this feature needs to accomplish. List concrete, checkable goals. -->
+- Introduce the new brand palette into the theme, keeping dark mode the default:
+  - `#df9a57` (warm tan)
+  - `#fc7a57` (coral)
+  - `#fcd757` (yellow — logo background)
+  - `#eefc57` (lime)
+  - `#5e5b52` (warm dark gray)
+- Replace the existing favicon with the new logo
+- Surface the new logo in the app (sidebar/top bar where the wordmark/logo lives)
+- Apply the palette where brand color currently shows (primary/accent, the marketing `.marketing` accent layer, etc.) without breaking dark-mode contrast
 
 ## Notes
-<!-- Implementation details, constraints, decisions, and references. -->
+- Logo asset is at `public/logo.png` — black mustache on `#fcd757` yellow.
+- Theme is Tailwind v4 CSS-based config in `src/app/globals.css` (`@theme inline`, `:root`, `.dark`, plus a `.marketing` scope). No `tailwind.config.*` (v4).
+- Decide palette role mapping before implementing (e.g. which hex becomes `--primary`, `--accent`, `--ring`). Confirm with user on `start`.
+- Existing marketing components use prototype accent colors/icons — check whether those need to align to the new palette too.
 
 ## History
 - **Initial Setup** — Next.js 16 and Tailwind CSS v4 scaffold.
