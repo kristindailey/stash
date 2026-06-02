@@ -81,12 +81,12 @@ export function BillingSection({
 							<span className="text-sm font-medium text-muted-foreground">
 								Current plan:
 							</span>
-							<Badge className="border-transparent bg-violet-500 text-white">
+							<Badge className="border-transparent bg-brand-purple text-white">
 								Pro
 							</Badge>
 						</div>
 						<h3 className="flex items-center gap-2 text-base font-semibold">
-							<Crown className="size-4 text-violet-500" />
+							<Crown className="size-4 text-brand-purple" />
 							Stash Pro
 						</h3>
 						<p className="text-sm text-muted-foreground">
