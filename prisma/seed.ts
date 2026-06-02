@@ -14,13 +14,13 @@ const prisma = new PrismaClient({ adapter });
 const DEMO_EMAIL = "demo@devstash.io";
 
 const systemItemTypes = [
-	{ name: "snippet", icon: "Code", color: "#3b82f6" },
-	{ name: "prompt", icon: "Sparkles", color: "#8b5cf6" },
-	{ name: "command", icon: "Terminal", color: "#f97316" },
-	{ name: "note", icon: "StickyNote", color: "#fde047" },
-	{ name: "file", icon: "File", color: "#6b7280" },
-	{ name: "image", icon: "Image", color: "#ec4899" },
-	{ name: "link", icon: "Link", color: "#10b981" },
+	{ name: "snippet", icon: "Code", color: "#6CB4B8" },
+	{ name: "prompt", icon: "Sparkles", color: "#A3B18A" },
+	{ name: "command", icon: "Terminal", color: "#fc7a57" },
+	{ name: "note", icon: "StickyNote", color: "#fcd757" },
+	{ name: "file", icon: "File", color: "#6A4C93" },
+	{ name: "image", icon: "Image", color: "#9A958A" },
+	{ name: "link", icon: "Link", color: "#df9a57" },
 ];
 
 async function seedSystemItemTypes() {

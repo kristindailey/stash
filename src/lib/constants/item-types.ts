@@ -20,13 +20,13 @@ export const ITEM_TYPE_ICONS: Partial<Record<string, LucideIcon>> = {
 };
 
 export const ITEM_TYPE_COLORS: Partial<Record<string, string>> = {
-	snippet: "#3b82f6",
-	prompt: "#8b5cf6",
-	command: "#f97316",
-	note: "#fde047",
-	file: "#6b7280",
-	image: "#ec4899",
-	link: "#10b981",
+	snippet: "#6CB4B8",
+	prompt: "#A3B18A",
+	command: "#fc7a57",
+	note: "#fcd757",
+	file: "#6A4C93",
+	image: "#9A958A",
+	link: "#df9a57",
 };
 
 export const ITEM_TYPE_LABELS: Partial<Record<string, string>> = {
