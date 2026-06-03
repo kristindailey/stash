@@ -618,13 +618,13 @@ Refer to the screenshots below as a base for the dashboard UI. It does not have 
 
 ```css
 :root {
-  --color-snippet: #3b82f6; /* Blue */
-  --color-prompt: #8b5cf6; /* Purple */
-  --color-command: #f97316; /* Orange */
-  --color-note: #fde047; /* Yellow */
-  --color-file: #6b7280; /* Gray */
-  --color-image: #ec4899; /* Pink */
-  --color-link: #10b981; /* Emerald */
+  --color-snippet: #6CB4B8;
+  --color-prompt: #A3B18A;
+  --color-command: #fc7a57;
+  --color-note: #fcd757;
+  --color-file: #6A4C93;
+  --color-image: #9A958A;
+  --color-link: #df9a57;
 }
 ```
 
@@ -685,7 +685,7 @@ export const ITEM_TYPE_COLORS = {
 ## 📁 Suggested Project Structure
 
 ```
-devstash/
+stash/
 ├── prisma/
 │   ├── schema.prisma
 │   ├── migrations/
