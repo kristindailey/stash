@@ -27,6 +27,7 @@ import { SuggestDescription } from "./SuggestDescription";
 import {
 	CONTENT_TYPES,
 	CREATABLE_TYPES,
+	DEFAULT_TYPE_COLOR,
 	FILE_TYPES,
 	ITEM_TYPE_COLORS,
 	ITEM_TYPE_ICONS,
@@ -161,7 +162,7 @@ export function NewItemDialog({ isPro }: { isPro: boolean }) {
 						<div className="flex flex-wrap gap-2">
 							{CREATABLE_TYPES.map((t) => {
 								const Icon = ITEM_TYPE_ICONS[t];
-								const color = ITEM_TYPE_COLORS[t] ?? "#6b7280";
+								const color = ITEM_TYPE_COLORS[t] ?? DEFAULT_TYPE_COLOR;
 								const active = type === t;
 								const locked = proLocked && PRO_ONLY_TYPES.has(t);
 								return (

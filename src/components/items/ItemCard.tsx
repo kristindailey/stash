@@ -2,6 +2,7 @@
 
 import { FolderOpen } from "lucide-react";
 import {
+	DEFAULT_TYPE_COLOR,
 	ITEM_TYPE_COLORS,
 	ITEM_TYPE_ICONS,
 } from "@/lib/constants/item-types";
@@ -19,7 +20,7 @@ function copyLabelFor(type: string): string {
 export function ItemCard({ item }: { item: DashboardItem }) {
 	const { openItem } = useItemDrawer();
 	const Icon = ITEM_TYPE_ICONS[item.type] ?? FolderOpen;
-	const color = ITEM_TYPE_COLORS[item.type] ?? "#6b7280";
+	const color = ITEM_TYPE_COLORS[item.type] ?? DEFAULT_TYPE_COLOR;
 	const copyText = getCopyText(item);
 
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {

@@ -109,7 +109,7 @@ export function Sidebar({
 										key={collection.id}
 										href={`/collections/${collection.id}`}
 										icon={Star}
-										iconColor="#fcd757"
+										iconColor="var(--brand-yellow)"
 										iconFill
 										label={collection.name}
 										count={collection.itemCount}

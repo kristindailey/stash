@@ -29,6 +29,8 @@ export const ITEM_TYPE_COLORS: Partial<Record<string, string>> = {
 	link: "#df9a57",
 };
 
+export const DEFAULT_TYPE_COLOR = "#6b7280";
+
 export const ITEM_TYPE_LABELS: Partial<Record<string, string>> = {
 	snippet: "Snippet",
 	prompt: "Prompt",

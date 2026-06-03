@@ -13,7 +13,7 @@ export function ItemStatusBadges({
 			{isFavorite && (
 				<Star
 					className="size-3.5"
-					style={{ color: "#fcd757" }}
+					style={{ color: "var(--brand-yellow)" }}
 					fill="currentColor"
 				/>
 			)}

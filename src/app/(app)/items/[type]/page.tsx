@@ -7,6 +7,7 @@ import { ItemCard } from "@/components/items/ItemCard";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { Pagination } from "@/components/shared/Pagination";
 import {
+	DEFAULT_TYPE_COLOR,
 	ITEM_TYPE_COLORS,
 	ITEM_TYPE_ICONS,
 	ITEM_TYPE_LABELS,
@@ -78,7 +79,7 @@ export default async function ItemsByTypePage({
 	const typeTotal = totalCount + pinnedItems.length;
 
 	const Icon = ITEM_TYPE_ICONS[singular] ?? FolderOpen;
-	const color = ITEM_TYPE_COLORS[singular] ?? "#6b7280";
+	const color = ITEM_TYPE_COLORS[singular] ?? DEFAULT_TYPE_COLOR;
 	const label = ITEM_TYPE_LABELS[singular] ?? capitalize(singular);
 	const pluralLabel = `${label}s`;
 

@@ -21,6 +21,7 @@ import { MarkdownEditor } from "./MarkdownEditor";
 import { DeleteItemDialog } from "./DeleteItemDialog";
 import { DrawerSection } from "./DrawerSection";
 import {
+	DEFAULT_TYPE_COLOR,
 	ITEM_TYPE_COLORS,
 	ITEM_TYPE_ICONS,
 	ITEM_TYPE_LABELS,
@@ -56,7 +57,7 @@ export function DrawerBody({
 }) {
 	const [confirmOpen, setConfirmOpen] = React.useState(false);
 	const Icon = ITEM_TYPE_ICONS[item.type] ?? FolderOpen;
-	const color = ITEM_TYPE_COLORS[item.type] ?? "#6b7280";
+	const color = ITEM_TYPE_COLORS[item.type] ?? DEFAULT_TYPE_COLOR;
 	const typeLabel = ITEM_TYPE_LABELS[item.type] ?? item.type;
 
 	return (
@@ -79,7 +80,7 @@ export function DrawerBody({
 					active={item.isFavorite}
 					activeLabel="Favorited"
 					inactiveLabel="Favorite"
-					activeColor="#fcd757"
+					activeColor="var(--brand-yellow)"
 					onClick={onToggleFavorite}
 					disabled={togglingFavorite}
 				/>

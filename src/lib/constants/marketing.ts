@@ -15,15 +15,7 @@ import {
 	Terminal,
 } from "lucide-react";
 
-export const MARKETING_TYPE_COLORS: Record<string, string> = {
-	snippet: "#6CB4B8",
-	prompt: "#A3B18A",
-	command: "#fc7a57",
-	note: "#fcd757",
-	file: "#6A4C93",
-	image: "#9A958A",
-	link: "#df9a57",
-};
+export { ITEM_TYPE_COLORS as MARKETING_TYPE_COLORS } from "./item-types";
 
 export const CTA_PRIMARY_CLASS =
 	"border-transparent bg-brand-yellow text-neutral-900 transition-colors hover:bg-brand-yellow/90";

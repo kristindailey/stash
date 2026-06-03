@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { FolderOpen, Layers } from "lucide-react";
 import { UserAvatar } from "@/components/shared/UserAvatar";
 import {
+	DEFAULT_TYPE_COLOR,
 	ITEM_TYPE_COLORS,
 	ITEM_TYPE_ICONS,
 	ITEM_TYPE_LABELS,
@@ -59,7 +60,7 @@ export default async function ProfilePage() {
 					<ul className="divide-y">
 						{stats.byType.map((row) => {
 							const Icon = ITEM_TYPE_ICONS[row.name] ?? Layers;
-							const color = ITEM_TYPE_COLORS[row.name] ?? "#6b7280";
+							const color = ITEM_TYPE_COLORS[row.name] ?? DEFAULT_TYPE_COLOR;
 							const label = ITEM_TYPE_LABELS[row.name] ?? row.name;
 							return (
 								<li

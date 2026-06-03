@@ -20,6 +20,7 @@ import { SuggestDescription } from "./SuggestDescription";
 import { DrawerSection } from "./DrawerSection";
 import {
 	CONTENT_TYPES,
+	DEFAULT_TYPE_COLOR,
 	ITEM_TYPE_COLORS,
 	ITEM_TYPE_ICONS,
 	ITEM_TYPE_LABELS,
@@ -46,7 +47,7 @@ export function DrawerEdit({
 }) {
 	const router = useRouter();
 	const Icon = ITEM_TYPE_ICONS[item.type] ?? FolderOpen;
-	const color = ITEM_TYPE_COLORS[item.type] ?? "#6b7280";
+	const color = ITEM_TYPE_COLORS[item.type] ?? DEFAULT_TYPE_COLOR;
 	const typeLabel = ITEM_TYPE_LABELS[item.type] ?? item.type;
 
 	const showContent = CONTENT_TYPES.has(item.type);

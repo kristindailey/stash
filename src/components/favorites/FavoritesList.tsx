@@ -5,6 +5,7 @@ import Link from "next/link";
 import { FolderOpen, Star } from "lucide-react";
 import {
 	CREATABLE_TYPES,
+	DEFAULT_TYPE_COLOR,
 	ITEM_TYPE_COLORS,
 	ITEM_TYPE_ICONS,
 	ITEM_TYPE_LABELS,
@@ -66,7 +67,7 @@ const rowClass =
 function ItemRow({ item }: { item: DashboardItem }) {
 	const { openItem } = useItemDrawer();
 	const Icon = ITEM_TYPE_ICONS[item.type] ?? FolderOpen;
-	const color = ITEM_TYPE_COLORS[item.type] ?? "#6b7280";
+	const color = ITEM_TYPE_COLORS[item.type] ?? DEFAULT_TYPE_COLOR;
 	const label = ITEM_TYPE_LABELS[item.type] ?? capitalize(item.type);
 
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
